@@ -12,7 +12,7 @@
 
 ## Global Constraints
 
-- New repo: `blueworx-io/blueworx_labs_theme`. Theme folder and slug: `blueworx`. Text domain stays `blueworx-labs-wordpress`.
+- New repo: `blueworx-io/blueworx_labs_wordpress_theme`. Theme folder and slug: `blueworx`. Text domain stays `blueworx-labs-wordpress`.
 - Theme version starts at `2.0.0`. `BLUEWORX_LABS_VERSION` is defined as `'2.0.0'`, so Clubhouse's `>= 1.88.0` check still passes.
 - Function, option, role, route and hook names stay exactly as in the plugin, so a site moved from the plugin keeps its settings.
 - The theme never runs alongside the 1.x plugin.
@@ -52,7 +52,7 @@
 
 ### Task 2: New repo with the theme skeleton
 
-**Files (new repo `blueworx_labs_theme`, created from this repo's `main` at `v1.96.3` with history kept):**
+**Files (new repo `blueworx_labs_wordpress_theme`, created from this repo's `main` at `v1.96.3` with history kept):**
 - Rename: `blueworx-labs-wordpress.php` to `functions.php`
 - Create: `style.css` (header only), `index.php`
 - Delete: `uninstall.php`
@@ -63,7 +63,7 @@
 - Produces: the constants `BLUEWORX_LABS_PATH`, which is `trailingslashit( get_template_directory() )`, and `BLUEWORX_LABS_URL`, which is `trailingslashit( get_template_directory_uri() )`.
 - Produces: `BLUEWORX_LABS_THEME_FILE`, the path to `functions.php`. It replaces `BLUEWORX_LABS_PLUGIN_FILE`, and every use of the old name is removed.
 
-- [ ] **Step 0:** Ask Luke to confirm before creating the GitHub repo `blueworx-io/blueworx_labs_theme`. It's outward-facing. Then clone this repo, point `origin` at the new repo, and push `main`.
+- [x] **Step 0:** Done 2026-10-23. Luke created `blueworx-io/blueworx_labs_wordpress_theme`, and `main` was pushed from the plugin at `v1.96.3` with history and without tags.
 - [ ] **Step 1: Write the failing spec.** In `tests/theme-skeleton.spec.js`:
   - `the theme is active and the console loads`: `/wp-admin/themes.php` shows "BlueWorx" as the active theme, and `/wp-admin/admin.php?page=blueworx-labs-wordpress` returns 200 with the Enhancements heading.
   - `assets load from the theme folder`: the admin theme stylesheet link's `href` contains `/wp-content/themes/blueworx/assets/css/admin-theme.css`.
@@ -143,7 +143,7 @@
 - [ ] **Step 1:** Change the three test scripts' stubs from `active_plugins` and `active_sitewide_plugins` to `get_option( 'template' )`. Add two checks: the theme on `'blueworx'` counts as running, and the theme on `'twentytwentyfive'` doesn't. In `auto-updates-test.php`, add: the `blueworx` theme item is forced on, and other themes are left alone.
 - [ ] **Step 2:** Run all three and confirm they fail.
 - [ ] **Step 3: Implement.**
-  - The update checker: `PucFactory::buildUpdateChecker( 'https://github.com/blueworx-io/blueworx_labs_theme/', get_template_directory() . '/functions.php', 'blueworx' )`, with the same token and release-asset settings as today.
+  - The update checker: `PucFactory::buildUpdateChecker( 'https://github.com/blueworx-io/blueworx_labs_wordpress_theme/', get_template_directory() . '/functions.php', 'blueworx' )`, with the same token and release-asset settings as today.
   - The helper, plus the two call sites.
   - Swap the auto-update filter.
 - [ ] **Step 4:** Run all `tests/php/*-test.php` and confirm every one passes.
