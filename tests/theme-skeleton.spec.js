@@ -88,6 +88,13 @@ test.describe('The theme', () => {
     expect(html).toContain('/wp-includes/');
   });
 
+  test('a missing page says so, under one heading', async ({ page }) => {
+    const res = await page.goto('/no-such-page-here/');
+    expect(res.status()).toBe(404);
+    await expect(page.locator('h1')).toHaveCount(1);
+    await expect(page.locator('h1')).toHaveText('Page not found');
+  });
+
   test('the theme updates itself rather than offering a toggle', async ({ page }) => {
     await login(page);
     await page.goto('/wp-admin/themes.php');

@@ -35,6 +35,10 @@ if ( have_posts() ) {
 		</article>
 		<?php
 	}
+} else {
+	?>
+	<h1><?php echo is_404() ? esc_html__( 'Page not found', 'blueworx-labs-wordpress' ) : esc_html__( 'Nothing here yet', 'blueworx-labs-wordpress' ); ?></h1>
+	<?php
 }
 ?>
 </main>
