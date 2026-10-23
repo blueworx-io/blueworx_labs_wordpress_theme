@@ -36,6 +36,21 @@ const TEST_HOOKS_PHP = `<?php
  * Description: Exercises the store pages and Source column filters the way another plugin would. Test fixture only.
  */
 
+// Listens for the theme's ready signal the way a client plugin would, and
+// prints what it heard, so tests/theme-skeleton.spec.js can read it off a page.
+add_action( 'blueworx_theme_ready', static function ( $version ) {
+	$GLOBALS['bw_test_ready'][] = array( $version, function_exists( 'blueworx_store_dashboard_screen' ) );
+} );
+
+add_action( 'wp_head', static function () {
+	$heard = isset( $GLOBALS['bw_test_ready'] ) ? $GLOBALS['bw_test_ready'] : array();
+	if ( ! $heard ) {
+		echo '<!-- blueworx_theme_ready: never -->';
+		return;
+	}
+	printf( '<!-- blueworx_theme_ready: %s, store loaded: %s, times: %d -->', esc_html( $heard[0][0] ), $heard[0][1] ? 'yes' : 'no', count( $heard ) );
+} );
+
 add_shortcode( 'bw_store_test_panel', static function () {
 	return '<p id="test-panel">TEST PANEL</p>';
 } );
