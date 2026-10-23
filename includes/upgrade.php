@@ -718,4 +718,7 @@ function blueworx_run_pending_labs_migrations() {
 
 	update_option( 'blueworx_labs_db_version', $current_version );
 }
-add_action( 'plugins_loaded', 'blueworx_run_pending_labs_migrations' );
+// Theme code loads after plugins_loaded, so this runs at the start of
+// after_setup_theme instead: before the per-site setup in theme-lifecycle.php
+// (priority 6) and before client plugins are told the theme is ready (20).
+add_action( 'after_setup_theme', 'blueworx_run_pending_labs_migrations', 5 );

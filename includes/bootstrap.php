@@ -1,17 +1,11 @@
 <?php
 /**
- * Plugin Name:       BlueWorx Labs | WordPress Enhancements
- * Plugin URI:        https://blueworx.io/
- * Description:       Site hardening, admin and media tools, cache refresh, and profile enhancements.
- * Version:           1.96.3
- * Requires at least: 5.0
- * Requires PHP:      8.0
- * Author:            BlueWorx
- * Author URI:        https://profiles.wordpress.org/blueworx/
- * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       blueworx-labs-wordpress
- * Domain Path:       /languages
+ * Loads the theme: updates, constants, every feature, and the signal client
+ * plugins wait for.
+ *
+ * Required from functions.php once it has checked the 1.x plugin is not also
+ * running. Theme code loads after plugins_loaded, so anything here that the
+ * plugin used to hook there now runs on after_setup_theme instead.
  *
  * @package BlueWorxLabs
  */
@@ -22,25 +16,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /*
- * Updates. The plugin watches this repo's GitHub releases and installs new
+ * Updates. The theme watches this repo's GitHub releases and installs new
  * versions itself, so nobody uploads a zip. The house standard this follows is
  * documented in the foundation's docs/wordpress-auto-updates.md; the decision
  * to install rather than merely offer lives in includes/auto-updates.php.
  *
  * At file scope, and not inside a function, conditional or hook: the library's
  * "use" import below cannot be wrapped without a parse error.
+ *
+ * The checker is pointed at functions.php in the theme's own folder: the
+ * library tells a theme from a plugin by finding style.css beside the file it
+ * is given, and only looks one folder deep.
  */
-require_once plugin_dir_path( __FILE__ ) . 'plugin-update-checker/plugin-update-checker.php';
+require_once get_template_directory() . '/plugin-update-checker/plugin-update-checker.php';
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 
 $blueworx_update_checker = PucFactory::buildUpdateChecker(
-	'https://github.com/blueworx-io/blueworx_labs_wordpress/',
-	__FILE__,
-	'blueworx-labs-wordpress' // Must equal the plugin's folder name on the site,
-	                          // and the folder name inside the release zip. If
-	                          // they disagree, an update installs alongside the
-	                          // original as a second copy and deactivates it.
+	'https://github.com/blueworx-io/blueworx_labs_wordpress_theme/',
+	get_template_directory() . '/functions.php',
+	'blueworx' // Must equal the theme's folder name on the site, and the
+	           // folder name inside the release zip. If they disagree, an
+	           // update installs alongside the original as a second theme.
 );
 
 /*
@@ -57,44 +54,50 @@ if ( defined( 'BLUEWORX_PLUGIN_UPDATE_TOKEN' ) && BLUEWORX_PLUGIN_UPDATE_TOKEN )
 /*
  * Install the zip attached to the release, not GitHub's own source tarball.
  * That tarball unpacks to a folder named <repo>-<version>, which WordPress
- * would treat as a different plugin — and it carries every development file in
+ * would treat as a different theme — and it carries every development file in
  * the repo besides.
  */
 $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 
+// Kept under the plugin's name: client plugins such as Clubhouse check it to
+// know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
-	define( 'BLUEWORX_LABS_VERSION', '1.96.3' );
+	define( 'BLUEWORX_LABS_VERSION', '2.0.0' );
 }
 
-// The main plugin file's own path. Two things need it by name rather than by
-// guessing at it: the update checker, which identifies the plugin to WordPress
-// by this file, and the filter that turns this plugin's own auto-update on.
-if ( ! defined( 'BLUEWORX_LABS_PLUGIN_FILE' ) ) {
-	define( 'BLUEWORX_LABS_PLUGIN_FILE', __FILE__ );
+// The theme's functions.php. The filter that turns the theme's own
+// auto-update on identifies it by its folder, read from here.
+if ( ! defined( 'BLUEWORX_LABS_THEME_FILE' ) ) {
+	define( 'BLUEWORX_LABS_THEME_FILE', get_template_directory() . '/functions.php' );
 }
 
+// The template directory, never the stylesheet one, so a child theme still
+// finds the parent's files.
 if ( ! defined( 'BLUEWORX_LABS_PATH' ) ) {
-	define( 'BLUEWORX_LABS_PATH', plugin_dir_path( __FILE__ ) );
+	define( 'BLUEWORX_LABS_PATH', trailingslashit( get_template_directory() ) );
 }
 
 if ( ! defined( 'BLUEWORX_LABS_URL' ) ) {
-	define( 'BLUEWORX_LABS_URL', plugin_dir_url( __FILE__ ) );
+	define( 'BLUEWORX_LABS_URL', trailingslashit( get_template_directory_uri() ) );
 }
 
 if ( ! defined( 'BLUEWORX_CUSTOM_LOGIN_SLUG' ) ) {
 	define( 'BLUEWORX_CUSTOM_LOGIN_SLUG', 'admin_login' );
 }
 
-// The shared admin design system's registrar. Required here, at plugin load
-// time rather than from inside admin-assets.php or any hook: registration has
-// to run before any copy on the site enqueues, and the newest-wins comparison
-// only works if every copy announces itself this early. See
+require_once BLUEWORX_LABS_PATH . 'includes/theme-urls.php';
+
+// The shared admin design system's registrar. Required here, at load time
+// rather than from inside admin-assets.php or any hook: registration has to run
+// before any copy on the site enqueues, and the newest-wins comparison only
+// works if every copy announces itself this early. See
 // assets/blueworx-admin-design.php for why.
 require_once BLUEWORX_LABS_PATH . 'assets/blueworx-admin-design.php';
 
 require_once BLUEWORX_LABS_PATH . 'includes/helpers.php';
 require_once BLUEWORX_LABS_PATH . 'includes/features.php';
 require_once BLUEWORX_LABS_PATH . 'includes/upgrade.php';
+require_once BLUEWORX_LABS_PATH . 'includes/theme-lifecycle.php';
 require_once BLUEWORX_LABS_PATH . 'includes/admin-design.php';
 require_once BLUEWORX_LABS_PATH . 'includes/admin-assets.php';
 require_once BLUEWORX_LABS_PATH . 'includes/admin-theme.php';
@@ -151,44 +154,42 @@ require_once BLUEWORX_LABS_PATH . 'includes/display-names.php';
 require_once BLUEWORX_LABS_PATH . 'includes/store/store.php';
 
 /**
- * Puts back what deactivation took away.
+ * What every theme declares about itself.
  *
- * Only the external role, and only when the function is already on — which
- * means this is a reactivation, and deactivation removed the role on the way
- * out. A fresh install has the function off and registers the role when
- * somebody switches it on.
+ * Matches the blank theme Clubhouse sites ran on before, so pages Clubhouse
+ * draws keep their featured images, feed links and title tag.
  *
  * @return void
  */
-function blueworx_labs_on_activate() {
-	blueworx_external_on_activate();
+function blueworx_theme_supports() {
+	add_theme_support( 'title-tag' );
+	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'responsive-embeds' );
+	add_theme_support( 'automatic-feed-links' );
+	add_theme_support( 'html5', array( 'search-form', 'comment-list', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
 }
-register_activation_hook( __FILE__, 'blueworx_labs_on_activate' );
+add_action( 'after_setup_theme', 'blueworx_theme_supports' );
 
 /**
- * Tears down everything that must not outlive the plugin being switched off.
+ * Tells client plugins the BlueWorx base is loaded.
  *
- * Both read-only roles are near-administrator accounts whose safety comes from
- * the request-layer block in includes/readonly-access.php. With the plugin off
- * that block does not run, so the accounts must not be left standing.
+ * Plugins load before the theme, so a plugin such as Clubhouse cannot call
+ * theme functions at load time. It hooks this instead of plugins_loaded for
+ * anything that needs them. Fires once, after every file above is loaded and
+ * after this site's setup and migrations have run.
  *
- * Switched off for a whole network, the plugin stops running on every site at
- * once, so every site is cleaned up, not just the main one.
- *
- * @param bool $network_wide Whether the plugin is being switched off for the whole network.
  * @return void
  */
-function blueworx_labs_on_deactivate( $network_wide = false ) {
-	blueworx_for_each_site( 'blueworx_labs_deactivate_site', (bool) $network_wide );
-}
+function blueworx_theme_signal_ready() {
+	if ( did_action( 'blueworx_theme_ready' ) ) {
+		return;
+	}
 
-/**
- * Removes the guest viewer and support accounts from the current site.
- *
- * @return void
- */
-function blueworx_labs_deactivate_site() {
-	blueworx_support_on_deactivate();
-	blueworx_external_on_deactivate();
+	/**
+	 * Fires once the BlueWorx theme has loaded.
+	 *
+	 * @param string $version The theme's version.
+	 */
+	do_action( 'blueworx_theme_ready', BLUEWORX_LABS_VERSION );
 }
-register_deactivation_hook( __FILE__, 'blueworx_labs_on_deactivate' );
+add_action( 'after_setup_theme', 'blueworx_theme_signal_ready', 20 );

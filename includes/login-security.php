@@ -308,16 +308,11 @@ function blueworx_replace_generated_login_url( $url, $path ) {
  * @return string The custom login URL, or '' when that site uses the normal login.
  */
 function blueworx_site_custom_login_url( $blog_id ) {
-	$basename = plugin_basename( BLUEWORX_LABS_PLUGIN_FILE );
-
 	switch_to_blog( (int) $blog_id );
 
-	$network_plugins = (array) get_site_option( 'active_sitewide_plugins', array() );
-	$site_plugins    = (array) get_option( 'active_plugins', array() );
-	$plugin_running  = isset( $network_plugins[ $basename ] ) || in_array( $basename, $site_plugins, true );
-	$url             = '';
+	$url = '';
 
-	if ( $plugin_running && blueworx_feature_enabled( 'login' ) ) {
+	if ( blueworx_theme_active_here() && blueworx_feature_enabled( 'login' ) ) {
 		$url = home_url( '/' . blueworx_login_slug() . '/' );
 	}
 

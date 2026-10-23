@@ -470,6 +470,7 @@ function date_i18n( $format, $time ) {
 
 require_once __DIR__ . '/../../includes/support-access.php';
 require_once __DIR__ . '/../../includes/external-access.php';
+require_once __DIR__ . '/../../includes/theme-lifecycle.php';
 
 /**
  * Invites a guest viewer for a week on the current site.
@@ -738,52 +739,18 @@ blueworx_labs_test_deactivate( false );
 check( 'support stays for site 2', sites_of( $support ), array( 2 ) );
 check( 'and so does site 2\'s viewer', sites_of( $elsewhere ), array( 2 ) );
 
-// -----------------------------------------------------------------------------
-echo "\nDeleting the plugin from a network cleans every site (#234)\n";
-
-reset_network( true );
-
-$support = give_support( 1, false );
-
-give_support( 2, true );
-
-$left_behind = on_site(
-	3,
-	function () {
-		update_option( 'blueworx_tracking_ga', 'G-123' );
-		return invite_viewer( 'left@example.com' );
-	}
-);
-
-define( 'WP_UNINSTALL_PLUGIN', 'blueworx-labs-wordpress/blueworx-labs-wordpress.php' );
-require __DIR__ . '/../../uninstall.php';
-
-check( 'the support account is deleted from the network', account_exists( $support ), false );
-check( 'site 2\'s support key is gone', on_site( 2, 'blueworx_support_has_key' ), false );
-check( 'site 2\'s window option is gone', option_on( 2, 'blueworx_support_access_until' ), 'none' );
-check( 'site 3\'s settings are gone', option_on( 3, 'blueworx_tracking_ga' ), 'none' );
-check( 'a viewer left on a site nobody deactivated is deleted', account_exists( $left_behind ), false );
-check( 'the external role is gone from site 3', on_site( 3, 'external_role_here' ), null );
-check( 'and the network is back on the site it started on', array( get_current_blog_id(), $GLOBALS['blog_stack'] ), array( 1, array() ) );
-
 finish();
 
 /**
- * Runs the plugin's deactivation the way blueworx-labs-wordpress.php does.
+ * Runs the theme's switch-away clean-up on one site, or on every site.
  *
- * The main plugin file loads every other include, so it cannot be required
- * here. Its one line is mirrored instead: the real per-site work and the real
- * network loop are what is under test.
+ * A theme is switched per site, so the theme itself only ever cleans the one
+ * site. The network loop is kept here because it still has to put the network
+ * back on the right site, for whatever uses it next.
  *
  * @param bool $network_wide Whether this is a network deactivation.
  * @return void
  */
 function blueworx_labs_test_deactivate( $network_wide ) {
-	blueworx_for_each_site(
-		function () {
-			blueworx_support_on_deactivate();
-			blueworx_external_on_deactivate();
-		},
-		$network_wide
-	);
+	blueworx_for_each_site( 'blueworx_labs_deactivate_site', $network_wide );
 }

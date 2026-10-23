@@ -41,6 +41,7 @@ const SCRIPTS = [
   'network-menu-icons-test.php',
   'application-passwords-test.php',
   'feature-defaults-test.php',
+  'theme-lifecycle-test.php',
 ];
 
 let phpAvailable = true;

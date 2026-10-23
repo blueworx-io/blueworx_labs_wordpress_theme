@@ -61,7 +61,6 @@ function user_can( $user, $cap ) {
  * A network, for the checks that need one. Each site keeps its own options, as
  * on a real network, so switching site swaps the whole set in and out.
  */
-define( 'BLUEWORX_LABS_PLUGIN_FILE', '/plugins/blueworx-labs-wordpress/blueworx-labs-wordpress.php' );
 
 function is_multisite() {
 	return ! empty( $GLOBALS['multisite'] );
@@ -133,8 +132,9 @@ function get_site_option( $key, $fallback = false ) {
 	return array_key_exists( $key, $GLOBALS['network_options'] ) ? $GLOBALS['network_options'][ $key ] : $fallback;
 }
 
-function plugin_basename( $file ) {
-	return 'blueworx-labs-wordpress/blueworx-labs-wordpress.php';
+// The real one is in includes/helpers.php, which this script does not load.
+function blueworx_theme_active_here() {
+	return 'blueworx' === get_option( 'template' );
 }
 
 // phpcs:enable Squiz.Commenting.FunctionComment.Missing
@@ -350,16 +350,16 @@ check( 'nor does a network where each site has its own domain', blueworx_mcp_net
 
 $GLOBALS['subdomain_install'] = false;
 $GLOBALS['sites'][2]          = array( 'path_no_slash' => '/site2' );
-$GLOBALS['sites'][3]          = array( 'path_no_slash' => '/plugin-off' );
+$GLOBALS['sites'][3]          = array( 'path_no_slash' => '/other-theme' );
 $GLOBALS['sites'][4]          = array( 'path_no_slash' => '/switched-off' );
 $GLOBALS['sites'][5]          = array(
 	'path_no_slash' => '/archived',
 	'archived'      => '1',
 );
-$GLOBALS['blog_options'][2]   = array( 'active_plugins' => array( 'blueworx-labs-wordpress/blueworx-labs-wordpress.php' ) );
-$GLOBALS['blog_options'][3]   = array( 'active_plugins' => array() );
+$GLOBALS['blog_options'][2]   = array( 'template' => 'blueworx' );
+$GLOBALS['blog_options'][3]   = array( 'template' => 'twentytwentyfive' );
 $GLOBALS['blog_options'][4]   = array(
-	'active_plugins'       => array( 'blueworx-labs-wordpress/blueworx-labs-wordpress.php' ),
+	'template'             => 'blueworx',
 	'blueworx_feature_mcp' => '0',
 );
 $GLOBALS['blog_options'][5]   = $GLOBALS['blog_options'][2];
@@ -391,12 +391,15 @@ check( 'and afterwards the main site is itself again', blueworx_mcp_issuer(), 'h
 check( 'with its own settings back', $GLOBALS['options']['blueworx_feature_mcp'], '1' );
 
 // A subsite that has not got Connect Claude must not appear to have it.
-check( 'nothing is offered for a site without this plugin', blueworx_mcp_network_metadata( 3, 'server_metadata' ), null );
+check( 'nothing is offered for a site on another theme', blueworx_mcp_network_metadata( 3, 'server_metadata' ), null );
 check( 'nor for one that has switched Connect Claude off', blueworx_mcp_network_metadata( 4, 'server_metadata' ), null );
 check( 'nor for an archived site', blueworx_mcp_network_metadata( 5, 'server_metadata' ), null );
 
-$GLOBALS['network_options']['active_sitewide_plugins'] = array( 'blueworx-labs-wordpress/blueworx-labs-wordpress.php' => time() );
-check( 'switched on for the whole network counts as having it', blueworx_mcp_network_metadata( 3, 'server_metadata' )['issuer'], 'https://example.com/plugin-off' );
+$GLOBALS['blog_options'][3] = array(
+	'template'   => 'blueworx',
+	'stylesheet' => 'blueworx-child',
+);
+check( 'a site on a child theme of this one counts as having it', blueworx_mcp_network_metadata( 3, 'server_metadata' )['issuer'], 'https://example.com/other-theme' );
 
 // The main site switching Connect Claude off is the main site's choice, and
 // does not stop it pointing Claude at a subsite that has it on.

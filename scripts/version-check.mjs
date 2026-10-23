@@ -2,12 +2,11 @@
 // Local mirror of the foundation header<->package.json version-sync guardrail.
 import { readFileSync } from 'node:fs';
 
-const SLUG = 'blueworx-labs-wordpress';
 let header;
 try {
-  header = readFileSync(`${SLUG}.php`, 'utf8');
+  header = readFileSync('style.css', 'utf8');
 } catch (err) {
-  console.error(`version:check FAILED — cannot read plugin main file ${SLUG}.php: ${err.message}`);
+  console.error(`version:check FAILED — cannot read the theme's style.css: ${err.message}`);
   process.exit(1);
 }
 const headerMatch = header.match(/^\s*\*?\s*Version:\s*(.+)$/im);
@@ -15,16 +14,28 @@ const headerVersion = headerMatch ? headerMatch[1].trim() : null;
 const pkgVersion = JSON.parse(readFileSync('package.json', 'utf8')).version;
 
 if (!headerVersion) {
-  console.error('version:check FAILED — no "Version:" header found in the plugin main file.');
+  console.error('version:check FAILED — no "Version:" header found in style.css.');
   process.exit(1);
 }
 if (headerVersion !== pkgVersion) {
-  console.error(`version:check FAILED — plugin header ${headerVersion} !== package.json ${pkgVersion}.`);
+  console.error(`version:check FAILED — style.css ${headerVersion} !== package.json ${pkgVersion}.`);
+  process.exit(1);
+}
+
+// The version constant client plugins read. It is set in code rather than read
+// from style.css, so a bump that misses it ships a theme that still reports the
+// version before.
+const bootstrap = readFileSync('includes/bootstrap.php', 'utf8');
+const constMatch = bootstrap.match(/define\(\s*'BLUEWORX_LABS_VERSION',\s*'([^']+)'\s*\)/);
+const constVersion = constMatch ? constMatch[1] : null;
+
+if (constVersion !== pkgVersion) {
+  console.error(`version:check FAILED — BLUEWORX_LABS_VERSION in includes/bootstrap.php ${constVersion} !== package.json ${pkgVersion}.`);
   process.exit(1);
 }
 
 // readme.txt's stable tag, which the two above do not imply. Nothing reads it
-// until the plugin is served from an update endpoint, and then it is the ONLY
+// until the theme is served from an update endpoint, and then it is the ONLY
 // number that decides which release a site is offered — a stale tag offers an
 // old version, or none at all. Because nothing breaks in the meantime it drifts
 // silently: it sat at 1.61.5 through fourteen releases. Checked here so a bump
@@ -42,4 +53,4 @@ if (stableTag !== pkgVersion) {
   process.exit(1);
 }
 
-console.log(`version:check OK — plugin header, package.json and readme.txt agree (${headerVersion}).`);
+console.log(`version:check OK — style.css, the version constant, package.json and readme.txt agree (${headerVersion}).`);

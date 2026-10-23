@@ -277,32 +277,13 @@ function blueworx_mcp_network_metadata( $site_id, $route ) {
 
 	$document = null;
 
-	if ( blueworx_mcp_plugin_active_here() && blueworx_feature_enabled( 'mcp' ) ) {
+	if ( blueworx_theme_active_here() && blueworx_feature_enabled( 'mcp' ) ) {
 		$document = 'server_metadata' === $route ? blueworx_mcp_server_metadata() : blueworx_mcp_resource_metadata();
 	}
 
 	restore_current_blog();
 
 	return $document;
-}
-
-/**
- * Whether this plugin is running on the current site.
- *
- * Asked after switching to another site, where the code being run is the main
- * site's copy and says nothing about whether that site has the plugin at all.
- *
- * @return bool True when it is switched on for this site or the whole network.
- */
-function blueworx_mcp_plugin_active_here() {
-	$basename = plugin_basename( BLUEWORX_LABS_PLUGIN_FILE );
-	$network  = get_site_option( 'active_sitewide_plugins', array() );
-
-	if ( is_array( $network ) && isset( $network[ $basename ] ) ) {
-		return true;
-	}
-
-	return in_array( $basename, (array) get_option( 'active_plugins', array() ), true );
 }
 
 /**
