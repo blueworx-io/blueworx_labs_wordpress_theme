@@ -154,6 +154,30 @@ require_once BLUEWORX_LABS_PATH . 'includes/display-names.php';
 require_once BLUEWORX_LABS_PATH . 'includes/store/store.php';
 
 /**
+ * Lets WordPress work out who is signed in again, now the theme has loaded.
+ *
+ * On admin requests WordPress decides who the visitor is before any theme
+ * loads, to pick the language for its own strings. A plugin is loaded by then;
+ * a theme is not. So a request signed in only through this theme's own
+ * determine_current_user filter, such as the support key header, was settled
+ * as nobody, and the read-only block let it through as an anonymous visitor.
+ *
+ * Only an anonymous answer is thrown away. A visitor already signed in, by
+ * cookie or otherwise, is never re-checked, so this can only add a sign-in the
+ * plugin would have made, never change one.
+ *
+ * @return void
+ */
+function blueworx_theme_recheck_anonymous_user() {
+	global $current_user;
+
+	if ( $current_user instanceof WP_User && 0 === (int) $current_user->ID ) {
+		$current_user = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Unset so WordPress asks again.
+	}
+}
+blueworx_theme_recheck_anonymous_user();
+
+/**
  * What every theme declares about itself.
  *
  * Matches the blank theme Clubhouse sites ran on before, so pages Clubhouse
