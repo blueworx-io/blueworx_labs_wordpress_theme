@@ -25,6 +25,7 @@ const WP_ROOT = join(REPO, '.wp-test', 'wp');
 const WP_LOAD = join(WP_ROOT, 'wp-load.php');
 const MU_PLUGINS = join(WP_ROOT, 'wp-content', 'mu-plugins');
 const TEST_HOOKS = join(MU_PLUGINS, 'blueworx-store-test-hooks.php');
+const TEST_PLUGIN = join(WP_ROOT, 'wp-content', 'plugins', 'blueworx-test-plugin', 'blueworx-test-plugin.php');
 
 /**
  * The mu-plugin the dashboard specs rely on: exercises the store pages' five
@@ -114,7 +115,7 @@ export default async function globalSetup() {
         'The suite defaults to the local harness, which serves this working tree.',
         'Start it with:',
         '',
-        '  node ../bluegroup_core_foundation/scripts/wp-test-env.mjs up --plugin .',
+        '  node ../bluegroup_core_foundation/scripts/wp-test-env.mjs up --theme . --theme-slug blueworx',
         '',
         'To test a deployed site instead, set PLAYWRIGHT_BASE_URL (plus WP_ADMIN_USER,',
         'WP_ADMIN_PASS and WP_LOGIN_PATH) in .env or on the command line.',
@@ -138,6 +139,23 @@ export default async function globalSetup() {
  * mu-plugin those specs rely on.
  */
 function seedStoreFixtures() {
+  // A plugin that does nothing, switched on by the PHP below. The theme is no
+  // longer a plugin, so without this the test site has none active, and the
+  // specs that check what an account can do on the Plugins screen have nothing
+  // to try it on.
+  mkdirSync(dirname(TEST_PLUGIN), { recursive: true });
+  writeFileSync(
+    TEST_PLUGIN,
+    [
+      '<?php',
+      '/**',
+      ' * Plugin Name: BlueWorx test plugin',
+      ' * Description: Does nothing. Gives the test site one active plugin. Test fixture only.',
+      ' */',
+      '',
+    ].join('\n')
+  );
+
   const php = join(tmpdir(), 'blueworx-store-global-setup.php');
   writeFileSync(
     php,
@@ -170,6 +188,12 @@ bw_fixture_page( 'claimed-fixture', 'Claimed dashboard fixture', '<p id="claimed
 // A member who is not an administrator, for the dashboard specs.
 if ( ! get_user_by( 'login', 'member' ) ) {
 	wp_insert_user( array( 'user_login' => 'member', 'user_pass' => 'wptest-member-pw', 'user_email' => 'member@example.com', 'display_name' => 'Pat Member', 'role' => 'subscriber' ) );
+}
+
+// One active plugin for the Plugins screen specs, written just before this ran.
+require_once ABSPATH . 'wp-admin/includes/plugin.php';
+if ( file_exists( WP_PLUGIN_DIR . '/blueworx-test-plugin/blueworx-test-plugin.php' ) ) {
+	activate_plugin( 'blueworx-test-plugin/blueworx-test-plugin.php' );
 }
 
 echo (int) get_option( 'surecart_checkout_page_id' ) > 0 ? 'seeded' : 'failed';
