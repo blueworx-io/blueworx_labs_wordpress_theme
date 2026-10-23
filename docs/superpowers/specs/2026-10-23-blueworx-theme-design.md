@@ -1,6 +1,6 @@
 # BlueWorx theme (2.0): design
 
-Issue: #223. Decided with Luke on 2026-10-22 and 2026-10-23.
+Issue: #1. Decided with Luke on 2026-10-22 and 2026-10-23.
 
 ## Why
 
@@ -24,7 +24,7 @@ The theme also runs on single sites that aren't on the multisite.
 - **Client plugins plug in.** Clubhouse registers its pages, collections and page fields with the theme. It also adds its guides, settings screens and shop panels through the hooks Labs already offers (`blueworx_guides`, `blueworx_store_*`, `blueworx_page_source` and the rest).
 - **Pages without a registered editor screen keep the block editor**, drawn inside the theme's look. A site with only the theme edits its pages that way. Generic editor pages for theme-only sites can come later.
 - **Works on a multisite.** The theme is enabled for the whole network, and each site keeps its own settings, branding and content.
-- **Two kinds of Claude connection.** BlueWorx staff are super admins on the network. They connect once (#240) and can make quick changes on any site without connecting to each one. Each client site also has its own staff, who use that site's own connection, limited to their site, as today.
+- **Two kinds of Claude connection.** BlueWorx staff are super admins on the network. They connect once (#2) and can make quick changes on any site without connecting to each one. Each client site also has its own staff, who use that site's own connection, limited to their site, as today.
 - **Updates itself** the way the plugin does, from GitHub releases, starting at version 2.0.0.
 
 ## Non-goals
@@ -32,7 +32,7 @@ The theme also runs on single sites that aren't on the multisite.
 - **Changing the plugin.** It stays on 1.x and gets fixes only. Existing sites stay on it until Luke moves them one at a time. Elementor sites stay on it for good, because they need Hello Elementor as their theme.
 - **Migrating existing sites automatically.** That includes the one live Clubhouse site, which keeps the old plugin and the old Clubhouse.
 - **Hosting.** Certificates for launched domains are a Cloudways problem: the wildcard certificate on clubhouse blocks per-domain certificates. That needs solving before the first launch, but outside this work.
-- **New features in the first release**, beyond what's listed above. The other feature issues (#180, #183, #184, #185, #213) come after the port.
+- **New features in the first release**, beyond what's listed above. The other feature issues (#8, #6, #5, #4, #3) come after the port.
 
 ## Anti-goals (a failure even if it works)
 
