@@ -1,0 +1,22 @@
+/*
+Theme Name:        BlueWorx
+Theme URI:         https://blueworx.io/
+Description:       The BlueWorx base for every site: the admin, security and sign-in, support access, the shop and member area, guides and the Claude connection.
+Version:           2.0.0
+Requires at least: 5.0
+Requires PHP:      8.0
+Author:            BlueWorx
+Author URI:        https://profiles.wordpress.org/blueworx/
+License:           GPL-2.0-or-later
+License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+Text Domain:       blueworx-labs-wordpress
+Domain Path:       /languages
+Update URI:        https://github.com/blueworx-io/blueworx_labs_wordpress_theme
+*/
+
+/*
+ * Update URI keeps wordpress.org out of this theme's updates. WordPress asks
+ * wordpress.org about every installed theme by folder name, so without it a
+ * public theme that later took the name "blueworx" would be offered here as
+ * an update. Updates come from GitHub releases instead (includes/bootstrap.php).
+ */

@@ -32,7 +32,7 @@ const BASE = process.argv[2] || 'origin/main';
 
 // The files a version bump touches, and therefore the files a conflict
 // resolution is most likely to take wholesale from the wrong side.
-const VERSION_FILES = ['blueworx-labs-wordpress.php', 'package.json', 'readme.txt'];
+const VERSION_FILES = ['style.css', 'includes/bootstrap.php', 'package.json', 'readme.txt'];
 const TESTS_DIR = 'tests';
 
 let failed = false;

@@ -14,6 +14,7 @@
  * @package BlueWorxLabs
  */
 
+// The shared WordPress stand-ins.
 require __DIR__ . '/stubs.php';
 
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
@@ -26,12 +27,50 @@ require __DIR__ . '/stubs.php';
  */
 class Blueworx_Test_Died extends Exception {}
 
+/**
+ * Stand-in for core's WP_User.
+ */
 class WP_User {
+	/**
+	 * The ID.
+	 *
+	 * @var int
+	 */
 	public $ID = 0;
+
+	/**
+	 * The roles.
+	 *
+	 * @var array
+	 */
 	public $roles = array();
+
+	/**
+	 * The user login.
+	 *
+	 * @var string
+	 */
 	public $user_login = '';
+
+	/**
+	 * The user email.
+	 *
+	 * @var string
+	 */
 	public $user_email = '';
+
+	/**
+	 * The display name.
+	 *
+	 * @var string
+	 */
 	public $display_name = '';
+
+	/**
+	 * The user activation key.
+	 *
+	 * @var string
+	 */
 	public $user_activation_key = '';
 
 	public function __construct( $id = 0, $roles = array() ) {
@@ -373,6 +412,11 @@ function clean_user_cache( $id ) {}
  * The one wpdb call support-access.php makes: the unusable password.
  */
 class Blueworx_Test_Wpdb {
+	/**
+	 * The users.
+	 *
+	 * @var string
+	 */
 	public $users = 'wp_users';
 
 	public function update( $table, $data, $where ) {
@@ -410,6 +454,10 @@ function wp_die( $message = '', $title = '', $args = array() ) {
 
 function blueworx_feature_enabled( $key ) {
 	return '0' !== get_option( 'blueworx_feature_' . $key, '1' );
+}
+
+function blueworx_readonly_stored_caps() {
+	return array( 'read' => true );
 }
 
 function blueworx_readonly_build_caps() {
@@ -470,6 +518,7 @@ function date_i18n( $format, $time ) {
 
 require_once __DIR__ . '/../../includes/support-access.php';
 require_once __DIR__ . '/../../includes/external-access.php';
+require_once __DIR__ . '/../../includes/theme-lifecycle.php';
 
 /**
  * Invites a guest viewer for a week on the current site.
@@ -572,7 +621,7 @@ blueworx_support_remove_account();
 
 check( 'the support account is deleted', account_exists( $support ), false );
 
-$support = give_support( 1, false );
+$support                 = give_support( 1, false );
 $GLOBALS['current_user'] = $support;
 
 check( 'a shut window still ends the session and clears the cookie', run_window_check(), array( 'session destroyed', 'cookie cleared', 'refused' ) );
@@ -696,28 +745,6 @@ check( 'the viewer on site 1 is gone', account_exists( $viewer_one ), false );
 check( 'the viewer on site 2 is gone', account_exists( $viewer_two ), false );
 check( 'the viewer on site 3 is gone', account_exists( $viewer_three ), false );
 check( 'site 3 has no support key left', on_site( 3, 'blueworx_support_has_key' ), false );
-check( 'every site was asked for, not just the first page', isset( $GLOBALS['get_sites_args']['number'] ) && 0 === $GLOBALS['get_sites_args']['number'], true );
-check( 'and the network is back on the site it started on', array( get_current_blog_id(), $GLOBALS['blog_stack'] ), array( 1, array() ) );
-
-echo "\nA failure on one site still puts the network back\n";
-
-reset_network( true );
-
-try {
-	blueworx_for_each_site(
-		function () {
-			if ( 2 === get_current_blog_id() ) {
-				throw new RuntimeException( 'site 2 broke' );
-			}
-		},
-		true
-	);
-} catch ( RuntimeException $broke ) {
-	unset( $broke );
-}
-
-check( 'the current site is restored', array( get_current_blog_id(), $GLOBALS['blog_stack'] ), array( 1, array() ) );
-
 echo "\nDeactivating on one site of a network leaves the others alone\n";
 
 reset_network( true );
@@ -738,52 +765,26 @@ blueworx_labs_test_deactivate( false );
 check( 'support stays for site 2', sites_of( $support ), array( 2 ) );
 check( 'and so does site 2\'s viewer', sites_of( $elsewhere ), array( 2 ) );
 
-// -----------------------------------------------------------------------------
-echo "\nDeleting the plugin from a network cleans every site (#234)\n";
-
-reset_network( true );
-
-$support = give_support( 1, false );
-
-give_support( 2, true );
-
-$left_behind = on_site(
-	3,
-	function () {
-		update_option( 'blueworx_tracking_ga', 'G-123' );
-		return invite_viewer( 'left@example.com' );
-	}
-);
-
-define( 'WP_UNINSTALL_PLUGIN', 'blueworx-labs-wordpress/blueworx-labs-wordpress.php' );
-require __DIR__ . '/../../uninstall.php';
-
-check( 'the support account is deleted from the network', account_exists( $support ), false );
-check( 'site 2\'s support key is gone', on_site( 2, 'blueworx_support_has_key' ), false );
-check( 'site 2\'s window option is gone', option_on( 2, 'blueworx_support_access_until' ), 'none' );
-check( 'site 3\'s settings are gone', option_on( 3, 'blueworx_tracking_ga' ), 'none' );
-check( 'a viewer left on a site nobody deactivated is deleted', account_exists( $left_behind ), false );
-check( 'the external role is gone from site 3', on_site( 3, 'external_role_here' ), null );
-check( 'and the network is back on the site it started on', array( get_current_blog_id(), $GLOBALS['blog_stack'] ), array( 1, array() ) );
-
 finish();
 
 /**
- * Runs the plugin's deactivation the way blueworx-labs-wordpress.php does.
+ * Runs the theme's switch-away clean-up on one site, or on every site.
  *
- * The main plugin file loads every other include, so it cannot be required
- * here. Its one line is mirrored instead: the real per-site work and the real
- * network loop are what is under test.
+ * A theme is switched per site, so the theme itself only ever cleans the one
+ * site. Every site switching away in turn is what clears a whole network.
  *
- * @param bool $network_wide Whether this is a network deactivation.
+ * @param bool $network_wide Whether every site switches away.
  * @return void
  */
 function blueworx_labs_test_deactivate( $network_wide ) {
-	blueworx_for_each_site(
-		function () {
-			blueworx_support_on_deactivate();
-			blueworx_external_on_deactivate();
-		},
-		$network_wide
-	);
+	if ( ! $network_wide ) {
+		blueworx_labs_deactivate_site();
+		return;
+	}
+
+	foreach ( $GLOBALS['sites'] as $site_id ) {
+		switch_to_blog( $site_id );
+		blueworx_labs_deactivate_site();
+		restore_current_blog();
+	}
 }

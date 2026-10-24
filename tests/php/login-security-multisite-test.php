@@ -24,7 +24,6 @@
 require __DIR__ . '/stubs.php';
 
 define( 'BLUEWORX_CUSTOM_LOGIN_SLUG', 'admin_login' );
-define( 'BLUEWORX_LABS_PLUGIN_FILE', '/plugins/blueworx-labs-wordpress/blueworx-labs-wordpress.php' );
 
 /**
  * Thrown where the real code would redirect or die, so a request can be traced.
@@ -67,14 +66,12 @@ $GLOBALS['test_super_admins'] = array( 1 );
 $GLOBALS['test_user']         = new WP_User( 0 );
 $GLOBALS['site_path']         = '/';
 $GLOBALS['home']              = 'https://example.test';
-$GLOBALS['site_options']      = array(
-	'active_sitewide_plugins' => array( 'blueworx-labs-wordpress/blueworx-labs-wordpress.php' => 1 ),
-);
+$GLOBALS['site_options']      = array();
 $GLOBALS['blogs']             = array(
 	2 => array(
 		'address' => 'https://example.test/site2/',
 		'home'    => 'https://example.test/site2',
-		'options' => array(),
+		'options' => array( 'template' => 'blueworx' ),
 	),
 );
 $GLOBALS['blog_stack']        = array();
@@ -155,8 +152,11 @@ function get_site_option( $key, $fallback = false ) {
 	return array_key_exists( $key, $GLOBALS['site_options'] ) ? $GLOBALS['site_options'][ $key ] : $fallback;
 }
 
-function plugin_basename( $file ) {
-	return 'blueworx-labs-wordpress/blueworx-labs-wordpress.php';
+/**
+ * The real one is in includes/helpers.php, which this script does not load.
+ */
+function blueworx_theme_active_here() {
+	return 'blueworx' === get_option( 'template' );
 }
 
 function get_blogaddress_by_id( $blog_id ) {
@@ -311,7 +311,10 @@ check(
 
 check( 'and the current site is restored afterwards', home_url( '/' ), 'https://example.test/' );
 
-$GLOBALS['blogs'][2]['options'] = array( 'blueworx_login_slug' => 'staff-door' );
+$GLOBALS['blogs'][2]['options'] = array(
+	'template'            => 'blueworx',
+	'blueworx_login_slug' => 'staff-door',
+);
 
 check(
 	'the new site\'s own login slug is used',
@@ -319,19 +322,24 @@ check(
 	"Your new site is at https://example.test/site2/\nLog in here: https://example.test/site2/staff-door/\n"
 );
 
-$GLOBALS['blogs'][2]['options'] = array( 'blueworx_feature_login' => '0' );
+$GLOBALS['blogs'][2]['options'] = array(
+	'template'               => 'blueworx',
+	'blueworx_feature_login' => '0',
+);
 
 check( 'left alone when the new site has the custom login switched off', blueworx_welcome_email_login_link( $email, 2 ), $email );
 
-$GLOBALS['blogs'][2]['options']                     = array();
-$GLOBALS['site_options']['active_sitewide_plugins'] = array();
+$GLOBALS['blogs'][2]['options'] = array( 'template' => 'twentytwentyfive' );
 
-check( 'left alone when the plugin is not running on the new site', blueworx_welcome_email_login_link( $email, 2 ), $email );
+check( 'left alone when the new site runs another theme', blueworx_welcome_email_login_link( $email, 2 ), $email );
 
-$GLOBALS['blogs'][2]['options'] = array( 'active_plugins' => array( 'blueworx-labs-wordpress/blueworx-labs-wordpress.php' ) );
+$GLOBALS['blogs'][2]['options'] = array(
+	'template'   => 'blueworx',
+	'stylesheet' => 'blueworx-child',
+);
 
 check(
-	'rewritten when the plugin is switched on for that site alone',
+	'rewritten when the new site runs a child theme of this one',
 	blueworx_welcome_email_login_link( $email, 2 ),
 	"Your new site is at https://example.test/site2/\nLog in here: https://example.test/site2/admin_login/\n"
 );

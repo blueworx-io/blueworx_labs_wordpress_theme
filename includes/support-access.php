@@ -224,7 +224,7 @@ function blueworx_support_ensure_account() {
 	add_role(
 		blueworx_support_role_slug(),
 		__( 'BlueWorx - Support Agent (Read-Only)', 'blueworx-labs-wordpress' ),
-		blueworx_readonly_build_caps()
+		blueworx_readonly_stored_caps()
 	);
 
 	$user = get_user_by( 'login', 'blueworx_support' );
@@ -270,9 +270,6 @@ function blueworx_support_ensure_account() {
  * network too. One still on another site is only taken off this one, because
  * that site is still using it.
  *
- * Lives here rather than in external-access.php because uninstall.php loads
- * this file and no other, and both kinds of account go through it.
- *
  * @param int $user_id Account to delete.
  * @return bool True when the account was taken off this site.
  */
@@ -301,43 +298,6 @@ function blueworx_delete_owned_account( $user_id ) {
 }
 
 /**
- * Runs a callback on every site of a network, or just this one.
- *
- * Every site when this is a network and $every_site is true; otherwise once,
- * on the current site, with nothing switched. The current site is always put
- * back afterwards, even when the callback fails part way through, so a broken
- * site cannot leave the rest of the request running against the wrong one.
- *
- * Lives here for the same reason as blueworx_delete_owned_account(): both
- * deactivation and uninstall.php need it, and uninstall loads only this file.
- *
- * @param callable $callback   Work to do on each site.
- * @param bool     $every_site Whether to cover the whole network.
- * @return void
- */
-function blueworx_for_each_site( $callback, $every_site ) {
-	if ( ! is_multisite() || ! $every_site ) {
-		call_user_func( $callback );
-		return;
-	}
-
-	foreach ( get_sites(
-		array(
-			'fields' => 'ids',
-			'number' => 0,
-		)
-	) as $site_id ) {
-		switch_to_blog( (int) $site_id );
-
-		try {
-			call_user_func( $callback );
-		} finally {
-			restore_current_blog();
-		}
-	}
-}
-
-/**
  * Deletes the support user and role.
  *
  * On a network the one support account is shared by every site that uses
@@ -357,17 +317,13 @@ function blueworx_support_remove_account() {
 }
 
 /**
- * Tears support access down when the plugin is deactivated.
+ * Tears support access down when the site switches away from the theme.
  *
- * Uninstall already handles a full removal, but deactivation left the
- * near-administrator account standing with nothing protecting it: the
- * read-only guarantee is the request-layer block in this file, and with the
- * plugin switched off that block does not run at all. The account and role go
- * first, and the key goes with them because it addresses an account that no
- * longer exists — leaving a live key hash behind would only misreport the
- * console's state on reactivation.
+ * The account and role go first, and the key goes with them because it
+ * addresses an account that no longer exists — leaving a live key hash behind
+ * would only misreport the console's state on switching back.
  *
- * Registered on register_deactivation_hook in blueworx-labs-wordpress.php.
+ * Called from blueworx_labs_deactivate_site() in includes/theme-lifecycle.php.
  *
  * @return void
  */
@@ -771,7 +727,7 @@ function blueworx_support_handle_login() {
 // Priority 0: this MUST run before blueworx_intercept_requests()
 // (includes/login-security.php, also hooked on init at priority 1). At equal
 // priority, intercept_requests runs first — required earlier in
-// blueworx-labs-wordpress.php — and Site Protection's frontend check would
+// includes/bootstrap.php — and Site Protection's frontend check would
 // wp_die() a logged-out key request before this handler ever ran, so the key
 // could never be exchanged. Do not "tidy" this back to priority 1.
 add_action( 'init', 'blueworx_support_handle_login', 0 );
@@ -1017,7 +973,7 @@ function blueworx_support_render_panel() {
 	echo '<div class="bw-fields bw-fields--single">';
 
 	if ( '' !== $new_key ) {
-		echo blueworx_ds_notice(
+		echo blueworx_ds_notice( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'tone'  => 'warning',
 				'title' => __( 'Copy this key now — it is not shown again.', 'blueworx-labs-wordpress' ),
@@ -1025,7 +981,7 @@ function blueworx_support_render_panel() {
 			)
 		);
 
-		echo blueworx_ds_copy_field(
+		echo blueworx_ds_copy_field( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'value' => $new_key,
 				'id'    => 'bw-support-key',
@@ -1044,7 +1000,7 @@ function blueworx_support_render_panel() {
 				<span class="bw-check__text"><?php esc_html_e( 'I have copied the key', 'blueworx-labs-wordpress' ); ?></span>
 			</label>
 			<?php
-			echo blueworx_ds_button(
+			echo blueworx_ds_button( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 				array(
 					'label'    => __( 'Done', 'blueworx-labs-wordpress' ),
 					'variant'  => 'primary',
@@ -1062,7 +1018,7 @@ function blueworx_support_render_panel() {
 	}
 
 	if ( blueworx_support_is_throttled() ) {
-		echo blueworx_ds_notice(
+		echo blueworx_ds_notice( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'tone'  => 'warning',
 				'title' => __( 'Support access is temporarily blocked from this address.', 'blueworx-labs-wordpress' ),
@@ -1093,7 +1049,7 @@ function blueworx_support_render_panel() {
 			$open_text .= ' ' . __( 'Personal-data access is also open for this window.', 'blueworx-labs-wordpress' );
 		}
 
-		echo blueworx_ds_notice(
+		echo blueworx_ds_notice( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'tone'    => 'success',
 				'title'   => __( 'Support access is open', 'blueworx-labs-wordpress' ),
@@ -1102,7 +1058,7 @@ function blueworx_support_render_panel() {
 			)
 		);
 	} elseif ( $has_key ) {
-		echo blueworx_ds_notice(
+		echo blueworx_ds_notice( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'tone'    => 'info',
 				'title'   => __( 'Support access is shut', 'blueworx-labs-wordpress' ),
@@ -1125,7 +1081,7 @@ function blueworx_support_render_panel() {
 			<textarea id="bw-support-prompt" data-testid="bw-support-prompt" readonly hidden aria-hidden="true" tabindex="-1"><?php echo esc_textarea( $prompt ); ?></textarea>
 			<div>
 				<?php
-				echo blueworx_ds_button(
+				echo blueworx_ds_button( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 					array(
 						'label' => __( 'Copy Claude Code prompt', 'blueworx-labs-wordpress' ),
 						'icon'  => 'file',
@@ -1163,7 +1119,7 @@ function blueworx_support_render_panel() {
 			<span class="bw-check__text"><?php esc_html_e( 'Also allow access to personal data for this session', 'blueworx-labs-wordpress' ); ?></span>
 		</label>
 		<?php
-		echo blueworx_ds_button(
+		echo blueworx_ds_button( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'label'   => $open
 					? __( 'Close support access', 'blueworx-labs-wordpress' )
@@ -1180,7 +1136,7 @@ function blueworx_support_render_panel() {
 			)
 		);
 
-		echo blueworx_ds_button(
+		echo blueworx_ds_button( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'label'   => __( 'Revoke access', 'blueworx-labs-wordpress' ),
 				'variant' => 'danger',
@@ -1195,7 +1151,7 @@ function blueworx_support_render_panel() {
 			)
 		);
 	} else {
-		echo blueworx_ds_button(
+		echo blueworx_ds_button( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- The design system helper escapes everything it emits.
 			array(
 				'label'   => __( 'Generate key', 'blueworx-labs-wordpress' ),
 				'variant' => 'primary',

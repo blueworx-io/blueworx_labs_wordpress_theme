@@ -1,18 +1,19 @@
 #!/usr/bin/env node
-// Builds the deployment artifact: dist/<slug>.zip containing the plugin folder.
+// Builds the deployment artifact: dist/<slug>.zip containing the theme folder.
 // Removes any existing <slug>*.zip first so only the current one remains.
 import { createWriteStream, mkdirSync, readdirSync, rmSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import archiver from 'archiver';
 
-const SLUG = 'blueworx-labs-wordpress';
+const SLUG = 'blueworx';
 const DIST = 'dist';
 
-// Runtime files/dirs that ship inside the plugin folder.
-// plugin-update-checker is required, not optional: a copy of the plugin without
+// Runtime files/dirs that ship inside the theme folder. style.css and index.php
+// are what make WordPress see a theme at all.
+// plugin-update-checker is required, not optional: a copy of the theme without
 // it can never be told about another release, so a zip missing it is a dead end
 // on whatever site installs it.
-const REQUIRED = ['blueworx-labs-wordpress.php', 'uninstall.php', 'readme.txt', 'includes', 'assets', 'plugin-update-checker'];
+const REQUIRED = ['functions.php', 'style.css', 'index.php', 'readme.txt', 'includes', 'assets', 'plugin-update-checker'];
 const OPTIONAL = ['languages'];
 const INCLUDE = [...REQUIRED, ...OPTIONAL];
 
@@ -34,7 +35,7 @@ archive.pipe(output);
 for (const entry of INCLUDE) {
   if (!existsSync(entry)) {
     if (REQUIRED.includes(entry)) {
-      throw new Error(`Required plugin entry missing from build: ${entry}`);
+      throw new Error(`Required theme entry missing from build: ${entry}`);
     }
     continue; // OPTIONAL entries skip silently
   }

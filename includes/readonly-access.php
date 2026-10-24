@@ -38,7 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * The roles this guard applies to.
  *
- * blueworx_external_role_slug() is guarded because includes/external-access.php
+ * The call to blueworx_external_role_slug() is guarded because includes/external-access.php
  * loads after this file, and because a build that ships only support access
  * must still work.
  *
@@ -279,6 +279,75 @@ function blueworx_readonly_build_caps() {
 
 	return $caps;
 }
+
+/**
+ * What the support and guest viewer roles store in the database.
+ *
+ * Enough to sign in and see the dashboard, nothing more. The rest of each
+ * role's capabilities are granted by blueworx_readonly_grant_caps() while the
+ * theme runs, because the theme is also what holds those accounts to
+ * read-only. Any request where it is not loaded — another theme previewed in
+ * the Customizer, the site switched to another theme without the clean-up
+ * running, the theme deleted — sees the accounts as this and no more, rather
+ * than as administrators nothing is restraining.
+ *
+ * @return array Capability map.
+ */
+function blueworx_readonly_stored_caps() {
+	return array( 'read' => true );
+}
+
+/**
+ * The capabilities a read-only role holds while the theme runs.
+ *
+ * Built once per request: user_has_cap runs on every capability check, and
+ * the administrator role these are cut from does not change mid-request.
+ *
+ * @param string $role Role slug.
+ * @return array|null Capability map, or null for a role that is not ours.
+ */
+function blueworx_readonly_role_caps( $role ) {
+	static $built = array();
+
+	if ( isset( $built[ $role ] ) ) {
+		return $built[ $role ];
+	}
+
+	if ( function_exists( 'blueworx_support_role_slug' ) && blueworx_support_role_slug() === $role ) {
+		$built[ $role ] = blueworx_readonly_build_caps();
+	} elseif ( function_exists( 'blueworx_external_role_slug' ) && blueworx_external_role_slug() === $role ) {
+		$built[ $role ] = blueworx_external_build_caps();
+	} else {
+		return null;
+	}
+
+	return $built[ $role ];
+}
+
+/**
+ * Grants the read-only roles their capabilities for this request.
+ *
+ * Runs first, so every later filter — the switch_themes refusal, view as role
+ * — sees the full set. A capability stored as false on the user stays false.
+ *
+ * @param array   $allcaps Capabilities the user has.
+ * @param array   $caps    Capabilities being checked.
+ * @param array   $args    The original check.
+ * @param WP_User $user    The user being checked.
+ * @return array
+ */
+function blueworx_readonly_grant_caps( $allcaps, $caps, $args, $user ) {
+	foreach ( (array) $user->roles as $role ) {
+		$granted = blueworx_readonly_role_caps( $role );
+
+		if ( null !== $granted ) {
+			$allcaps += $granted;
+		}
+	}
+
+	return $allcaps;
+}
+add_filter( 'user_has_cap', 'blueworx_readonly_grant_caps', 1, 4 );
 
 /**
  * Admin screens denied to the support account without data access.
@@ -797,7 +866,7 @@ add_action( 'wp_enqueue_scripts', 'blueworx_readonly_disable_heartbeat', 1 );
 /**
  * Whether this request is aimed at an endpoint that exists only to act.
  *
- * admin-post.php is not a screen. It is the generic "do something" handler, and
+ * The admin-post.php handler is not a screen. It is the generic "do something" handler, and
  * a plugin is free to hang an action off it and reach it with a plain link —
  * this plugin's own Duplicate row action does exactly that. So a read-only
  * account that is refused every POST could still create a post with one click,
@@ -889,7 +958,7 @@ add_action( 'init', 'blueworx_readonly_block_writes', 0 );
 /**
  * Refuses a read-only account on XML-RPC.
  *
- * xmlrpc.php reads its credentials out of the request body and authenticates
+ * XML-RPC reads its credentials out of the request body and authenticates
  * long after "init" has fired — so blueworx_readonly_block_writes() has already
  * run against an anonymous user and returned, and there is no XML-RPC
  * equivalent of the rest_pre_dispatch net. wp.newPost, wp.editPost,

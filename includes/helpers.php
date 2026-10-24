@@ -63,3 +63,16 @@ function blueworx_require_post_request() {
 		array( 'response' => 403 )
 	);
 }
+
+/**
+ * Whether the BlueWorx theme is running on the current site.
+ *
+ * Asked after switch_to_blog(), where the code being run is the current
+ * request's copy and says nothing about which theme that other site uses. A
+ * child theme of this one counts, because its parent's code runs under it.
+ *
+ * @return bool
+ */
+function blueworx_theme_active_here() {
+	return BLUEWORX_THEME_SLUG === get_option( 'template' );
+}

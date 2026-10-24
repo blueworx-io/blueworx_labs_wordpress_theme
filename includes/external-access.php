@@ -73,12 +73,12 @@ function blueworx_external_role_name() {
 }
 
 /**
- * Registers the role, rebuilding its capabilities from the live administrator.
+ * Registers the role.
  *
- * Rebuilt rather than created-once because the role it clones changes: a
- * commerce or booking plugin installed next month adds its capabilities to
- * administrator, and a role frozen at first registration would quietly stop
- * showing the screens this feature exists to show.
+ * Stored with sign-in rights only. Its real capabilities are cut from the live
+ * administrator on each request by blueworx_readonly_grant_caps(), so a
+ * commerce or booking plugin installed next month shows up for guest viewers
+ * without the role being rewritten.
  *
  * Called only at the moments the role can actually need writing — the plugin
  * activating, the function being switched on, and a site upgrading into a
@@ -101,7 +101,7 @@ function blueworx_external_register_role() {
 	add_role(
 		blueworx_external_role_slug(),
 		blueworx_external_role_name(),
-		blueworx_external_build_caps()
+		blueworx_readonly_stored_caps()
 	);
 }
 
@@ -177,13 +177,13 @@ function blueworx_external_ensure_role() {
 }
 
 /**
- * Puts the role in place when the plugin is activated.
+ * Puts the role in place when the site is set up.
  *
- * Only for a site that already has the function switched on, which means a
- * reactivation: a fresh install has it off, and switching it on registers the
- * role at that point.
+ * Only for a site that already has the function switched on, which means the
+ * theme was switched away from and back: a fresh site has it off, and
+ * switching it on registers the role at that point.
  *
- * Registered on register_activation_hook in blueworx-labs-wordpress.php.
+ * Called from blueworx_theme_maybe_setup_site() in includes/theme-lifecycle.php.
  *
  * @return void
  */
@@ -478,11 +478,11 @@ function blueworx_external_invitations() {
 }
 
 /**
- * Withdraws external access when the plugin is switched off.
+ * Withdraws external access when the site switches away from the theme.
  *
- * Every invited account is deleted, not merely expired. Expiry is enforced by
- * this plugin; with it switched off, an account left standing is a working
- * administrator-shaped login that nothing is narrowing.
+ * Every invited account is deleted, not merely expired: expiry is enforced by
+ * this theme, and an invitation nobody can use any more is clutter on the
+ * users screen.
  *
  * @return void
  */

@@ -292,21 +292,43 @@ function blueworx_view_as_filter_caps( $allcaps, $caps = array(), $args = array(
 		return $allcaps;
 	}
 
-	$role = get_role( $role_slug );
+	$role_caps = blueworx_view_as_role_caps( $role_slug );
 
-	if ( ! $role ) {
+	if ( null === $role_caps ) {
 		return $allcaps;
 	}
 
 	$filtered = array();
 
 	foreach ( (array) $allcaps as $cap => $granted ) {
-		$filtered[ $cap ] = $granted && ! empty( $role->capabilities[ $cap ] );
+		$filtered[ $cap ] = $granted && ! empty( $role_caps[ $cap ] );
 	}
 
 	$filtered['read'] = ! empty( $allcaps['read'] );
 
 	return $filtered;
+}
+
+/**
+ * The capabilities a role holds, as its members actually get them.
+ *
+ * The support and guest viewer roles store sign-in rights only and get the
+ * rest while the theme runs, so their stored map would preview as nearly
+ * nothing.
+ *
+ * @param string $role_slug Role slug.
+ * @return array|null Capability map, or null when there is no such role.
+ */
+function blueworx_view_as_role_caps( $role_slug ) {
+	$role = get_role( $role_slug );
+
+	if ( ! $role ) {
+		return null;
+	}
+
+	$granted = function_exists( 'blueworx_readonly_role_caps' ) ? blueworx_readonly_role_caps( $role_slug ) : null;
+
+	return null !== $granted ? $granted + (array) $role->capabilities : (array) $role->capabilities;
 }
 
 /**
@@ -339,9 +361,9 @@ function blueworx_view_as_super_admin_caps( $caps, $cap, $user_id ) {
 		return $caps;
 	}
 
-	$role = get_role( $role_slug );
+	$role_caps = blueworx_view_as_role_caps( $role_slug );
 
-	if ( ! $role ) {
+	if ( null === $role_caps ) {
 		return $caps;
 	}
 
@@ -350,7 +372,7 @@ function blueworx_view_as_super_admin_caps( $caps, $cap, $user_id ) {
 			continue;
 		}
 
-		if ( empty( $role->capabilities[ $needed ] ) ) {
+		if ( empty( $role_caps[ $needed ] ) ) {
 			return array( 'do_not_allow' );
 		}
 	}

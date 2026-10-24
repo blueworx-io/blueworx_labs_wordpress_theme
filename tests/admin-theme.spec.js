@@ -806,6 +806,8 @@ test.describe('BlueWorx admin theme', () => {
         dispatch('core/edit-post').toggleFeature('fullscreenMode');
       }
     });
+    // Leaving fullscreen animates, so measure only once it has finished.
+    await expect(page.locator('body')).not.toHaveClass(/is-fullscreen-mode/);
 
     const skeleton = page.locator('.interface-interface-skeleton');
     await expect(skeleton).toBeVisible();
@@ -871,6 +873,7 @@ test.describe('BlueWorx admin theme', () => {
         dispatch('core/edit-post').toggleFeature('fullscreenMode');
       }
     });
+    await expect(page.locator('body')).toHaveClass(/is-fullscreen-mode/);
 
     const skeleton = page.locator('.interface-interface-skeleton');
     await expect(skeleton).toBeVisible();
@@ -901,6 +904,8 @@ test.describe('BlueWorx admin theme', () => {
         dispatch('core/edit-post').toggleFeature('fullscreenMode');
       }
     });
+    // Leaving fullscreen animates, so measure only once it has finished.
+    await expect(page.locator('body')).not.toHaveClass(/is-fullscreen-mode/);
 
     const skeleton = page.locator('.interface-interface-skeleton');
     await expect(skeleton).toBeVisible();
@@ -1201,26 +1206,6 @@ test.describe('BlueWorx admin theme', () => {
         )
       )
       .toBe('32px');
-  });
-
-  test('the plugin updates itself rather than offering a toggle', async ({ page }) => {
-    // Two things at once, and both need a real WordPress. WordPress prints
-    // "Auto-updates enabled" as plain text where a plugin has forced the
-    // decision, and an Enable/Disable link where it has left the choice to the
-    // site — so that difference is the only outward sign the filter is doing
-    // its job. And the Plugins screen renders at all, which it would not if the
-    // vendored update checker failed to parse or load.
-    await login(page);
-    await page.goto('/wp-admin/plugins.php');
-
-    const row = page.locator(
-      'tr[data-plugin="blueworx-labs-wordpress/blueworx-labs-wordpress.php"]'
-    );
-    await expect(row).toHaveCount(1);
-
-    const column = row.locator('.column-auto-updates');
-    await expect(column).toContainText('Auto-updates enabled');
-    await expect(column.locator('a')).toHaveCount(0);
   });
 
   test('the site editor is always fullscreen, so our chrome stays hidden rather than offset', async ({ page }) => {
