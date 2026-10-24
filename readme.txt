@@ -36,8 +36,8 @@ The new login URL and cache refresh status are displayed in the **BlueWorx** adm
 == Installation ==
 
 1. Upload the `blueworx` folder to `/wp-content/themes/`, or upload the zip under **Appearance > Themes > Add New**.
-2. If the BlueWorx Labs | WordPress Enhancements plugin is active, deactivate it first. Its settings carry across. Deactivating it removes guest viewers and any support key, so invite guests again afterwards.
-3. Activate the theme under **Appearance > Themes**. On a network, enable it for the network first.
+2. Activate the theme under **Appearance > Themes**. On a network, enable it for the network first.
+3. If the BlueWorx Labs | WordPress Enhancements plugin is active, deactivate it now, after the theme. On plugin 1.96.4 or later its settings, guest viewers and support key all carry across, and the plugin can then be deleted. Deactivating it before the theme is active removes guest viewers and any support key.
 4. Visit **BlueWorx** to see your new login URL and active enhancements.
 5. Bookmark your new login URL before logging out.
 

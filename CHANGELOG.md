@@ -17,9 +17,9 @@ history is in the plugin's own repository,
   tracking codes, translation, cache and media tools, and the Claude
   connection. It updates itself from GitHub releases, like the plugin did.
 - **Settings carry across.** A site moved from the plugin keeps its settings,
-  roles and Claude connection. Switching the plugin off still removes guest
-  viewers and any support key, as it always has, so invite guests again
-  afterwards.
+  roles and Claude connection. Activate the theme first, then switch the
+  plugin off (1.96.4 or later) and its guest viewers and support key carry
+  across too. The plugin can then be deleted.
 - **Only administrators can change theme**, so a client can't switch the
   BlueWorx base off by accident. Other roles get the ability back if the site
   moves to another theme.

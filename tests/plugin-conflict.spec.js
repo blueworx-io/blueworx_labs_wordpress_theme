@@ -45,6 +45,9 @@ test.describe('The theme with the 1.x plugin still on', () => {
     const res = await page.goto('/wp-admin/');
     expect(res.status()).toBe(200);
     await expect(page.locator('body')).toContainText('Switch off the BlueWorx Labs plugin');
+    // The stand-in plugin is 1.96.3, which still removes guests when switched
+    // off, so the notice asks for an update first.
+    await expect(page.locator('body')).toContainText('Update the BlueWorx Labs | WordPress Enhancements plugin to 1.96.4 or later');
   });
 
   test('the theme\'s console is not registered', async ({ page }) => {
