@@ -26,6 +26,7 @@ require __DIR__ . '/stubs.php';
 // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed
 
 define( 'BLUEWORX_LABS_VERSION', '2.0.0' );
+define( 'BLUEWORX_THEME_SLUG', 'blueworx' );
 
 $GLOBALS['hooks']        = array();
 $GLOBALS['super_admins'] = array();
@@ -72,10 +73,6 @@ class WP_Role {
 
 	public function has_cap( $cap ) {
 		return ! empty( $this->capabilities[ $cap ] );
-	}
-
-	public function remove_cap( $cap ) {
-		unset( $this->capabilities[ $cap ] );
 	}
 }
 
@@ -132,10 +129,6 @@ class WP_User {
 		$this->ID    = $id;
 		$this->roles = $roles;
 	}
-}
-
-function wp_roles() {
-	return (object) array( 'role_objects' => $GLOBALS['roles'] );
 }
 
 /**
@@ -215,15 +208,7 @@ echo "\nOnly administrators can change theme\n";
 fresh_site();
 blueworx_theme_maybe_setup_site();
 
-$holders = array();
-foreach ( $GLOBALS['roles'] as $name => $role ) {
-	if ( $role->has_cap( 'switch_themes' ) ) {
-		$holders[] = $name;
-	}
-}
-
-check( 'after setup only the administrator role holds switch_themes', $holders, array( 'administrator' ) );
-check( 'and the owner keeps the rest of its capabilities', $GLOBALS['roles']['owner']->has_cap( 'edit_theme_options' ), true );
+check( 'setup leaves the roles in the database alone', $GLOBALS['roles']['owner']->has_cap( 'switch_themes' ), true );
 
 $asked     = array( 'switch_themes' );
 $granted   = array( 'switch_themes' => true );
@@ -235,7 +220,7 @@ $other_cap = array( 'edit_posts' => true );
 $GLOBALS['super_admins'] = array( 9 );
 
 $owner_caps = blueworx_theme_deny_switch_themes( $granted, $asked, array(), $owner );
-check( 'a role added after setup is still refused', $owner_caps['switch_themes'], false );
+check( 'a role other than administrator is refused', $owner_caps['switch_themes'], false );
 check( 'an administrator is not', blueworx_theme_deny_switch_themes( $granted, $asked, array(), $admin ), $granted );
 check( 'nor a super admin with no role on the site', blueworx_theme_deny_switch_themes( $granted, $asked, array(), $super ), $granted );
 check( 'other capability checks are left alone', blueworx_theme_deny_switch_themes( $other_cap, array( 'edit_posts' ), array(), $owner ), $other_cap );
@@ -258,5 +243,14 @@ check( 'nor does moving to a child theme of this one', $GLOBALS['calls']['suppor
 
 blueworx_theme_on_switch_away( 'Twenty Twenty-Five', new WP_Theme( 'twentytwentyfive' ), null );
 check( 'nor a switch with no old theme to go on', $GLOBALS['calls']['support_off'], 1 );
+
+echo "\nThe theme is recognised by the folder it is in\n";
+
+// BLUEWORX_THEME_SLUG is read from the folder, and this script fixed it at
+// "blueworx". A copy installed elsewhere under its default name is a
+// different theme as far as this site is concerned.
+fresh_site();
+blueworx_theme_on_switch_away( 'Twenty Twenty-Five', new WP_Theme( 'twentytwentyfive' ), new WP_Theme( 'blueworx-old' ) );
+check( 'a theme in another folder is not this one', $GLOBALS['calls']['support_off'], 0 );
 
 finish();

@@ -63,16 +63,24 @@ add_filter( 'plugins_url', 'blueworx_theme_plugins_url', 10, 3 );
  * @return string|null Forward-slashed, no leading slash.
  */
 function blueworx_theme_relative_path( $file ) {
-	$file  = wp_normalize_path( $file );
-	$roots = array( get_template_directory() );
+	// Every plugins_url() call on the site passes through here, so the theme's
+	// folder is worked out once per request.
+	static $roots = null;
 
-	$real = realpath( get_template_directory() );
-	if ( false !== $real ) {
-		$roots[] = $real;
+	if ( null === $roots ) {
+		$roots = array( trailingslashit( wp_normalize_path( get_template_directory() ) ) );
+
+		$real = realpath( get_template_directory() );
+		if ( false !== $real ) {
+			$roots[] = trailingslashit( wp_normalize_path( $real ) );
+		}
+
+		$roots = array_unique( $roots );
 	}
 
+	$file = wp_normalize_path( $file );
+
 	foreach ( $roots as $root ) {
-		$root = trailingslashit( wp_normalize_path( $root ) );
 		if ( 0 === stripos( $file, $root ) ) {
 			return substr( $file, strlen( $root ) );
 		}

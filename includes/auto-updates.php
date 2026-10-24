@@ -45,7 +45,7 @@ function blueworx_force_own_auto_update( $update, $item ) {
 		return $update;
 	}
 
-	if ( basename( dirname( BLUEWORX_LABS_THEME_FILE ) ) !== $item->theme ) {
+	if ( BLUEWORX_THEME_SLUG !== $item->theme ) {
 		return $update;
 	}
 

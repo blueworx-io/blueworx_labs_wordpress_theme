@@ -25,7 +25,7 @@ require __DIR__ . '/stubs.php';
 
 function add_filter( $hook, $callback, $priority = 10, $args = 1 ) {}
 
-define( 'BLUEWORX_LABS_THEME_FILE', '/var/www/wp-content/themes/blueworx/functions.php' );
+define( 'BLUEWORX_THEME_SLUG', 'blueworx' );
 
 require __DIR__ . '/../../includes/auto-updates.php';
 

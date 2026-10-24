@@ -44,7 +44,7 @@ if ( defined( 'BLUEWORX_LABS_VERSION' ) ) {
 			printf(
 				'<div class="bw-notice bw-notice--warning" role="status"><div class="bw-notice__body"><p class="bw-notice__title">%1$s</p><p class="bw-notice__text">%2$s</p></div></div>',
 				esc_html__( 'Switch off the BlueWorx Labs plugin', 'blueworx-labs-wordpress' ),
-				esc_html__( 'The BlueWorx theme does everything the plugin does, so it stays switched off while the plugin is active. Deactivate the BlueWorx Labs | WordPress Enhancements plugin to use the theme. Your settings carry across.', 'blueworx-labs-wordpress' )
+				esc_html__( 'The BlueWorx theme does everything the plugin does, so it stays switched off while the plugin is active. Deactivate the BlueWorx Labs | WordPress Enhancements plugin to use the theme. Your settings carry across; guest viewers and any support key are removed, so invite guests again afterwards.', 'blueworx-labs-wordpress' )
 			);
 		}
 	}

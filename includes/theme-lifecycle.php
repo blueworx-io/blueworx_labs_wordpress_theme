@@ -9,8 +9,11 @@
  * switch_theme action.
  *
  * There is no uninstall step. A theme's code is not running when the theme is
- * deleted, so nothing could run it. Switching away already removes the
- * accounts that must not outlive the theme.
+ * deleted, so nothing could run it. Nor does the clean-up below run when a
+ * site changes theme from the Customizer, because the theme being previewed is
+ * the one loaded then. Neither leaves anything dangerous behind: the support
+ * and guest viewer roles store sign-in rights only, and get the rest from this
+ * theme while it runs (see blueworx_readonly_grant_caps()).
  *
  * @package BlueWorxLabs
  */
@@ -18,19 +21,6 @@
 // Prevent direct file access.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
-}
-
-/**
- * Puts back what switching away took away.
- *
- * Only the external role, and only when the function is already on — which
- * means the theme was switched away from and back. A fresh site has the
- * function off and registers the role when somebody switches it on.
- *
- * @return void
- */
-function blueworx_labs_on_activate() {
-	blueworx_external_on_activate();
 }
 
 /**
@@ -61,35 +51,22 @@ function blueworx_theme_maybe_setup_site() {
 		return;
 	}
 
-	blueworx_labs_on_activate();
-	blueworx_theme_remove_switch_themes();
+	// Puts back the guest viewer role switching away took away. Only when the
+	// function is already on, which means the theme was switched away from and
+	// back; a fresh site registers it when somebody switches the function on.
+	blueworx_external_on_activate();
 
 	update_option( 'blueworx_theme_setup_version', BLUEWORX_LABS_VERSION );
 }
 add_action( 'after_setup_theme', 'blueworx_theme_maybe_setup_site', 6 );
 
 /**
- * Takes the ability to change theme away from every role but administrator.
- *
- * Switching away from this theme switches off the whole BlueWorx base, so
- * only administrators (and super admins, who hold every capability) may do it.
- * Roles a plugin adds later are covered by blueworx_theme_deny_switch_themes().
- *
- * @return void
- */
-function blueworx_theme_remove_switch_themes() {
-	foreach ( wp_roles()->role_objects as $name => $role ) {
-		if ( 'administrator' !== $name && $role->has_cap( 'switch_themes' ) ) {
-			$role->remove_cap( 'switch_themes' );
-		}
-	}
-}
-
-/**
  * Refuses switch_themes to anyone who is not an administrator.
  *
- * Covers roles registered after this site's setup ran, such as a client
- * plugin's own roles, and capabilities granted to a single user.
+ * Switching away from this theme switches off the whole BlueWorx base, so only
+ * administrators (and super admins) may do it. Refused per request rather than
+ * taken off the roles in the database, so a site that moves to another theme
+ * gets its roles back exactly as they were.
  *
  * @param array   $allcaps Capabilities the user has.
  * @param array   $caps    Capabilities being checked.
@@ -125,12 +102,12 @@ add_filter( 'user_has_cap', 'blueworx_theme_deny_switch_themes', 10, 4 );
  * @return void
  */
 function blueworx_theme_on_switch_away( $new_name, $new_theme, $old_theme ) {
-	if ( ! $old_theme instanceof WP_Theme || 'blueworx' !== $old_theme->get_template() ) {
+	if ( ! $old_theme instanceof WP_Theme || BLUEWORX_THEME_SLUG !== $old_theme->get_template() ) {
 		return;
 	}
 
 	// Switching from the parent to its own child theme keeps the theme running.
-	if ( $new_theme instanceof WP_Theme && 'blueworx' === $new_theme->get_template() ) {
+	if ( $new_theme instanceof WP_Theme && BLUEWORX_THEME_SLUG === $new_theme->get_template() ) {
 		return;
 	}
 

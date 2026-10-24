@@ -18,6 +18,9 @@
  *   setup-version  prints blueworx_theme_setup_version as it was before this
  *                  script's own load ran the setup
  *   support-state  prints "<support user exists>|<key stored>", e.g. "0|0"
+ *   support-caps   prints "<caps the role stores>|<can open settings with the
+ *                  theme running>|<and without it>", e.g. "read|1|0"
+ *   support-off    removes the support account and key
  *   plugin-on      writes an mu-plugin that looks like the 1.x plugin loaded
  *   plugin-off     removes it
  *
@@ -130,6 +133,26 @@ switch ( $command ) {
 		$user = get_user_by( 'login', 'blueworx_support' );
 		$key  = get_option( 'blueworx_support_key_hash', '' );
 		echo ( $user ? '1' : '0' ) . '|' . ( $key ? '1' : '0' ) . "\n";
+		break;
+
+	case 'support-caps':
+		$user   = get_user_by( 'login', 'blueworx_support' );
+		$role   = get_role( 'blueworx_support' );
+		$stored = $role ? implode( ',', array_keys( array_filter( $role->capabilities ) ) ) : '';
+		$with   = $user && user_can( $user, 'manage_options' ) ? '1' : '0';
+
+		// What a request sees where the theme is not loaded, such as another
+		// theme being previewed in the Customizer.
+		remove_filter( 'user_has_cap', 'blueworx_readonly_grant_caps', 1 );
+		$user    = $user ? new WP_User( $user->ID ) : null;
+		$without = $user && user_can( $user, 'manage_options' ) ? '1' : '0';
+
+		echo $stored . '|' . $with . '|' . $without . "\n";
+		break;
+
+	case 'support-off':
+		blueworx_support_on_deactivate();
+		echo "ok\n";
 		break;
 
 	default:

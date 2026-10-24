@@ -74,5 +74,5 @@ function blueworx_require_post_request() {
  * @return bool
  */
 function blueworx_theme_active_here() {
-	return 'blueworx' === get_option( 'template' );
+	return BLUEWORX_THEME_SLUG === get_option( 'template' );
 }

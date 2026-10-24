@@ -28,6 +28,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * library tells a theme from a plugin by finding style.css beside the file it
  * is given, and only looks one folder deep.
  */
+// The theme's folder name on this site. Normally "blueworx", the folder inside
+// the release zip, but read rather than assumed: everything that recognises
+// this theme by name compares against this.
+if ( ! defined( 'BLUEWORX_THEME_SLUG' ) ) {
+	define( 'BLUEWORX_THEME_SLUG', basename( get_template_directory() ) );
+}
+
 require_once get_template_directory() . '/plugin-update-checker/plugin-update-checker.php';
 
 use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
@@ -35,10 +42,10 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 $blueworx_update_checker = PucFactory::buildUpdateChecker(
 	'https://github.com/blueworx-io/blueworx_labs_wordpress_theme/',
 	get_template_directory() . '/functions.php',
-	// Must equal the theme's folder name on the site, and the folder name
-	// inside the release zip. If they disagree, an update installs alongside
-	// the original as a second theme.
-	'blueworx'
+	// The folder the theme is installed in. The library renames the release
+	// zip's own folder to this when it installs an update, so an update lands
+	// on top of the original rather than beside it as a second theme.
+	BLUEWORX_THEME_SLUG
 );
 
 /*
@@ -64,12 +71,6 @@ $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 // know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
 	define( 'BLUEWORX_LABS_VERSION', '2.0.0' );
-}
-
-// The theme's functions.php. The filter that turns the theme's own
-// auto-update on identifies it by its folder, read from here.
-if ( ! defined( 'BLUEWORX_LABS_THEME_FILE' ) ) {
-	define( 'BLUEWORX_LABS_THEME_FILE', get_template_directory() . '/functions.php' );
 }
 
 // The template directory, never the stylesheet one, so a child theme still
@@ -163,14 +164,19 @@ require_once BLUEWORX_LABS_PATH . 'includes/store/store.php';
  * determine_current_user filter, such as the support key header, was settled
  * as nobody, and the read-only block let it through as an anonymous visitor.
  *
- * Only an anonymous answer is thrown away. A visitor already signed in, by
- * cookie or otherwise, is never re-checked, so this can only add a sign-in the
- * plugin would have made, never change one.
+ * Only an anonymous answer is thrown away, and only on a request carrying the
+ * support key. Anything else — a visitor signed in by cookie, or a plugin that
+ * deliberately set nobody, such as a second-factor check holding a session
+ * back — is left exactly as it was.
  *
  * @return void
  */
 function blueworx_theme_recheck_anonymous_user() {
 	global $current_user;
+
+	if ( empty( $_SERVER['HTTP_X_BLUEWORX_SUPPORT_KEY'] ) ) {
+		return;
+	}
 
 	if ( $current_user instanceof WP_User && 0 === (int) $current_user->ID ) {
 		$current_user = null; // phpcs:ignore WordPress.WP.GlobalVariablesOverride.Prohibited -- Unset so WordPress asks again.

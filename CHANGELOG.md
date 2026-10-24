@@ -17,9 +17,16 @@ history is in the plugin's own repository,
   tracking codes, translation, cache and media tools, and the Claude
   connection. It updates itself from GitHub releases, like the plugin did.
 - **Settings carry across.** A site moved from the plugin keeps its settings,
-  roles and Claude connection.
-- **Only administrators can change theme.** Every other role loses that
-  ability, so a client can't switch the BlueWorx base off by accident.
+  roles and Claude connection. Switching the plugin off still removes guest
+  viewers and any support key, as it always has, so invite guests again
+  afterwards.
+- **Only administrators can change theme**, so a client can't switch the
+  BlueWorx base off by accident. Other roles get the ability back if the site
+  moves to another theme.
+- **Support and guest viewer accounts are only powerful while the theme
+  runs.** Anywhere it isn't running, such as after a theme change made from
+  the Customizer or the theme being deleted, they can sign in and nothing
+  more.
 - **Switching to another theme removes the guest viewer and support
   accounts**, and ends any live support key, as deactivating the plugin did.
 
@@ -29,7 +36,6 @@ history is in the plugin's own repository,
   before using it.
 - **Works as the default theme on a network.** Each new site sets itself up on
   its first visit.
-
 - **The theme stays switched off next to the plugin.** While the 1.x plugin is
   active on the same site, the theme does nothing and shows a notice asking for
   the plugin to be switched off. The plugin keeps getting fixes on 1.x, and
@@ -37,5 +43,5 @@ history is in the plugin's own repository,
 
 ### Removed
 - **Nothing is cleared out when the theme is deleted.** Themes get no
-  uninstall step. Switching away already removes the accounts that must not be
-  left behind.
+  uninstall step. Any support or guest accounts left behind can sign in and
+  nothing more.

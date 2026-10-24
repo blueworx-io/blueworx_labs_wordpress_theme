@@ -145,6 +145,17 @@ function add_filter( $hook, $callback, $priority = 10, $args = 1 ) {}
 
 function add_action( $hook, $callback, $priority = 10, $args = 1 ) {}
 
+/**
+ * The guest viewer's set: the shared one, minus the settings screens.
+ *
+ * @return array
+ */
+function blueworx_external_build_caps() {
+	$caps = blueworx_readonly_build_caps();
+	unset( $caps['manage_options'] );
+	return $caps;
+}
+
 require __DIR__ . '/../../includes/readonly-access.php';
 
 echo "Who the guard applies to\n";
@@ -185,5 +196,32 @@ check( 'support cannot, with the switch off', blueworx_readonly_data_allowed( $s
 $GLOBALS['support_data_open'] = true;
 check( 'support can, with the switch on', blueworx_readonly_data_allowed( $support ), true );
 check( 'an external viewer never can', blueworx_readonly_data_allowed( $external ), false );
+
+echo "\nThe roles are powerful only while the theme runs\n";
+
+$stored = blueworx_readonly_stored_caps();
+check( 'what the database keeps is sign-in only', $stored, array( 'read' => true ) );
+
+$support_caps = blueworx_readonly_grant_caps( $stored, array( 'manage_options' ), array(), new WP_User( 2, array( 'blueworx_support' ), 'blueworx_support' ) );
+check( 'support gets the settings screens from the theme', ! empty( $support_caps['manage_options'] ), true );
+check( 'but nothing the shared set takes away', isset( $support_caps['install_plugins'] ), false );
+
+$guest_caps = blueworx_readonly_grant_caps( $stored, array( 'edit_posts' ), array(), new WP_User( 3, array( 'blueworx_external' ), 'client' ) );
+check( 'a guest viewer gets its own set', ! empty( $guest_caps['edit_posts'] ), true );
+check( 'without the settings screens', isset( $guest_caps['manage_options'] ), false );
+
+$editor_caps = array( 'edit_posts' => true );
+check( 'any other role is left alone', blueworx_readonly_grant_caps( $editor_caps, array( 'manage_options' ), array(), new WP_User( 4, array( 'editor' ), 'ed' ) ), $editor_caps );
+
+$denied = blueworx_readonly_grant_caps(
+	array(
+		'read'           => true,
+		'manage_options' => false,
+	),
+	array( 'manage_options' ),
+	array(),
+	new WP_User( 2, array( 'blueworx_support' ), 'blueworx_support' )
+);
+check( 'a capability taken off the user stays off', $denied['manage_options'], false );
 
 finish();

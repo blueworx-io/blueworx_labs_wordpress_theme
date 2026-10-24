@@ -456,6 +456,10 @@ function blueworx_feature_enabled( $key ) {
 	return '0' !== get_option( 'blueworx_feature_' . $key, '1' );
 }
 
+function blueworx_readonly_stored_caps() {
+	return array( 'read' => true );
+}
+
 function blueworx_readonly_build_caps() {
 	return array(
 		'read'           => true,
@@ -741,28 +745,6 @@ check( 'the viewer on site 1 is gone', account_exists( $viewer_one ), false );
 check( 'the viewer on site 2 is gone', account_exists( $viewer_two ), false );
 check( 'the viewer on site 3 is gone', account_exists( $viewer_three ), false );
 check( 'site 3 has no support key left', on_site( 3, 'blueworx_support_has_key' ), false );
-check( 'every site was asked for, not just the first page', isset( $GLOBALS['get_sites_args']['number'] ) && 0 === $GLOBALS['get_sites_args']['number'], true );
-check( 'and the network is back on the site it started on', array( get_current_blog_id(), $GLOBALS['blog_stack'] ), array( 1, array() ) );
-
-echo "\nA failure on one site still puts the network back\n";
-
-reset_network( true );
-
-try {
-	blueworx_for_each_site(
-		function () {
-			if ( 2 === get_current_blog_id() ) {
-				throw new RuntimeException( 'site 2 broke' );
-			}
-		},
-		true
-	);
-} catch ( RuntimeException $broke ) {
-	unset( $broke );
-}
-
-check( 'the current site is restored', array( get_current_blog_id(), $GLOBALS['blog_stack'] ), array( 1, array() ) );
-
 echo "\nDeactivating on one site of a network leaves the others alone\n";
 
 reset_network( true );
@@ -789,12 +771,20 @@ finish();
  * Runs the theme's switch-away clean-up on one site, or on every site.
  *
  * A theme is switched per site, so the theme itself only ever cleans the one
- * site. The network loop is kept here because it still has to put the network
- * back on the right site, for whatever uses it next.
+ * site. Every site switching away in turn is what clears a whole network.
  *
- * @param bool $network_wide Whether this is a network deactivation.
+ * @param bool $network_wide Whether every site switches away.
  * @return void
  */
 function blueworx_labs_test_deactivate( $network_wide ) {
-	blueworx_for_each_site( 'blueworx_labs_deactivate_site', $network_wide );
+	if ( ! $network_wide ) {
+		blueworx_labs_deactivate_site();
+		return;
+	}
+
+	foreach ( $GLOBALS['sites'] as $site_id ) {
+		switch_to_blog( $site_id );
+		blueworx_labs_deactivate_site();
+		restore_current_blog();
+	}
 }

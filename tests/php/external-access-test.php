@@ -79,6 +79,10 @@ function blueworx_feature_enabled( $key ) {
 	return empty( $GLOBALS['feature_off'] );
 }
 
+function blueworx_readonly_stored_caps() {
+	return array( 'read' => true );
+}
+
 function blueworx_readonly_build_caps() {
 	return array(
 		'read'           => true,

@@ -48,6 +48,22 @@ test.describe('Theme setup and clean-up', () => {
     }
   });
 
+  test('the support account is only powerful while the theme runs', async ({ page }) => {
+    try {
+      await login(page);
+      await page.goto('/wp-admin/admin.php?page=blueworx-support');
+      await page.getByRole('button', { name: 'Generate key' }).click();
+      expect((await readSupportKey(page)).trim()).toMatch(/^[0-9a-f]{64}$/);
+
+      // The role stores sign-in rights only; the theme grants the rest. A
+      // theme change from the Customizer skips the clean-up, so this is what
+      // keeps a leftover account harmless.
+      expect(themeState('support-caps')).toBe('read|1|0');
+    } finally {
+      await restoreAll([['remove the support account', async () => themeState('support-off')]]);
+    }
+  });
+
   test('a fresh site is set up on first load', async ({ page }) => {
     themeState('forget-setup');
     expect(themeState('setup-version')).toBe('');

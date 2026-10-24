@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return int Current migration version.
  */
 function blueworx_get_labs_db_version() {
-	return 13;
+	return 14;
 }
 
 /**
@@ -510,9 +510,8 @@ function blueworx_migrate_remove_client_roles() {
  *
  * The role is written only when a key is generated, so a site with a support
  * key already issued would otherwise keep showing the old
- * "BlueWorx Support (read-only)" label until the next key. Capabilities are
- * rebuilt from the same function the feature uses, so this is a label change
- * only, and sites that never used support access have no role to touch.
+ * "BlueWorx Support (read-only)" label until the next key. Sites that never
+ * used support access have no role to touch.
  *
  * @return void
  */
@@ -527,7 +526,7 @@ function blueworx_migrate_relabel_support_role() {
 	add_role(
 		$slug,
 		__( 'BlueWorx - Support Agent (Read-Only)', 'blueworx-labs-wordpress' ),
-		blueworx_readonly_build_caps()
+		blueworx_readonly_stored_caps()
 	);
 }
 
@@ -598,6 +597,29 @@ function blueworx_get_retired_headless_options() {
 		'blueworx_headless_surecart_enabled',
 		'blueworx_feature_headless_api',
 	);
+}
+
+/**
+ * Cuts the support and guest viewer roles back to sign-in rights.
+ *
+ * Up to 1.x both roles stored a near-administrator capability map. They now
+ * get it from the theme on each request (see blueworx_readonly_grant_caps()),
+ * so that wherever the theme is not running they are harmless. Each role keeps
+ * its label and its users.
+ *
+ * @return void
+ */
+function blueworx_migrate_park_readonly_roles() {
+	foreach ( array( blueworx_support_role_slug(), blueworx_external_role_slug() ) as $slug ) {
+		if ( ! get_role( $slug ) ) {
+			continue;
+		}
+
+		$name = wp_roles()->role_names[ $slug ];
+
+		remove_role( $slug );
+		add_role( $slug, $name, blueworx_readonly_stored_caps() );
+	}
 }
 
 /**
@@ -714,6 +736,10 @@ function blueworx_run_pending_labs_migrations() {
 
 	if ( $stored_version < 13 ) {
 		blueworx_migrate_translate_audience();
+	}
+
+	if ( $stored_version < 14 ) {
+		blueworx_migrate_park_readonly_roles();
 	}
 
 	update_option( 'blueworx_labs_db_version', $current_version );
