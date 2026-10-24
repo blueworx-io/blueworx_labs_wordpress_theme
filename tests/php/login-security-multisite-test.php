@@ -152,7 +152,9 @@ function get_site_option( $key, $fallback = false ) {
 	return array_key_exists( $key, $GLOBALS['site_options'] ) ? $GLOBALS['site_options'][ $key ] : $fallback;
 }
 
-// The real one is in includes/helpers.php, which this script does not load.
+/**
+ * The real one is in includes/helpers.php, which this script does not load.
+ */
 function blueworx_theme_active_here() {
 	return 'blueworx' === get_option( 'template' );
 }

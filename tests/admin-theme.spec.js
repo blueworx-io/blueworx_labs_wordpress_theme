@@ -806,6 +806,8 @@ test.describe('BlueWorx admin theme', () => {
         dispatch('core/edit-post').toggleFeature('fullscreenMode');
       }
     });
+    // Leaving fullscreen animates, so measure only once it has finished.
+    await expect(page.locator('body')).not.toHaveClass(/is-fullscreen-mode/);
 
     const skeleton = page.locator('.interface-interface-skeleton');
     await expect(skeleton).toBeVisible();
@@ -871,6 +873,8 @@ test.describe('BlueWorx admin theme', () => {
         dispatch('core/edit-post').toggleFeature('fullscreenMode');
       }
     });
+    // Leaving fullscreen animates, so measure only once it has finished.
+    await expect(page.locator('body')).not.toHaveClass(/is-fullscreen-mode/);
 
     const skeleton = page.locator('.interface-interface-skeleton');
     await expect(skeleton).toBeVisible();
@@ -901,6 +905,8 @@ test.describe('BlueWorx admin theme', () => {
         dispatch('core/edit-post').toggleFeature('fullscreenMode');
       }
     });
+    // Leaving fullscreen animates, so measure only once it has finished.
+    await expect(page.locator('body')).not.toHaveClass(/is-fullscreen-mode/);
 
     const skeleton = page.locator('.interface-interface-skeleton');
     await expect(skeleton).toBeVisible();

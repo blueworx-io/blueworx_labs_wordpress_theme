@@ -13,6 +13,7 @@
  * @package BlueWorxLabs
  */
 
+// The shared WordPress stand-ins.
 require __DIR__ . '/stubs.php';
 
 // phpcs:disable Squiz.Commenting.FunctionComment.Missing -- Test stubs mirror core signatures.
@@ -45,7 +46,15 @@ function get_bloginfo( $what ) {
 	return 'Example';
 }
 
+/**
+ * Stand-in for core's WP_User.
+ */
 class WP_User {
+	/**
+	 * The ID.
+	 *
+	 * @var int
+	 */
 	public $ID = 7;
 }
 
@@ -62,6 +71,9 @@ function user_can( $user, $cap ) {
  * on a real network, so switching site swaps the whole set in and out.
  */
 
+/**
+ * Whether the check has switched the network on.
+ */
 function is_multisite() {
 	return ! empty( $GLOBALS['multisite'] );
 }
@@ -132,7 +144,9 @@ function get_site_option( $key, $fallback = false ) {
 	return array_key_exists( $key, $GLOBALS['network_options'] ) ? $GLOBALS['network_options'][ $key ] : $fallback;
 }
 
-// The real one is in includes/helpers.php, which this script does not load.
+/**
+ * The real one is in includes/helpers.php, which this script does not load.
+ */
 function blueworx_theme_active_here() {
 	return 'blueworx' === get_option( 'template' );
 }
@@ -172,7 +186,16 @@ echo "\nBatches\n";
 
 check( 'a JSON array is a batch', blueworx_mcp_is_list( json_decode( '[{"id":1},{"id":2}]', true ) ), true );
 check( 'a JSON object is one message', blueworx_mcp_is_list( json_decode( '{"jsonrpc":"2.0","id":1}', true ) ), false );
-check( 'numbered keys out of order are not a batch', blueworx_mcp_is_list( array( 1 => 'a', 0 => 'b' ) ), false );
+check(
+	'numbered keys out of order are not a batch',
+	blueworx_mcp_is_list(
+		array(
+			1 => 'a',
+			0 => 'b',
+		)
+	),
+	false
+);
 
 echo "\nPKCE\n";
 

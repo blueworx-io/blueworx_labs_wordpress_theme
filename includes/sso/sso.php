@@ -19,11 +19,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Reads an SSO option.
  *
  * @param string $name    Option name without the blueworx_sso_ prefix.
- * @param mixed  $default Value to return when the option is unset.
- * @return mixed Stored value, or $default.
+ * @param mixed  $fallback Value to return when the option is unset.
+ * @return mixed Stored value, or $fallback.
  */
-function blueworx_sso_option( $name, $default = '' ) {
-	return get_option( 'blueworx_sso_' . $name, $default );
+function blueworx_sso_option( $name, $fallback = '' ) {
+	return get_option( 'blueworx_sso_' . $name, $fallback );
 }
 
 /**

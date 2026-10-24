@@ -35,9 +35,10 @@ use YahnisElsts\PluginUpdateChecker\v5\PucFactory;
 $blueworx_update_checker = PucFactory::buildUpdateChecker(
 	'https://github.com/blueworx-io/blueworx_labs_wordpress_theme/',
 	get_template_directory() . '/functions.php',
-	'blueworx' // Must equal the theme's folder name on the site, and the
-	           // folder name inside the release zip. If they disagree, an
-	           // update installs alongside the original as a second theme.
+	// Must equal the theme's folder name on the site, and the folder name
+	// inside the release zip. If they disagree, an update installs alongside
+	// the original as a second theme.
+	'blueworx'
 );
 
 /*

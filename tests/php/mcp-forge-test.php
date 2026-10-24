@@ -13,6 +13,7 @@
  * @package BlueWorxLabs
  */
 
+// The shared WordPress stand-ins.
 require __DIR__ . '/stubs.php';
 
 // phpcs:disable Squiz.Commenting.FunctionComment.Missing, Squiz.Commenting.ClassComment.Missing, Squiz.Commenting.VariableComment.Missing, Generic.Files.OneObjectStructurePerFile.MultipleFound -- Test stand-ins.
@@ -157,6 +158,8 @@ function forge_source_question() {
 
 /**
  * Where each stage goes next, on the stand-in's short path.
+ *
+ * @param string $stage Stage slug.
  */
 function forge_next( $stage ) {
 	$next = array(
@@ -582,6 +585,8 @@ function rest_do_request( $request ) {
 
 /**
  * Forge's capacity grid: Luke tight in the first week, Sam not set up.
+ *
+ * @param array $q Query arguments.
  */
 function forge_capacity( $q ) {
 	if ( ! empty( $GLOBALS['forge']['no_capacity'] ) ) {
@@ -633,6 +638,9 @@ function forge_capacity( $q ) {
 
 /**
  * One person's drill-down: a task of their own, and a review they are covering.
+ *
+ * @param int   $user_id Person's user ID.
+ * @param array $q       Query arguments.
  */
 function forge_capacity_person( $user_id, $q ) {
 	$allocation = function ( $item, $title, $role, $covering, $hours, $day, $status ) use ( $user_id ) {

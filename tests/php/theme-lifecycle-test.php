@@ -138,8 +138,10 @@ function wp_roles() {
 	return (object) array( 'role_objects' => $GLOBALS['roles'] );
 }
 
-// What setup and clean-up call, counted rather than run: their own files and
-// tests cover what they do.
+/**
+ * What setup and clean-up call, counted rather than run: their own files and
+ * tests cover what they do.
+ */
 function blueworx_external_on_activate() {
 	++$GLOBALS['calls']['activate'];
 }
@@ -167,14 +169,14 @@ function fresh_site() {
 	$GLOBALS['roles']   = array(
 		'administrator' => new WP_Role(
 			array(
-				'switch_themes' => true,
+				'switch_themes'  => true,
 				'manage_options' => true,
 			)
 		),
 		'editor'        => new WP_Role( array( 'edit_posts' => true ) ),
 		'owner'         => new WP_Role(
 			array(
-				'switch_themes' => true,
+				'switch_themes'      => true,
 				'edit_theme_options' => true,
 			)
 		),
@@ -187,7 +189,14 @@ fresh_site();
 
 echo "Setup runs once per site, per version\n";
 
-check( 'it is hooked early in after_setup_theme', $GLOBALS['hooks']['after_setup_theme'], array( 'callback' => 'blueworx_theme_maybe_setup_site', 'priority' => 6 ) );
+check(
+	'it is hooked early in after_setup_theme',
+	$GLOBALS['hooks']['after_setup_theme'],
+	array(
+		'callback' => 'blueworx_theme_maybe_setup_site',
+		'priority' => 6,
+	)
+);
 
 blueworx_theme_maybe_setup_site();
 check( 'a fresh site is set up on its first load', $GLOBALS['calls']['activate'], 1 );

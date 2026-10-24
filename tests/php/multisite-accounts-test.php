@@ -14,6 +14,7 @@
  * @package BlueWorxLabs
  */
 
+// The shared WordPress stand-ins.
 require __DIR__ . '/stubs.php';
 
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
@@ -26,12 +27,50 @@ require __DIR__ . '/stubs.php';
  */
 class Blueworx_Test_Died extends Exception {}
 
+/**
+ * Stand-in for core's WP_User.
+ */
 class WP_User {
+	/**
+	 * The ID.
+	 *
+	 * @var int
+	 */
 	public $ID = 0;
+
+	/**
+	 * The roles.
+	 *
+	 * @var array
+	 */
 	public $roles = array();
+
+	/**
+	 * The user login.
+	 *
+	 * @var string
+	 */
 	public $user_login = '';
+
+	/**
+	 * The user email.
+	 *
+	 * @var string
+	 */
 	public $user_email = '';
+
+	/**
+	 * The display name.
+	 *
+	 * @var string
+	 */
 	public $display_name = '';
+
+	/**
+	 * The user activation key.
+	 *
+	 * @var string
+	 */
 	public $user_activation_key = '';
 
 	public function __construct( $id = 0, $roles = array() ) {
@@ -373,6 +412,11 @@ function clean_user_cache( $id ) {}
  * The one wpdb call support-access.php makes: the unusable password.
  */
 class Blueworx_Test_Wpdb {
+	/**
+	 * The users.
+	 *
+	 * @var string
+	 */
 	public $users = 'wp_users';
 
 	public function update( $table, $data, $where ) {
@@ -573,7 +617,7 @@ blueworx_support_remove_account();
 
 check( 'the support account is deleted', account_exists( $support ), false );
 
-$support = give_support( 1, false );
+$support                 = give_support( 1, false );
 $GLOBALS['current_user'] = $support;
 
 check( 'a shut window still ends the session and clears the cookie', run_window_check(), array( 'session destroyed', 'cookie cleared', 'refused' ) );
