@@ -20,12 +20,10 @@ on:
 
 jobs:
   release:
-    # TEMPORARY: pinned to the foundation's add-theme-mode branch, which adds
-    # theme support (bluegroup_core_foundation#88). Once that merges and is
-    # tagged, pin this and foundation_ref below to the new tag.
-    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/release-wordpress.yml@add-theme-mode
+    # v1.19.0 is the first foundation release that supports themes.
+    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/release-wordpress.yml@v1.19.0
     with:
-      foundation_ref: add-theme-mode
+      foundation_ref: v1.19.0
       # A theme: the version is read from style.css, and the zip's top folder is
       # blueworx/, the theme's folder name on every site.
       theme_slug: blueworx

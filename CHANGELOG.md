@@ -8,7 +8,7 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
-## [2.0.0] - Unreleased
+## [2.0.0] - 2026-10-24
 
 ### Changed
 - **The Labs plugin is now a theme.** Everything the plugin does comes with
