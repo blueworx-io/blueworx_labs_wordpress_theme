@@ -26,7 +26,7 @@ require __DIR__ . '/stubs.php';
 // phpcs:disable Universal.Files.SeparateFunctionsFromOO.Mixed
 
 define( 'BLUEWORX_LABS_VERSION', '2.0.0' );
-define( 'BLUEWORX_THEME_SLUG', 'blueworx' );
+define( 'BLUEWORX_THEME_SLUG', 'blueworx-labs-wordpress-theme' );
 
 $GLOBALS['hooks']        = array();
 $GLOBALS['super_admins'] = array();
@@ -230,7 +230,7 @@ echo "\nSwitching away cleans up, once\n";
 fresh_site();
 blueworx_theme_maybe_setup_site();
 
-blueworx_theme_on_switch_away( 'Twenty Twenty-Five', new WP_Theme( 'twentytwentyfive' ), new WP_Theme( 'blueworx' ) );
+blueworx_theme_on_switch_away( 'Twenty Twenty-Five', new WP_Theme( 'twentytwentyfive' ), new WP_Theme( 'blueworx-labs-wordpress-theme' ) );
 check( 'switching away from this theme removes the support account', $GLOBALS['calls']['support_off'], 1 );
 check( 'and the guest viewers', $GLOBALS['calls']['external_off'], 1 );
 check( 'and forgets the setup, so switching back runs it again', get_option( 'blueworx_theme_setup_version' ), false );
@@ -238,7 +238,7 @@ check( 'and forgets the setup, so switching back runs it again', get_option( 'bl
 blueworx_theme_on_switch_away( 'Twenty Twenty-Four', new WP_Theme( 'twentytwentyfour' ), new WP_Theme( 'twentytwentyfive' ) );
 check( 'switching between two other themes does nothing', $GLOBALS['calls']['support_off'], 1 );
 
-blueworx_theme_on_switch_away( 'BlueWorx child', new WP_Theme( 'blueworx' ), new WP_Theme( 'blueworx' ) );
+blueworx_theme_on_switch_away( 'BlueWorx child', new WP_Theme( 'blueworx-labs-wordpress-theme' ), new WP_Theme( 'blueworx-labs-wordpress-theme' ) );
 check( 'nor does moving to a child theme of this one', $GLOBALS['calls']['support_off'], 1 );
 
 blueworx_theme_on_switch_away( 'Twenty Twenty-Five', new WP_Theme( 'twentytwentyfive' ), null );
@@ -247,10 +247,10 @@ check( 'nor a switch with no old theme to go on', $GLOBALS['calls']['support_off
 echo "\nThe theme is recognised by the folder it is in\n";
 
 // BLUEWORX_THEME_SLUG is read from the folder, and this script fixed it at
-// "blueworx". A copy installed elsewhere under its default name is a
+// "blueworx-labs-wordpress-theme". A copy installed elsewhere under its default name is a
 // different theme as far as this site is concerned.
 fresh_site();
-blueworx_theme_on_switch_away( 'Twenty Twenty-Five', new WP_Theme( 'twentytwentyfive' ), new WP_Theme( 'blueworx-old' ) );
+blueworx_theme_on_switch_away( 'Twenty Twenty-Five', new WP_Theme( 'twentytwentyfive' ), new WP_Theme( 'blueworx' ) );
 check( 'a theme in another folder is not this one', $GLOBALS['calls']['support_off'], 0 );
 
 finish();

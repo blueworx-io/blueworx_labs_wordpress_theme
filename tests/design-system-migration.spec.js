@@ -60,7 +60,7 @@ test.describe('the rebuilt screens no longer need admin-theme.css', () => {
     // screen, which is why the migration removed no rules from it: there were
     // none to remove. This holds that, so a future rebuild does not quietly put
     // screen styling back here instead of into the design system.
-    const css = await page.request.get('/wp-content/themes/blueworx/assets/css/admin-theme.css');
+    const css = await page.request.get('/wp-content/themes/blueworx-labs-wordpress-theme/assets/css/admin-theme.css');
     expect(css.status()).toBe(200);
 
     const text = await css.text();

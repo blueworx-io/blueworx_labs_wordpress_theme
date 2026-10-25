@@ -1,10 +1,10 @@
 /**
  * The plugin, running as a theme.
  *
- * WordPress has to see a theme called BlueWorx, load the whole console from it,
- * find its files under /themes/blueworx/ (also when a child theme is active),
- * draw public pages in a working frame, keep it updating itself, and tell
- * client plugins once it has loaded.
+ * WordPress has to see a theme called BlueWorx Enhance, load the whole console
+ * from it, find its files under /themes/blueworx-labs-wordpress-theme/ (also
+ * when a child theme is active), draw public pages in a working frame, keep it
+ * updating itself, and tell client plugins once it has loaded.
  */
 
 import { execFileSync } from 'node:child_process';
@@ -29,7 +29,7 @@ function themeState(command) {
 
 const VERSION = JSON.parse(readFileSync(path.join(__dirname, '..', 'package.json'), 'utf8')).version;
 const CONSOLE_PATH = '/wp-admin/admin.php?page=blueworx-labs-wordpress';
-const ADMIN_CSS = /\/wp-content\/themes\/blueworx\/assets\/css\/admin-theme\.css/;
+const ADMIN_CSS = /\/wp-content\/themes\/blueworx-labs-wordpress-theme\/assets\/css\/admin-theme\.css/;
 
 test.describe('The theme', () => {
   test.skip(isPlaceholder, 'No real site configured');
@@ -42,7 +42,7 @@ test.describe('The theme', () => {
     const active = await page.evaluate(
       () => (window._wpThemeSettings?.themes || []).find((theme) => theme.active)?.name
     );
-    expect(active).toBe('BlueWorx');
+    expect(active).toBe('BlueWorx Enhance');
 
     const screen = await page.goto(CONSOLE_PATH);
     expect(screen.status()).toBe(200);
@@ -58,7 +58,7 @@ test.describe('The theme', () => {
     // The shared design system works its address out the plugin way, so this
     // is the one most likely to point under /plugins/.
     const design = page.locator('link[href*="blueworx-admin-design.css"]');
-    await expect(design).toHaveAttribute('href', /\/wp-content\/themes\/blueworx\/assets\/blueworx-admin-design\.css/);
+    await expect(design).toHaveAttribute('href', /\/wp-content\/themes\/blueworx-labs-wordpress-theme\/assets\/blueworx-admin-design\.css/);
 
     const css = await page.request.get(await design.getAttribute('href'));
     expect(css.status()).toBe(200);
@@ -100,7 +100,7 @@ test.describe('The theme', () => {
     await page.goto('/wp-admin/themes.php');
 
     const forced = await page.evaluate(
-      () => (window._wpThemeSettings?.themes || []).find((theme) => theme.id === 'blueworx')?.autoupdate?.forced
+      () => (window._wpThemeSettings?.themes || []).find((theme) => theme.id === 'blueworx-labs-wordpress-theme')?.autoupdate?.forced
     );
     expect(forced).toBe(true);
   });
