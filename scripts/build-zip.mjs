@@ -5,7 +5,7 @@ import { createWriteStream, mkdirSync, readdirSync, rmSync, existsSync } from 'n
 import { join } from 'node:path';
 import archiver from 'archiver';
 
-const SLUG = 'blueworx';
+const SLUG = 'blueworx-labs-wordpress-theme';
 const DIST = 'dist';
 
 // Runtime files/dirs that ship inside the theme folder. style.css and index.php

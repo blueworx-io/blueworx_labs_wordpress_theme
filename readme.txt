@@ -1,10 +1,10 @@
-=== BlueWorx ===
+=== BlueWorx Enhance ===
 Contributors:      blueworx
 Tags:              login, security, custom login url, hardening, cache
 Requires at least: 5.0
 Tested up to:      6.9
 Requires PHP:      8.0
-Stable tag:        2.0.0
+Stable tag:        2.0.1
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ The BlueWorx base for every site: admin, security, sign-in, shop, guides and the
 
 == Description ==
 
-The BlueWorx theme is the base every BlueWorx site runs on. It used to be the BlueWorx Labs | WordPress Enhancements plugin, and does everything that plugin did:
+The BlueWorx Enhance theme is the base every BlueWorx site runs on. It used to be the BlueWorx Labs | WordPress Enhancements plugin, and does everything that plugin did:
 
 * Replacing the default `/wp-login.php` login URL with a custom `/admin_login` URL.
 * Blocking all direct access to `/wp-login.php` - visitors are redirected to the homepage.
@@ -35,7 +35,7 @@ The new login URL and cache refresh status are displayed in the **BlueWorx** adm
 
 == Installation ==
 
-1. Upload the `blueworx` folder to `/wp-content/themes/`, or upload the zip under **Appearance > Themes > Add New**.
+1. Upload the `blueworx-labs-wordpress-theme` folder to `/wp-content/themes/`, or upload the zip under **Appearance > Themes > Add New**.
 2. Activate the theme under **Appearance > Themes**. On a network, enable it for the network first.
 3. If the BlueWorx Labs | WordPress Enhancements plugin is active, deactivate it now, after the theme. On plugin 1.96.4 or later its settings, guest viewers and support key all carry across, and the plugin can then be deleted. Deactivating it before the theme is active removes guest viewers and any support key.
 4. Visit **BlueWorx** to see your new login URL and active enhancements.

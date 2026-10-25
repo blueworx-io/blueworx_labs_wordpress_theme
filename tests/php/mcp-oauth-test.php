@@ -148,7 +148,7 @@ function get_site_option( $key, $fallback = false ) {
  * The real one is in includes/helpers.php, which this script does not load.
  */
 function blueworx_theme_active_here() {
-	return 'blueworx' === get_option( 'template' );
+	return 'blueworx-labs-wordpress-theme' === get_option( 'template' );
 }
 
 // phpcs:enable Squiz.Commenting.FunctionComment.Missing
@@ -379,10 +379,10 @@ $GLOBALS['sites'][5]          = array(
 	'path_no_slash' => '/archived',
 	'archived'      => '1',
 );
-$GLOBALS['blog_options'][2]   = array( 'template' => 'blueworx' );
+$GLOBALS['blog_options'][2]   = array( 'template' => 'blueworx-labs-wordpress-theme' );
 $GLOBALS['blog_options'][3]   = array( 'template' => 'twentytwentyfive' );
 $GLOBALS['blog_options'][4]   = array(
-	'template'             => 'blueworx',
+	'template'             => 'blueworx-labs-wordpress-theme',
 	'blueworx_feature_mcp' => '0',
 );
 $GLOBALS['blog_options'][5]   = $GLOBALS['blog_options'][2];
@@ -419,7 +419,7 @@ check( 'nor for one that has switched Connect Claude off', blueworx_mcp_network_
 check( 'nor for an archived site', blueworx_mcp_network_metadata( 5, 'server_metadata' ), null );
 
 $GLOBALS['blog_options'][3] = array(
-	'template'   => 'blueworx',
+	'template'   => 'blueworx-labs-wordpress-theme',
 	'stylesheet' => 'blueworx-child',
 );
 check( 'a site on a child theme of this one counts as having it', blueworx_mcp_network_metadata( 3, 'server_metadata' )['issuer'], 'https://example.com/other-theme' );

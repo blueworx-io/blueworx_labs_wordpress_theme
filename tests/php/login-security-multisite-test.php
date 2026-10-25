@@ -71,7 +71,7 @@ $GLOBALS['blogs']             = array(
 	2 => array(
 		'address' => 'https://example.test/site2/',
 		'home'    => 'https://example.test/site2',
-		'options' => array( 'template' => 'blueworx' ),
+		'options' => array( 'template' => 'blueworx-labs-wordpress-theme' ),
 	),
 );
 $GLOBALS['blog_stack']        = array();
@@ -156,7 +156,7 @@ function get_site_option( $key, $fallback = false ) {
  * The real one is in includes/helpers.php, which this script does not load.
  */
 function blueworx_theme_active_here() {
-	return 'blueworx' === get_option( 'template' );
+	return 'blueworx-labs-wordpress-theme' === get_option( 'template' );
 }
 
 function get_blogaddress_by_id( $blog_id ) {
@@ -312,7 +312,7 @@ check(
 check( 'and the current site is restored afterwards', home_url( '/' ), 'https://example.test/' );
 
 $GLOBALS['blogs'][2]['options'] = array(
-	'template'            => 'blueworx',
+	'template'            => 'blueworx-labs-wordpress-theme',
 	'blueworx_login_slug' => 'staff-door',
 );
 
@@ -323,7 +323,7 @@ check(
 );
 
 $GLOBALS['blogs'][2]['options'] = array(
-	'template'               => 'blueworx',
+	'template'               => 'blueworx-labs-wordpress-theme',
 	'blueworx_feature_login' => '0',
 );
 
@@ -334,7 +334,7 @@ $GLOBALS['blogs'][2]['options'] = array( 'template' => 'twentytwentyfive' );
 check( 'left alone when the new site runs another theme', blueworx_welcome_email_login_link( $email, 2 ), $email );
 
 $GLOBALS['blogs'][2]['options'] = array(
-	'template'   => 'blueworx',
+	'template'   => 'blueworx-labs-wordpress-theme',
 	'stylesheet' => 'blueworx-child',
 );
 

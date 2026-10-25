@@ -8,6 +8,13 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.0.1] - 2026-10-25
+
+### Changed
+- **The theme is now called BlueWorx Enhance**, and its zip and folder are
+  `blueworx-labs-wordpress-theme`. A site that installed 2.0.0 keeps its
+  existing folder when it updates.
+
 ## [2.0.0] - 2026-10-24
 
 ### Changed

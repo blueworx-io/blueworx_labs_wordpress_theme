@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * library tells a theme from a plugin by finding style.css beside the file it
  * is given, and only looks one folder deep.
  */
-// The theme's folder name on this site. Normally "blueworx", the folder inside
+// The theme's folder name on this site. Normally "blueworx-labs-wordpress-theme", the folder inside
 // the release zip, but read rather than assumed: everything that recognises
 // this theme by name compares against this.
 if ( ! defined( 'BLUEWORX_THEME_SLUG' ) ) {
@@ -70,7 +70,7 @@ $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 // Kept under the plugin's name: client plugins such as Clubhouse check it to
 // know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
-	define( 'BLUEWORX_LABS_VERSION', '2.0.0' );
+	define( 'BLUEWORX_LABS_VERSION', '2.0.1' );
 }
 
 // The template directory, never the stylesheet one, so a child theme still

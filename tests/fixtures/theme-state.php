@@ -93,14 +93,14 @@ switch ( $command ) {
 		if ( ! is_dir( $child_dir ) ) {
 			mkdir( $child_dir, 0777, true );
 		}
-		file_put_contents( $child_dir . '/style.css', "/*\nTheme Name: BlueWorx child (test)\nTemplate: blueworx\n*/\n" );
+		file_put_contents( $child_dir . '/style.css', "/*\nTheme Name: BlueWorx child (test)\nTemplate: blueworx-labs-wordpress-theme\n*/\n" );
 		search_theme_directories( true );
 		switch_theme( 'blueworx-child' );
 		echo get_option( 'stylesheet' ) . "\n";
 		break;
 
 	case 'child-off':
-		switch_theme( 'blueworx' );
+		switch_theme( 'blueworx-labs-wordpress-theme' );
 		if ( is_file( $child_dir . '/style.css' ) ) {
 			unlink( $child_dir . '/style.css' );
 		}
@@ -116,7 +116,7 @@ switch ( $command ) {
 		break;
 
 	case 'switch-back':
-		switch_theme( 'blueworx' );
+		switch_theme( 'blueworx-labs-wordpress-theme' );
 		echo get_option( 'stylesheet' ) . "\n";
 		break;
 

@@ -25,11 +25,11 @@ require __DIR__ . '/stubs.php';
 
 function add_filter( $hook, $callback, $priority = 10, $args = 1 ) {}
 
-define( 'BLUEWORX_THEME_SLUG', 'blueworx' );
+define( 'BLUEWORX_THEME_SLUG', 'blueworx-labs-wordpress-theme' );
 
 require __DIR__ . '/../../includes/auto-updates.php';
 
-$ours  = (object) array( 'theme' => 'blueworx' );
+$ours  = (object) array( 'theme' => 'blueworx-labs-wordpress-theme' );
 $other = (object) array( 'theme' => 'twentytwentyfive' );
 $child = (object) array( 'theme' => 'blueworx-child' );
 
