@@ -1581,7 +1581,13 @@ blueworx_mcp_tool_forge_create_task(
 	)
 );
 check( 'a new task can have the client review it', last_call( 'POST', '/work-items' )[3]['reviewer_id'], 'client' );
-check( 'the client is no one\'s assignee', error_of( blueworx_mcp_tool_forge_update_task( array( 'id' => 'wi_f2', 'assignee' => 'client' ) ) ), 'unknown_person' );
+$not_assignee = blueworx_mcp_tool_forge_update_task(
+	array(
+		'id'       => 'wi_f2',
+		'assignee' => 'client',
+	)
+);
+check( 'the client is no one\'s assignee', error_of( $not_assignee ), 'unknown_person' );
 
 forge_reset();
 
