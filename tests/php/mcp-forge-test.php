@@ -1542,9 +1542,9 @@ echo "\nWhen work was added\n";
 
 // Forge keeps when each item was added and last changed, as Unix times.
 foreach ( array(
-	'wi_m1' => array( 1767225600, 1767225600 ), // 2026-01-01.
-	'wi_f1' => array( 1780272000, 1782864000 ), // 2026-06-01, changed 2026-07-01.
-	'wi_f2' => array( 1772323200, 1772323200 ), // 2026-03-01.
+	'wi_m1' => array( 1767225600, 1767225600 ), // 1 January 2026.
+	'wi_f1' => array( 1780272000, 1782864000 ), // 1 June 2026, changed 1 July.
+	'wi_f2' => array( 1772323200, 1772323200 ), // 1 March 2026.
 ) as $id => $times ) {
 	$GLOBALS['forge']['items'][ $id ]['created_at'] = $times[0];
 	$GLOBALS['forge']['items'][ $id ]['updated_at'] = $times[1];
