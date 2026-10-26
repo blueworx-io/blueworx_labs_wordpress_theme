@@ -285,7 +285,10 @@ function forge_matches( $item, $q ) {
 		}
 	}
 
-	if ( isset( $q['person'] ) && ! array_intersect( (array) $q['person'], array( $item['primary_user_id'], $item['reviewer_id'] ) ) ) {
+	$assignees = $item['assignees'] ?? array();
+	$assignees = is_string( $assignees ) ? (array) json_decode( $assignees, true ) : (array) $assignees;
+
+	if ( isset( $q['person'] ) && ! array_intersect( (array) $q['person'], array_merge( array( $item['primary_user_id'], $item['reviewer_id'] ), $assignees ) ) ) {
 		return false;
 	}
 
@@ -1486,6 +1489,101 @@ check(
 	),
 	'That change could not be saved. assignee_hours: At most 100 hours.'
 );
+
+echo "\nPeople and hours on chores and reminders\n";
+
+// Forge keeps a chore's or reminder's people in a list and each person's time
+// in hours_each, not in the assignee seat. Its REST answers send the list
+// decoded; a raw row would still hold it as JSON, so both are tried.
+forge_reset();
+$GLOBALS['forge']['items']['wi_c1'] = array_merge(
+	$GLOBALS['forge']['items']['wi_f2'],
+	array(
+		'id'          => 'wi_c1',
+		'title'       => 'Weekly backups check',
+		'parent_id'   => '',
+		'reviewer_id' => '',
+		'assignees'   => array( 'usr_sam' ),
+		'hours_each'  => 0.75,
+	)
+);
+$GLOBALS['forge']['items']['wi_c2'] = array_merge(
+	$GLOBALS['forge']['items']['wi_c1'],
+	array(
+		'id'         => 'wi_c2',
+		'title'      => 'Renew the domain',
+		'assignees'  => '["usr_luke"]',
+		'hours_each' => '0.5',
+	)
+);
+
+$listed = blueworx_mcp_tool_forge_list_tasks( array() );
+$chores = array_values(
+	array_filter(
+		$listed['tasks'],
+		function ( $task ) {
+			return in_array( $task['id'], array( 'wi_c1', 'wi_c2' ), true );
+		}
+	)
+);
+check( 'a chore shows its person by name', array( $chores[0]['assignee'], $chores[0]['assignee_id'] ), array( 'Sam Jones', 'usr_sam' ) );
+check( 'and their time as the assignee\'s hours', $chores[0]['hours']['assignee'], 0.75 );
+check( 'a list still held as JSON is read too', array( $chores[1]['assignee'], $chores[1]['hours']['assignee'] ), array( 'Luke McFarland', 0.5 ) );
+check( 'a normal task keeps its own assignee and hours', array( $listed['tasks'][1]['assignee'], $listed['tasks'][1]['hours']['assignee'] ), array( 'Luke McFarland', 6.0 ) );
+
+$chore = blueworx_mcp_tool_forge_get_task( array( 'id' => 'wi_c1' ) );
+check( 'a chore in full shows its person and hours', array( $chore['assignee'], $chore['hours']['assignee'] ), array( 'Sam Jones', 0.75 ) );
+
+check( 'listing by assignee finds their chores', ids_of( blueworx_mcp_tool_forge_list_tasks( array( 'assignee' => 'Sam Jones' ) )['tasks'] ), array( 'wi_c1' ) );
+
+forge_reset();
+
+echo "\nWhen work was added\n";
+
+// Forge keeps when each item was added and last changed, as Unix times.
+foreach ( array(
+	'wi_m1' => array( 1767225600, 1767225600 ), // 2026-01-01.
+	'wi_f1' => array( 1780272000, 1782864000 ), // 2026-06-01, changed 2026-07-01.
+	'wi_f2' => array( 1772323200, 1772323200 ), // 2026-03-01.
+) as $id => $times ) {
+	$GLOBALS['forge']['items'][ $id ]['created_at'] = $times[0];
+	$GLOBALS['forge']['items'][ $id ]['updated_at'] = $times[1];
+}
+
+$dated = blueworx_mcp_tool_forge_list_tasks( array() );
+check( 'each task says when it was added and last changed', array( $dated['tasks'][1]['created_date'], $dated['tasks'][1]['updated_date'] ), array( '2026-06-01', '2026-07-01' ) );
+check( 'a task Forge has no date for says so with nothing', $dated['tasks'][3]['created_date'], '' );
+check( 'work added before a date', ids_of( blueworx_mcp_tool_forge_list_tasks( array( 'created_before' => '2026-03-01' ) )['tasks'] ), array( 'wi_m1', 'wi_f2' ) );
+check( 'work added after a date', ids_of( blueworx_mcp_tool_forge_list_tasks( array( 'created_after' => '2026-02-01' ) )['tasks'] ), array( 'wi_f1', 'wi_f2' ) );
+check( 'oldest first', ids_of( blueworx_mcp_tool_forge_list_tasks( array( 'oldest_first' => true ) )['tasks'] ), array( 'wi_m1', 'wi_f2', 'wi_f1', 'wi_f3' ) );
+check( 'a created date that does not exist is refused', error_of( blueworx_mcp_tool_forge_list_tasks( array( 'created_before' => '2026-02-30' ) ) ), 'invalid_date' );
+check( 'the full task says when it was added', blueworx_mcp_tool_forge_get_task( array( 'id' => 'wi_f1' ) )['created_date'], '2026-06-01' );
+
+forge_reset();
+
+echo "\nThe client as reviewer\n";
+
+// Forge keeps the client in the reviewer seat as "client", which is no person.
+blueworx_mcp_tool_forge_update_task(
+	array(
+		'id'       => 'wi_f2',
+		'reviewer' => 'The client',
+	)
+);
+check( 'the client can be made the reviewer', last_call( 'PATCH', '/work-items/wi_f2' )[3]['reviewer_id'], 'client' );
+check( 'and shows as the client', blueworx_mcp_tool_forge_get_task( array( 'id' => 'wi_f2' ) )['people']->reviewer, 'The client' );
+
+blueworx_mcp_tool_forge_create_task(
+	array(
+		'title'          => 'Sign off the homepage',
+		'client_site_id' => 'cs_a',
+		'reviewer'       => 'client',
+	)
+);
+check( 'a new task can have the client review it', last_call( 'POST', '/work-items' )[3]['reviewer_id'], 'client' );
+check( 'the client is no one\'s assignee', error_of( blueworx_mcp_tool_forge_update_task( array( 'id' => 'wi_f2', 'assignee' => 'client' ) ) ), 'unknown_person' );
+
+forge_reset();
 
 echo "\nTeam capacity\n";
 

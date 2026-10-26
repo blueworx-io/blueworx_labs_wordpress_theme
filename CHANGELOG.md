@@ -8,6 +8,17 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.0.2] - 2026-10-26
+
+### Fixed
+- **Claude can now see when Forge work was added.** Each task shows the day it
+  was added and last changed, and Claude can list work added before a date,
+  oldest first, to find items that have sat too long.
+- **Claude can make the client a Forge task's reviewer.** Before, it could only
+  pick a staff member.
+- **Claude now sees who did a Forge chore or reminder, and how long it took.**
+  These showed no person and no hours, so audits couldn't count the time.
+
 ## [2.0.1] - 2026-10-25
 
 ### Changed
