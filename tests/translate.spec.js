@@ -481,15 +481,6 @@ test.describe('BlueWorx on-page translation — display style', () => {
     await page.goto('/');
 
     await expect(page.locator(PILL_FLAG)).toBeVisible();
-    // TEMPORARY DIAGNOSTIC — reverted once the CI failure is understood.
-    await page.waitForTimeout(2000);
-    console.log('BWDIAG', JSON.stringify(await page.evaluate(() => ({
-      ready: document.readyState,
-      config: window.blueworxTranslate && { source: window.blueworxTranslate.source, sourceFlag: window.blueworxTranslate.sourceFlag, display: window.blueworxTranslate.display, languages: window.blueworxTranslate.languages },
-      stored: (() => { try { return JSON.stringify(localStorage); } catch (e) { return String(e); } })(),
-      lang: document.documentElement.lang,
-      widget: (document.querySelector('.blueworx-translate') || {}).outerHTML?.slice(0, 1500),
-    }))));
     await expect(page.locator(PILL_FLAG)).toHaveText('🇬🇧');
     expect(await widthOf(page, PILL_NAME)).toBeGreaterThan(1);
   });
