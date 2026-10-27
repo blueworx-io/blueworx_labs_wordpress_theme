@@ -1531,7 +1531,22 @@ test.describe('Support access — key lifecycle', () => {
       expect(prompt).toContain('READ ONLY');
 
       const button = page.locator('[data-testid="bw-support-copy-prompt"]');
+      // TEMPORARY DIAGNOSTIC — reverted once the CI copy failure is understood.
+      page.on('console', (msg) => console.log(`BWDIAG console ${msg.type()}: ${msg.text()}`));
+      console.log('BWDIAG before', JSON.stringify(await page.evaluate(async () => {
+        const out = { secure: window.isSecureContext, focus: document.hasFocus(), clip: !!(navigator.clipboard && navigator.clipboard.writeText), ua: navigator.userAgent };
+        window.__bwLabels = [];
+        new MutationObserver(() => window.__bwLabels.push(`${Date.now()} ${document.querySelector('[data-testid="bw-support-copy-prompt"]').textContent}`))
+          .observe(document.querySelector('[data-testid="bw-support-copy-prompt"]'), { childList: true, characterData: true, subtree: true });
+        try { await navigator.clipboard.writeText('x'); out.write = 'ok'; } catch (e) { out.write = `${e.name}: ${e.message}`; }
+        const ta = document.createElement('textarea'); ta.value = 'y'; document.body.appendChild(ta); ta.select();
+        try { out.exec = document.execCommand('copy'); } catch (e) { out.exec = `${e.name}: ${e.message}`; }
+        ta.remove();
+        return out;
+      })));
       await button.click();
+      await page.waitForTimeout(3000);
+      console.log('BWDIAG labels', JSON.stringify(await page.evaluate(() => window.__bwLabels)));
       await expect(button).toHaveText('Copied');
 
       // Copying must not submit the form it sits inside.
