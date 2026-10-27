@@ -249,4 +249,16 @@ $GLOBALS['filters']['blueworx_design_tokens'] = function ( $tokens ) {
 };
 check( 'a filtered value cannot break out', false === strpos( blueworx_design_css( blueworx_design_defaults() ), '</style' ), true );
 
+unset( $GLOBALS['filters']['blueworx_design_tokens'], $GLOBALS['filters']['blueworx_design_fonts'] );
+
+$file = blueworx_design_tokens_file( blueworx_design_defaults() );
+$root = substr( $file, 0, strpos( $file, '@media' ) );
+check( 'the tokens file opens with :root', 0 === strpos( $file, ":root {\n" ), true );
+check( 'the tokens file is readable, one style a line', false !== strpos( $file, "\n  --color-primary: #2f5bea;\n" ), true );
+check( 'the tokens file has the phone sizes', false !== strpos( $file, '@media (max-width: 639px)' ), true );
+check( 'the tokens file groups its styles', false !== strpos( $file, '/* Colours */' ), true );
+foreach ( $named as $name ) {
+	check( "the tokens file has $name once", substr_count( $root, "  $name: " ), 1 );
+}
+
 finish();

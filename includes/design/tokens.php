@@ -253,6 +253,66 @@ function blueworx_design_declarations( $tokens ) {
 }
 
 /**
+ * The named styles as a readable file: one per line, in labelled groups.
+ *
+ * What the design system page shows and the download's tokens.css holds, so
+ * both always match what pages get. Cleaned exactly as blueworx_design_css()
+ * cleans them.
+ *
+ * @param array|null $settings Choices; null reads the site's.
+ * @return string CSS.
+ */
+function blueworx_design_tokens_file( $settings = null ) {
+	$groups = array(
+		'--color-'   => 'Colours',
+		'--font-'    => 'Fonts',
+		'--text-'    => 'Type sizes',
+		'--space-'   => 'Spacing',
+		'--radius-'  => 'Corners',
+		'--shadow-'  => 'Shadows and effects',
+		'--focus-'   => 'Shadows and effects',
+		'--overlay'  => 'Shadows and effects',
+		'--width-'   => 'Layout',
+		'--gutter'   => 'Layout',
+		'--section-' => 'Layout',
+	);
+
+	$lines = static function ( $tokens, $indent, $text_label ) use ( $groups ) {
+		$groups['--text-'] = $text_label;
+		$out     = '';
+		$current = null;
+
+		foreach ( explode( ';', rtrim( blueworx_design_declarations( $tokens ), ';' ) ) as $declaration ) {
+			if ( '' === $declaration ) {
+				continue;
+			}
+
+			list( $name, $value ) = explode( ':', $declaration, 2 );
+			$group                = 'Other';
+
+			foreach ( $groups as $prefix => $label ) {
+				if ( 0 === strpos( $name, $prefix ) ) {
+					$group = $label;
+					break;
+				}
+			}
+
+			if ( $group !== $current ) {
+				$out    .= ( null === $current ? '' : "\n" ) . $indent . '/* ' . $group . " */\n";
+				$current = $group;
+			}
+
+			$out .= $indent . $name . ': ' . $value . ";\n";
+		}
+
+		return $out;
+	};
+
+	return ":root {\n" . $lines( blueworx_design_tokens( $settings ), '  ', 'Type sizes' ) . "}\n\n"
+		. "@media (max-width: 639px) {\n  :root {\n" . $lines( blueworx_design_phone_tokens( $settings ), '    ', 'Type sizes on phones' ) . "  }\n}\n";
+}
+
+/**
  * The named styles as CSS.
  *
  * @param array|null $settings Choices; null reads the site's.
