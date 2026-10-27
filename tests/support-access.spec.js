@@ -1544,6 +1544,20 @@ test.describe('Support access — key lifecycle', () => {
         ta.remove();
         return out;
       })));
+      console.log('BWDIAG wrap', JSON.stringify(await page.evaluate(() => {
+        const realWrite = navigator.clipboard.writeText.bind(navigator.clipboard);
+        navigator.clipboard.writeText = (text) => {
+          console.log(`write called, ${String(text).length} chars, focus ${document.hasFocus()}`);
+          return realWrite(text).then(
+            (v) => { console.log('write resolved'); return v; },
+            (e) => { console.log(`write rejected ${e.name}: ${e.message}`); throw e; }
+          );
+        };
+        const realExec = document.execCommand.bind(document);
+        document.execCommand = (cmd) => { const r = realExec(cmd); console.log(`exec ${cmd} -> ${r}, selection "${String(window.getSelection()).length}"`); return r; };
+        const field = document.getElementById('bw-support-prompt');
+        return { field: !!field, tag: field && field.tagName, hidden: field && field.hidden, display: field && getComputedStyle(field).display, len: field && field.value.length };
+      })));
       await button.click();
       await page.waitForTimeout(3000);
       console.log('BWDIAG labels', JSON.stringify(await page.evaluate(() => window.__bwLabels)));
