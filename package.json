@@ -1,6 +1,6 @@
 {
   "name": "blueworx-labs-wordpress-theme",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "description": "BlueWorx theme — the base for every BlueWorx site: admin, security, sign-in, shop, guides and the Claude connection.",
   "license": "GPL-2.0-or-later",
