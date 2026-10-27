@@ -96,6 +96,30 @@ add_filter( 'blueworx_page_source', static function ( $label, $post_id ) {
 add_filter( 'blueworx_store_dashboard_url', static function ( $url ) {
 	return isset( $_GET['bw_claim'] ) ? home_url( '/claimed-fixture/' ) : $url; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 } );
+
+// Supplies a design preset and a font the way Clubhouse V2 supplies its skins,
+// and reads the named styles back the way any plugin would, for
+// tests/design-system.spec.js.
+add_filter( 'blueworx_design_fonts', static function ( $fonts ) {
+	$fonts['fixture-mono'] = array( 'label' => 'Fixture Mono', 'family' => 'Fixture Mono', 'stack' => '"Fixture Mono", monospace', 'files' => array() );
+	return $fonts;
+} );
+
+add_filter( 'blueworx_design_presets', static function ( $presets ) {
+	$presets['fixture'] = array(
+		'label'       => 'Fixture preset',
+		'description' => 'A preset another plugin added.',
+		'settings'    => array( 'primary' => '#c6f24e', 'heading_font' => 'fixture-mono', 'corners' => 'square' ),
+	);
+	return $presets;
+} );
+
+add_action( 'wp_head', static function () {
+	if ( function_exists( 'blueworx_design_tokens' ) ) {
+		$tokens = blueworx_design_tokens();
+		printf( '<!-- design tokens seen: %d, primary: %s -->', count( $tokens ), esc_html( $tokens['--color-primary'] ) );
+	}
+} );
 `;
 
 export default async function globalSetup() {

@@ -102,6 +102,7 @@ require_once BLUEWORX_LABS_PATH . 'includes/design/color.php';
 require_once BLUEWORX_LABS_PATH . 'includes/design/settings.php';
 require_once BLUEWORX_LABS_PATH . 'includes/design/tokens.php';
 require_once BLUEWORX_LABS_PATH . 'includes/design/output.php';
+require_once BLUEWORX_LABS_PATH . 'includes/design/screen.php';
 require_once BLUEWORX_LABS_PATH . 'includes/upgrade.php';
 require_once BLUEWORX_LABS_PATH . 'includes/theme-lifecycle.php';
 require_once BLUEWORX_LABS_PATH . 'includes/admin-design.php';
@@ -199,6 +200,7 @@ blueworx_theme_recheck_anonymous_user();
 function blueworx_theme_supports() {
 	add_theme_support( 'title-tag' );
 	add_theme_support( 'post-thumbnails' );
+	add_theme_support( 'custom-logo' );
 	add_theme_support( 'responsive-embeds' );
 	add_theme_support( 'automatic-feed-links' );
 	add_theme_support( 'html5', array( 'search-form', 'comment-list', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
