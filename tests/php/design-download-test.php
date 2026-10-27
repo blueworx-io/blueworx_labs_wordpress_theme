@@ -28,6 +28,10 @@ $GLOBALS['site_name']  = 'Fixture Site';
 
 // phpcs:disable Squiz.Commenting.FunctionComment.Missing -- Test stubs mirror core signatures.
 
+function add_action( $hook, $callback, $priority = 10 ) {
+	return true;
+}
+
 function absint( $value ) {
 	return abs( (int) $value );
 }
