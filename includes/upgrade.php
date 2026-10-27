@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return int Current migration version.
  */
 function blueworx_get_labs_db_version() {
-	return 14;
+	return 15;
 }
 
 /**
@@ -670,6 +670,33 @@ function blueworx_migrate_remove_headless_layer() {
 }
 
 /**
+ * Leaves the public pages of a site that already runs the theme as they are.
+ *
+ * 2.1.0 adds the `site_styles` feature default-on: it styles every public page
+ * from the site's design system. A site updating into it has no stored option,
+ * so without this its pages would be restyled the moment it updated, under
+ * whatever plugin or page builder draws them now. Its owner switches it on when
+ * the site is ready for it.
+ *
+ * Fresh installs are not touched, so a new site looks finished from the start.
+ *
+ * @return void
+ */
+function blueworx_migrate_site_styles_default() {
+	if ( ! blueworx_should_opt_out_of_new_default( null !== get_option( 'blueworx_labs_db_version', null ) ) ) {
+		return;
+	}
+
+	// Only when the site has not already expressed a preference, which it cannot
+	// have here — but this migration must stay safe if it is ever re-run.
+	if ( null !== get_option( 'blueworx_feature_site_styles', null ) ) {
+		return;
+	}
+
+	update_option( 'blueworx_feature_site_styles', '0' );
+}
+
+/**
  * Runs any pending one-time migrations.
  *
  * Cheap on every request: a single get_option compare when already current.
@@ -740,6 +767,11 @@ function blueworx_run_pending_labs_migrations() {
 
 	if ( $stored_version < 14 ) {
 		blueworx_migrate_park_readonly_roles();
+	}
+
+	// Before the version row write below, like the other opt-outs.
+	if ( $stored_version < 15 ) {
+		blueworx_migrate_site_styles_default();
 	}
 
 	update_option( 'blueworx_labs_db_version', $current_version );

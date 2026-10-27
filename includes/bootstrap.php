@@ -98,6 +98,10 @@ require_once BLUEWORX_LABS_PATH . 'assets/blueworx-admin-design.php';
 
 require_once BLUEWORX_LABS_PATH . 'includes/helpers.php';
 require_once BLUEWORX_LABS_PATH . 'includes/features.php';
+require_once BLUEWORX_LABS_PATH . 'includes/design/color.php';
+require_once BLUEWORX_LABS_PATH . 'includes/design/settings.php';
+require_once BLUEWORX_LABS_PATH . 'includes/design/tokens.php';
+require_once BLUEWORX_LABS_PATH . 'includes/design/output.php';
 require_once BLUEWORX_LABS_PATH . 'includes/upgrade.php';
 require_once BLUEWORX_LABS_PATH . 'includes/theme-lifecycle.php';
 require_once BLUEWORX_LABS_PATH . 'includes/admin-design.php';
