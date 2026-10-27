@@ -37,10 +37,11 @@ The list only grows; a name is never renamed or removed.
 | Name | What it is for | Default |
 |---|---|---|
 | `--color-primary` | Main brand colour: buttons, highlights | `#2f5bea` |
-| `--color-primary-hover` | Hover, and the main colour as link text | worked out |
+| `--color-primary-hover` | Buttons on hover | worked out |
 | `--color-primary-pressed` | Pressed buttons | worked out |
 | `--color-primary-tint` | Selected rows, soft fills | worked out |
-| `--color-on-primary` | Text on the main colour | worked out |
+| `--color-on-primary` | Text on the main colour, and on its hover and pressed shades | worked out |
+| `--color-link` | The main colour as text: links, outline buttons | worked out |
 | `--color-primary-50` … `--color-primary-900` | Ten shades, 500 is the colour itself | worked out |
 | `--color-accent` | Second colour: badges, offers. Never text | `#f08a2c` |
 | `--color-accent-text` | The second colour when it must be text | worked out |

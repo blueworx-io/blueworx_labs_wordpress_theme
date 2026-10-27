@@ -218,8 +218,8 @@ test.describe('BlueWorx > Design', () => {
   });
 
   test('a plugin reads every named style', async ({ page }) => {
-    // The contract in docs/design-system.md: 73 named styles.
-    expect(await homeHtml(page)).toContain('<!-- design tokens seen: 73,');
+    // The contract in docs/design-system.md: 74 named styles.
+    expect(await homeHtml(page)).toContain('<!-- design tokens seen: 74,');
   });
 
   test('site name and social links save', async ({ page }) => {

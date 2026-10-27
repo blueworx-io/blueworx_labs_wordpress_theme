@@ -56,6 +56,7 @@ $named = array(
 	'--color-primary-pressed',
 	'--color-primary-tint',
 	'--color-on-primary',
+	'--color-link',
 	'--color-primary-50',
 	'--color-primary-100',
 	'--color-primary-200',
@@ -165,6 +166,9 @@ $looks = array(
 	'defaults' => array(),
 	'yellow'   => array( 'primary' => '#f5d90a' ),
 	'lime'     => array( 'primary' => '#c6f24e' ),
+	'grey'     => array( 'primary' => '#808080' ),
+	'cyan'     => array( 'primary' => '#00ffff' ),
+	'orange'   => array( 'primary' => '#f08a2c' ),
 	'dark'     => array(
 		'background' => '#111111',
 		'text'       => '#f2f2f2',
@@ -187,7 +191,11 @@ check( 'pale body text is flagged', array_column( $pale, 'passes', 'label' )['Bo
 check( 'a mid-grey brand colour still gets readable button text', array_column( blueworx_design_readability( blueworx_design_tokens( with( array( 'primary' => '#8a8a8a' ) ) ) ), 'passes', 'label' )['Button text on the main colour'], true );
 
 $dark = blueworx_design_tokens( with( $looks['dark'] ) );
-check( 'on dark, pressed goes lighter, not darker', blueworx_color_luminance( $dark['--color-primary-pressed'] ) > blueworx_color_luminance( $dark['--color-primary'] ), true );
+$report = array_column( blueworx_design_readability( $dark ), 'passes', 'label' );
+foreach ( array( 'Button text on the main colour', 'Button text on hover', 'Button text when pressed', 'Links on the background' ) as $pair ) {
+	check( "the report checks: $pair", isset( $report[ $pair ] ), true );
+}
+check( 'links have their own colour', isset( $dark['--color-link'] ), true );
 
 $css = blueworx_design_css( blueworx_design_defaults() );
 check( 'css is a root block and a phone block', (bool) preg_match( '/^:root\{[^}]+\}@media \(max-width:639px\)\{:root\{[^}]+\}\}$/', $css ), true );

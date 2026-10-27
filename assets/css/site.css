@@ -73,14 +73,16 @@ body {
 }
 
 :where(a) {
-	color: var(--color-primary-hover);
+	color: var(--color-link);
 	font-weight: 500;
 	text-decoration: underline;
 	text-underline-offset: 0.15em;
 }
 
+/* A heavier underline rather than a new colour, so hover can never be the
+   one state that is hard to read. */
 :where(a:hover) {
-	color: var(--color-primary-pressed);
+	text-decoration-thickness: 2px;
 }
 
 :where(:focus-visible) {
@@ -123,7 +125,7 @@ body {
 
 :where(.is-style-outline) > :where(.wp-block-button__link) {
 	background: transparent;
-	color: var(--color-primary-hover);
+	color: var(--color-link);
 }
 
 /* Forms */

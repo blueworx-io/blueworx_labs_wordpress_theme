@@ -84,12 +84,20 @@ function blueworx_design_tokens( $settings = null ) {
 	$pole    = blueworx_color_pole( $bg );
 	$accent  = '' !== $s['accent'] ? $s['accent'] : blueworx_color_partner( $primary, $bg, $ink );
 
+	// Hover and pressed are the button's fill, under the same text as the main
+	// colour. They move away from that text — darker under light text, lighter
+	// under dark — so the text only ever gets easier to read as they deepen.
+	$on_primary = blueworx_color_text_on( $primary, $ink );
+	$away       = blueworx_color_luminance( $on_primary ) > blueworx_color_luminance( $primary ) ? '#000000' : '#ffffff';
+
 	$t = array(
 		'--color-primary'         => $primary,
-		'--color-primary-hover'   => blueworx_color_readable_on( blueworx_color_mix( $primary, $pole, 0.82 ), $bg ),
-		'--color-primary-pressed' => blueworx_color_mix( $primary, $pole, 0.66 ),
+		'--color-primary-hover'   => blueworx_color_mix( $primary, $away, 0.82 ),
+		'--color-primary-pressed' => blueworx_color_mix( $primary, $away, 0.66 ),
 		'--color-primary-tint'    => blueworx_color_mix( $primary, $bg, 0.08 ),
-		'--color-on-primary'      => blueworx_color_text_on( $primary, $ink ),
+		'--color-on-primary'      => $on_primary,
+		// The main colour as text: links, outline buttons.
+		'--color-link'            => blueworx_color_readable_on( blueworx_color_mix( $primary, $pole, 0.82 ), $bg ),
 	);
 
 	foreach ( blueworx_color_scale( $primary ) as $step => $shade ) {
@@ -300,8 +308,10 @@ function blueworx_design_readability( $tokens = null ) {
 		array( __( 'Body text on the background', 'blueworx-labs-wordpress' ), '--color-text', '--color-bg' ),
 		array( __( 'Secondary text on the background', 'blueworx-labs-wordpress' ), '--color-text-muted', '--color-bg' ),
 		array( __( 'Placeholder text on the background', 'blueworx-labs-wordpress' ), '--color-placeholder', '--color-bg' ),
-		array( __( 'Links on the background', 'blueworx-labs-wordpress' ), '--color-primary-hover', '--color-bg' ),
+		array( __( 'Links on the background', 'blueworx-labs-wordpress' ), '--color-link', '--color-bg' ),
 		array( __( 'Button text on the main colour', 'blueworx-labs-wordpress' ), '--color-on-primary', '--color-primary' ),
+		array( __( 'Button text on hover', 'blueworx-labs-wordpress' ), '--color-on-primary', '--color-primary-hover' ),
+		array( __( 'Button text when pressed', 'blueworx-labs-wordpress' ), '--color-on-primary', '--color-primary-pressed' ),
 		array( __( 'Text on the second colour', 'blueworx-labs-wordpress' ), '--color-on-accent', '--color-accent' ),
 		array( __( 'Second colour as text on the background', 'blueworx-labs-wordpress' ), '--color-accent-text', '--color-bg' ),
 		array( __( 'Body text on panels', 'blueworx-labs-wordpress' ), '--color-text', '--color-surface' ),
