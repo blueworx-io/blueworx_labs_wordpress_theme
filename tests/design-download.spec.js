@@ -62,3 +62,38 @@ test.describe('Design system download', () => {
     }
   });
 });
+
+test.describe('Design system download, kept to the people who set the design', () => {
+  test.skip(
+    isPlaceholder || !ADMIN_USER || !ADMIN_PASS,
+    'No real staging/preview URL and/or WP_ADMIN_USER / WP_ADMIN_PASS configured yet.'
+  );
+
+  test('a member with a valid link of their own still gets no zip', async ({ page }) => {
+    await page.goto('/admin_login/');
+    await page.fill('#user_login', 'member');
+    await page.fill('#user_pass', 'wptest-member-pw');
+    await page.click('#wp-submit');
+    await expect(page.locator('#wpadminbar')).toHaveCount(1);
+
+    const home = await (await page.request.get(cacheBust('/'))).text();
+    const nonce = home.match(/design download nonce: ([0-9a-f]+)/);
+    expect(nonce, 'the test plugin hands out a nonce').not.toBeNull();
+
+    const response = await page.request.get(`${DOWNLOAD_PATH}&_wpnonce=${nonce[1]}`);
+    expect(response.status()).toBe(403);
+    expect(response.headers()['content-type'] || '').not.toContain('application/zip');
+  });
+
+  test('stray output from elsewhere on the site does not spoil the zip', async ({ page }) => {
+    await login(page);
+    await page.goto(DESIGN_PATH);
+    const href = await page.getByRole('link', { name: 'Download design system' }).getAttribute('href');
+
+    const response = await page.request.get(`${href.replace(/&amp;/g, '&')}&bw_noise=1`);
+    const body = await response.body();
+    expect(response.headers()['content-type']).toContain('application/zip');
+    expect(body.subarray(0, 2).toString('latin1')).toBe('PK');
+    expect(Number(response.headers()['content-length'])).toBe(body.length);
+  });
+});

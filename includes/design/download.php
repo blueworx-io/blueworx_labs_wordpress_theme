@@ -291,6 +291,19 @@ function blueworx_design_handle_download() {
 		wp_die( esc_html__( 'The design system could not be packed up just now. Try again, and if it keeps happening, tell BlueWorx.', 'blueworx-labs-wordpress' ), 500 );
 	}
 
+	// Anything another plugin or a displayed notice has already buffered would
+	// otherwise land inside the zip and spoil it, so it is thrown away first.
+	// Output that has already gone out cannot be taken back: say so instead of
+	// sending a broken file.
+	while ( ob_get_level() > 0 ) {
+		ob_end_clean();
+	}
+
+	if ( headers_sent() ) {
+		wp_delete_file( $zip );
+		wp_die( esc_html__( 'The design system could not be sent because something else on the site has already written to the page. Try again, and if it keeps happening, tell BlueWorx.', 'blueworx-labs-wordpress' ), 500 );
+	}
+
 	nocache_headers();
 	header( 'Content-Type: application/zip' );
 	header( 'Content-Disposition: attachment; filename="' . $folder . '.zip"' );

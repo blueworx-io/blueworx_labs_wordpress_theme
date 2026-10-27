@@ -121,6 +121,24 @@ add_action( 'wp_head', static function () {
 	}
 } );
 
+// Hands whoever is signed in a download nonce of their own, so
+// tests/design-download.spec.js can prove a member holding a valid one is
+// still refused — the only way to reach the capability check.
+add_action( 'wp_head', static function () {
+	if ( is_user_logged_in() ) {
+		printf( '<!-- design download nonce: %s -->', esc_html( wp_create_nonce( 'blueworx_download_design' ) ) );
+	}
+} );
+
+// Stray buffered output before the download handler runs, as a noisy plugin or
+// a displayed notice would make, when the request asks for it.
+add_action( 'admin_init', static function () {
+	if ( isset( $_GET['bw_noise'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		ob_start();
+		echo 'NOISE';
+	}
+} );
+
 // A plugin stylesheet that depends on the design system, as docs/design-system.md
 // tells plugins to write one. WordPress drops it wherever that handle is missing.
 add_action( 'admin_enqueue_scripts', static function () {
