@@ -70,7 +70,7 @@ $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 // Kept under the plugin's name: client plugins such as Clubhouse check it to
 // know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
-	define( 'BLUEWORX_LABS_VERSION', '2.0.2' );
+	define( 'BLUEWORX_LABS_VERSION', '2.0.3' );
 }
 
 // The template directory, never the stylesheet one, so a child theme still
