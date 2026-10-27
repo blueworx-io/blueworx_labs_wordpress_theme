@@ -33,14 +33,27 @@ function blueworx_design_page_css() {
 }
 
 /**
+ * Registers the design system's style handle, on every kind of request.
+ *
+ * Registered everywhere, and not only on public pages, because plugins are
+ * told to depend on it and WordPress silently drops a stylesheet whose
+ * dependency is missing — a plugin's editor or admin styles would vanish.
+ *
+ * @return void
+ */
+function blueworx_design_register() {
+	// No file: the handle exists to carry the inline block and to be depended on.
+	wp_register_style( 'blueworx-design', false, array(), BLUEWORX_LABS_VERSION );
+	wp_add_inline_style( 'blueworx-design', blueworx_design_page_css() );
+}
+add_action( 'init', 'blueworx_design_register' );
+
+/**
  * Adds the design system to public pages.
  *
  * @return void
  */
 function blueworx_design_enqueue() {
-	// No file: the handle exists to carry the inline block and to be depended on.
-	wp_register_style( 'blueworx-design', false, array(), BLUEWORX_LABS_VERSION );
-	wp_add_inline_style( 'blueworx-design', blueworx_design_page_css() );
 	wp_enqueue_style( 'blueworx-design' );
 
 	if ( blueworx_feature_enabled( 'site_styles' ) ) {
@@ -80,15 +93,25 @@ add_filter( 'block_editor_settings_all', 'blueworx_design_editor_settings' );
  * So a colour or size picked for a block is one of the design system's, and
  * follows it when the design changes.
  *
+ * Only with Site styles on. Replacing the palette and sizes changes what a
+ * site's existing content looks like and what its editors can pick, which a
+ * site that already had the theme must choose rather than get from an update.
+ *
  * @return void
  */
 function blueworx_design_editor_supports() {
+	if ( ! blueworx_feature_enabled( 'site_styles' ) ) {
+		return;
+	}
+
 	$t = blueworx_design_tokens();
 
 	$colors = array(
 		'primary' => array( __( 'Main colour', 'blueworx-labs-wordpress' ), '--color-primary' ),
 		'accent'  => array( __( 'Second colour', 'blueworx-labs-wordpress' ), '--color-accent' ),
-		'text'    => array( __( 'Text', 'blueworx-labs-wordpress' ), '--color-text' ),
+		// Not "text": core puts has-text-color on every block with a text colour,
+		// and a palette colour with that slug would repaint all of them.
+		'ink'     => array( __( 'Text', 'blueworx-labs-wordpress' ), '--color-text' ),
 		'muted'   => array( __( 'Secondary text', 'blueworx-labs-wordpress' ), '--color-text-muted' ),
 		'surface' => array( __( 'Panel', 'blueworx-labs-wordpress' ), '--color-surface' ),
 		'bg'      => array( __( 'Background', 'blueworx-labs-wordpress' ), '--color-bg' ),

@@ -76,46 +76,28 @@ function blueworx_design_screen_assets() {
 add_action( 'admin_enqueue_scripts', 'blueworx_design_screen_assets' );
 
 /**
- * Saves the Design screen, or applies a preset from it.
+ * Checks a request to change the design, then lets it through.
  *
+ * @param string $action The nonce action.
  * @return void
  */
-function blueworx_design_handle_save() {
+function blueworx_design_check_request( $action ) {
 	blueworx_require_post_request();
 
 	if ( ! current_user_can( blueworx_design_capability() ) ) {
 		wp_die( esc_html__( 'You do not have sufficient permissions to perform this action.', 'blueworx-labs-wordpress' ) );
 	}
 
-	check_admin_referer( 'blueworx_save_design' );
+	check_admin_referer( $action );
+}
 
-	// phpcs:disable WordPress.Security.NonceVerification.Missing -- check_admin_referer() ran above.
-	if ( isset( $_POST['blueworx_design_apply_preset'] ) ) {
-		$preset = isset( $_POST['blueworx_design_preset'] ) ? sanitize_key( wp_unslash( $_POST['blueworx_design_preset'] ) ) : '';
-		$notice = blueworx_design_apply_preset( $preset ) ? 'preset:' . $preset : 'preset-missing';
-	} else {
-		$raw = isset( $_POST['blueworx_design'] ) && is_array( $_POST['blueworx_design'] ) ? wp_unslash( $_POST['blueworx_design'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Every key is cleaned by blueworx_design_sanitize().
-
-		blueworx_design_save( $raw );
-
-		if ( isset( $_POST['blueworx_design_site_name'] ) ) {
-			update_option( 'blogname', sanitize_text_field( wp_unslash( $_POST['blueworx_design_site_name'] ) ) );
-		}
-
-		if ( isset( $_POST['blueworx_design_logo'] ) ) {
-			$logo = absint( $_POST['blueworx_design_logo'] );
-
-			if ( $logo ) {
-				set_theme_mod( 'custom_logo', $logo );
-			} else {
-				remove_theme_mod( 'custom_logo' );
-			}
-		}
-
-		$notice = 'saved';
-	}
-	// phpcs:enable WordPress.Security.NonceVerification.Missing
-
+/**
+ * Clears cached pages, leaves a notice, and goes back to the screen.
+ *
+ * @param string $notice What to say: 'saved', 'preset:<id>' or 'preset-missing'.
+ * @return void
+ */
+function blueworx_design_finish_request( $notice ) {
 	if ( function_exists( 'blueworx_purge_site_cache' ) ) {
 		blueworx_purge_site_cache( 'design' );
 	}
@@ -125,7 +107,56 @@ function blueworx_design_handle_save() {
 	wp_safe_redirect( admin_url( 'admin.php?page=blueworx-design' ) );
 	exit;
 }
+
+/**
+ * Saves the Design screen.
+ *
+ * @return void
+ */
+function blueworx_design_handle_save() {
+	blueworx_design_check_request( 'blueworx_save_design' );
+
+	// phpcs:disable WordPress.Security.NonceVerification.Missing -- Checked in blueworx_design_check_request().
+	$raw = isset( $_POST['blueworx_design'] ) && is_array( $_POST['blueworx_design'] ) ? wp_unslash( $_POST['blueworx_design'] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Every key is cleaned by blueworx_design_sanitize().
+
+	blueworx_design_save( $raw );
+
+	if ( isset( $_POST['blueworx_design_site_name'] ) ) {
+		update_option( 'blogname', sanitize_text_field( wp_unslash( $_POST['blueworx_design_site_name'] ) ) );
+	}
+
+	if ( isset( $_POST['blueworx_design_logo'] ) ) {
+		$logo = absint( $_POST['blueworx_design_logo'] );
+
+		if ( $logo ) {
+			set_theme_mod( 'custom_logo', $logo );
+		} else {
+			remove_theme_mod( 'custom_logo' );
+		}
+	}
+	// phpcs:enable WordPress.Security.NonceVerification.Missing
+
+	blueworx_design_finish_request( 'saved' );
+}
 add_action( 'admin_post_blueworx_save_design', 'blueworx_design_handle_save' );
+
+/**
+ * Applies a preset from the Design screen.
+ *
+ * A form of its own, in the page header, so pressing Enter in the settings
+ * form can only ever save it — never replace the look with a preset.
+ *
+ * @return void
+ */
+function blueworx_design_handle_preset() {
+	blueworx_design_check_request( 'blueworx_apply_design_preset' );
+
+	// Only ever looked up among the registered presets, so it is used as sent.
+	$preset = isset( $_POST['blueworx_design_preset'] ) && is_string( $_POST['blueworx_design_preset'] ) ? wp_unslash( $_POST['blueworx_design_preset'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Missing, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Nonce checked above; matched against preset ids, never output or stored as sent.
+
+	blueworx_design_finish_request( blueworx_design_apply_preset( $preset ) ? 'preset:' . $preset : 'preset-missing' );
+}
+add_action( 'admin_post_blueworx_apply_design_preset', 'blueworx_design_handle_preset' );
 
 /**
  * A colour field: the browser's picker paired with a hex box.
@@ -271,7 +302,7 @@ function blueworx_design_saved_notice() {
 			array(
 				'tone' => 'success',
 				/* translators: %s: preset name. */
-				'text' => sprintf( __( 'Saved. The site now uses the %s preset.', 'blueworx-labs-wordpress' ), $label ),
+				'text' => sprintf( __( 'Saved. Preset applied: %s.', 'blueworx-labs-wordpress' ), $label ),
 			)
 		);
 	}
@@ -330,20 +361,57 @@ function blueworx_render_design_page() {
 	$choices = blueworx_design_choices();
 	$presets = blueworx_design_presets();
 	$allowed = blueworx_design_screen_allowed_html();
+	$actions = '';
+
+	// The preset picker is a form of its own in the header, outside the settings
+	// form, so Enter pressed in a settings box can only ever save.
+	if ( $presets ) {
+		$options = array();
+
+		foreach ( $presets as $id => $preset ) {
+			$options[ $id ] = $preset['label'] ?? $id;
+		}
+
+		$actions = sprintf(
+			'<form method="post" action="%1$s"><input type="hidden" name="action" value="blueworx_apply_design_preset" />%2$s',
+			esc_url( admin_url( 'admin-post.php' ) ),
+			wp_nonce_field( 'blueworx_apply_design_preset', '_wpnonce', true, false )
+		)
+			. blueworx_ds_select(
+				array(
+					'name'     => 'blueworx_design_preset',
+					'id'       => 'blueworx_design_preset',
+					'options'  => $options,
+					'selected' => $s['preset'],
+					'attrs'    => array( 'aria-label' => __( 'Preset', 'blueworx-labs-wordpress' ) ),
+				)
+			)
+			. ' '
+			. blueworx_ds_button(
+				array(
+					'label' => __( 'Use this preset', 'blueworx-labs-wordpress' ),
+					'type'  => 'submit',
+					'attrs' => array( 'title' => __( 'Replaces the colours, fonts and shapes below. The logos and links stay.', 'blueworx-labs-wordpress' ) ),
+				)
+			)
+			. '</form>';
+	}
 
 	blueworx_open_admin_page(
 		array(
-			'title' => __( 'Design', 'blueworx-labs-wordpress' ),
-			'lede'  => __( 'The site\'s brand and look. Every public page, the editor and our plugins take their colours, fonts, sizes and corners from here.', 'blueworx-labs-wordpress' ),
+			'title'   => __( 'Design', 'blueworx-labs-wordpress' ),
+			'lede'    => __( 'The site\'s brand and look. Every public page, the editor and our plugins take their colours, fonts, sizes and corners from here.', 'blueworx-labs-wordpress' ),
+			'actions' => $actions,
 			// novalidate: the server cleans every value, and a browser refusing to
 			// send the form would hide that from whoever pressed Save.
-			'form'  => sprintf(
+			'form'    => sprintf(
 				'<form method="post" action="%1$s" novalidate><input type="hidden" name="action" value="blueworx_save_design" />%2$s',
 				esc_url( admin_url( 'admin-post.php' ) ),
 				wp_nonce_field( 'blueworx_save_design', '_wpnonce', true, false )
 			),
 		)
 	);
+
 
 	$notices = blueworx_design_saved_notice() . blueworx_design_readability_notice( blueworx_design_tokens( $s ) );
 
@@ -359,47 +427,6 @@ function blueworx_render_design_page() {
 	echo wp_kses( $notices, $allowed );
 
 	$html = '';
-
-	if ( $presets ) {
-		$options = array();
-
-		foreach ( $presets as $id => $preset ) {
-			$options[ $id ] = isset( $preset['label'] ) ? $preset['label'] : $id;
-		}
-
-		$html .= blueworx_ds_card(
-			array(
-				'title'   => __( 'Presets', 'blueworx-labs-wordpress' ),
-				'actions' => blueworx_ds_button(
-					array(
-						'label' => __( 'Use this preset', 'blueworx-labs-wordpress' ),
-						'type'  => 'submit',
-						'attrs' => array(
-							'name'  => 'blueworx_design_apply_preset',
-							'value' => '1',
-						),
-					)
-				),
-				'note'    => __( 'Ready-made looks from the site\'s plugins. Using one replaces the colours, fonts and shapes below; the logos and links stay.', 'blueworx-labs-wordpress' ),
-				'body'    => '<div class="bw-fields">'
-					. blueworx_ds_field(
-						array(
-							'label'   => __( 'Preset', 'blueworx-labs-wordpress' ),
-							'for'     => 'blueworx_design_preset',
-							'control' => blueworx_ds_select(
-								array(
-									'name'     => 'blueworx_design_preset',
-									'id'       => 'blueworx_design_preset',
-									'options'  => $options,
-									'selected' => $s['preset'],
-								)
-							),
-						)
-					)
-					. '</div>',
-			)
-		);
-	}
 
 	$brand = blueworx_ds_field(
 		array(

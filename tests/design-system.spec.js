@@ -253,3 +253,79 @@ test.describe('BlueWorx > Design', () => {
     }
   });
 });
+
+test.describe('Site design system alongside existing content and plugins', () => {
+  test.skip(
+    isPlaceholder || !ADMIN_USER || !ADMIN_PASS,
+    'No real staging/preview URL and/or WP_ADMIN_USER / WP_ADMIN_PASS configured yet.'
+  );
+
+  test('text keeps the colour picked for it, with site styles on or off', async ({ page }) => {
+    await login(page);
+    await page.goto(SETTINGS_PATH);
+    const wasOn = await featureIsOn(page, 'site_styles');
+
+    try {
+      for (const on of [false, true]) {
+        await switchSiteStyles(page, on);
+        await page.goto(cacheBust('/design-colour-fixture/'));
+        const color = await page.locator('#custom-colour').evaluate((el) => getComputedStyle(el).color);
+        expect(color, `site styles ${on ? 'on' : 'off'}`).toBe('rgb(255, 0, 0)');
+      }
+    } finally {
+      await restoreAll([['site styles', () => switchSiteStyles(page, wasOn)]]);
+    }
+  });
+
+  test('the editor palette only changes once site styles are on', async ({ page }) => {
+    await login(page);
+    await page.goto(SETTINGS_PATH);
+    const wasOn = await featureIsOn(page, 'site_styles');
+
+    /**
+     * The colour slugs the block editor offers.
+     */
+    async function paletteSlugs() {
+      await page.goto('/wp-admin/post-new.php?post_type=page');
+      await page.waitForFunction(() => window.wp && wp.data && wp.data.select('core/block-editor'));
+      return page.evaluate(() =>
+        (wp.data.select('core/block-editor').getSettings().colors || []).map((color) => color.slug)
+      );
+    }
+
+    try {
+      await switchSiteStyles(page, false);
+      expect(await paletteSlugs()).not.toContain('primary');
+
+      await switchSiteStyles(page, true);
+      const slugs = await paletteSlugs();
+      expect(slugs).toContain('primary');
+      // "text" would collide with core's has-text-color class on every coloured block.
+      expect(slugs).not.toContain('text');
+    } finally {
+      await restoreAll([['site styles', () => switchSiteStyles(page, wasOn)]]);
+    }
+  });
+
+  test('a plugin stylesheet that depends on the design system loads in the admin too', async ({ page }) => {
+    await login(page);
+    await page.goto('/wp-admin/index.php');
+    await expect(page.locator('link#bw-test-design-dep-css')).toHaveCount(1);
+  });
+
+  test('pressing Enter on the Design screen saves, and never applies a preset', async ({ page }) => {
+    await login(page);
+
+    try {
+      await page.goto(DESIGN_PATH);
+      await page.fill('#blueworx_design_primary_hex', '#0a7d5c');
+      await page.press('#blueworx_design_primary_hex', 'Enter');
+      await page.waitForLoadState('domcontentloaded');
+
+      await expect(page.locator('.bw-notice--success')).toContainText('Every public page');
+      await expect(page.locator('#blueworx_design_primary_hex')).toHaveValue('#0a7d5c');
+    } finally {
+      await restoreAll([['default look', () => resetDesign(page)]]);
+    }
+  });
+});

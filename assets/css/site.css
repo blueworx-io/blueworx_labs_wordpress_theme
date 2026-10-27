@@ -207,16 +207,16 @@ body {
 
 /* Dark sections: the site's text colour as the background */
 
-:where(.is-style-dark, .has-text-background-color) {
+:where(.is-style-dark, .has-ink-background-color) {
 	background: var(--color-text);
 	color: var(--color-bg);
 }
 
-:where(.is-style-dark, .has-text-background-color) :where(h1, h2, h3, h4, h5, h6, a) {
+:where(.is-style-dark, .has-ink-background-color) :where(h1, h2, h3, h4, h5, h6, a) {
 	color: inherit;
 }
 
-:where(.is-style-dark, .has-text-background-color) :where(.wp-block-group, details) {
+:where(.is-style-dark, .has-ink-background-color) :where(.wp-block-group, details) {
 	background: var(--color-dark-raised);
 }
 
