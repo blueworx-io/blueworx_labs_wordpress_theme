@@ -367,6 +367,14 @@ function blueworx_render_design_page() {
 			'icon'  => 'eye',
 			'href'  => blueworx_design_reference_url(),
 		)
+	)
+	. ' '
+	. blueworx_ds_button(
+		array(
+			'label' => __( 'Download design system', 'blueworx-labs-wordpress' ),
+			'icon'  => 'download',
+			'href'  => blueworx_design_download_url(),
+		)
 	);
 
 	// The preset picker is a form of its own in the header, outside the settings

@@ -227,3 +227,77 @@ function blueworx_design_download_logo_usage( $name ) {
 		)
 	);
 }
+
+/**
+ * The download's address, carrying a nonce.
+ *
+ * @return string URL.
+ */
+function blueworx_design_download_url() {
+	return wp_nonce_url( admin_url( 'admin-post.php?action=blueworx_download_design' ), 'blueworx_download_design' );
+}
+
+/**
+ * Builds the zip in a temporary file.
+ *
+ * @param array  $manifest From blueworx_design_download_manifest().
+ * @param string $folder   The folder everything sits in.
+ * @return string|WP_Error The zip's path, or why it could not be made.
+ */
+function blueworx_design_build_zip( $manifest, $folder ) {
+	if ( ! class_exists( 'PclZip' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/class-pclzip.php';
+	}
+
+	$path = wp_tempnam( $folder . '.zip' );
+	$zip  = new PclZip( $path );
+	$list = array();
+
+	foreach ( $manifest as $name => $entry ) {
+		$content = isset( $entry['content'] ) ? $entry['content'] : (string) file_get_contents( $entry['file'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- A file on this site, found by blueworx_design_local_path() or get_attached_file().
+
+		$list[] = array(
+			PCLZIP_ATT_FILE_NAME    => $folder . '/' . $name,
+			PCLZIP_ATT_FILE_CONTENT => $content,
+		);
+	}
+
+	if ( 0 === $zip->create( $list ) ) {
+		wp_delete_file( $path );
+		return new WP_Error( 'blueworx_design_zip', $zip->errorInfo( true ) );
+	}
+
+	return $path;
+}
+
+/**
+ * Sends the design system download.
+ *
+ * A read, so a nonce in the link is enough; nothing on the site changes.
+ *
+ * @return void
+ */
+function blueworx_design_handle_download() {
+	if ( ! current_user_can( blueworx_design_capability() ) ) {
+		wp_die( esc_html__( 'You do not have sufficient permissions to perform this action.', 'blueworx-labs-wordpress' ), 403 );
+	}
+
+	check_admin_referer( 'blueworx_download_design' );
+
+	$folder = blueworx_design_download_folder( wp_specialchars_decode( (string) get_bloginfo( 'name' ), ENT_QUOTES ) );
+	$zip    = blueworx_design_build_zip( blueworx_design_download_manifest(), $folder );
+
+	if ( is_wp_error( $zip ) ) {
+		wp_die( esc_html__( 'The design system could not be packed up just now. Try again, and if it keeps happening, tell BlueWorx.', 'blueworx-labs-wordpress' ), 500 );
+	}
+
+	nocache_headers();
+	header( 'Content-Type: application/zip' );
+	header( 'Content-Disposition: attachment; filename="' . $folder . '.zip"' );
+	header( 'Content-Length: ' . filesize( $zip ) );
+
+	readfile( $zip ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_readfile -- Streaming the zip just built.
+	wp_delete_file( $zip );
+	exit;
+}
+add_action( 'admin_post_blueworx_download_design', 'blueworx_design_handle_download' );

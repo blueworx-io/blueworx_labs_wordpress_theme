@@ -110,6 +110,7 @@ $bw_chevron = blueworx_design_reference_icon( 'expand', 18 );
 			?>
 		</span>
 		<span class="bw-ref-bar__meta"><?php echo esc_html( 'BlueWorx Enhance ' . BLUEWORX_LABS_VERSION . ' · ' . wp_date( get_option( 'date_format' ) ) ); ?></span>
+		<a class="wp-element-button bw-ref-btn--small" href="<?php echo esc_url( blueworx_design_download_url() ); ?>"><?php esc_html_e( 'Download design system', 'blueworx-labs-wordpress' ); ?></a>
 	</div>
 
 	<nav class="bw-ref-jump" aria-label="<?php esc_attr_e( 'Sections', 'blueworx-labs-wordpress' ); ?>">
