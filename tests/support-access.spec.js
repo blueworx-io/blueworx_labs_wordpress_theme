@@ -1505,10 +1505,6 @@ test.describe('Support access — key lifecycle', () => {
   test('the panel offers a one-click Claude Code prompt carrying the fresh key', async ({
     page,
   }) => {
-    // A person's browser lets the page they clicked on write to the clipboard.
-    // The bare test browser CI installs does not, unless told to, and both copy
-    // routes then fail — which is the button working, not the button broken.
-    await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: baseURL });
     await login(page);
     await page.goto(SUPPORT_PATH);
 
@@ -1530,43 +1526,14 @@ test.describe('Support access — key lifecycle', () => {
       expect(prompt).toContain('/wp-json/');
       expect(prompt).toContain('READ ONLY');
 
+      // The button is wired up by a script near the foot of the page, after a
+      // long run of WordPress's own. A quick test can reach the button before
+      // that script has loaded, and a click then does nothing. A person is
+      // never that quick.
+      await page.waitForLoadState('load');
+
       const button = page.locator('[data-testid="bw-support-copy-prompt"]');
-      // TEMPORARY DIAGNOSTIC — reverted once the CI copy failure is understood.
-      page.on('console', (msg) => console.log(`BWDIAG console ${msg.type()}: ${msg.text()}`));
-      console.log('BWDIAG before', JSON.stringify(await page.evaluate(async () => {
-        const out = { secure: window.isSecureContext, focus: document.hasFocus(), clip: !!(navigator.clipboard && navigator.clipboard.writeText), ua: navigator.userAgent };
-        window.__bwLabels = [];
-        new MutationObserver(() => window.__bwLabels.push(`${Date.now()} ${document.querySelector('[data-testid="bw-support-copy-prompt"]').textContent}`))
-          .observe(document.querySelector('[data-testid="bw-support-copy-prompt"]'), { childList: true, characterData: true, subtree: true });
-        try { await navigator.clipboard.writeText('x'); out.write = 'ok'; } catch (e) { out.write = `${e.name}: ${e.message}`; }
-        const ta = document.createElement('textarea'); ta.value = 'y'; document.body.appendChild(ta); ta.select();
-        try { out.exec = document.execCommand('copy'); } catch (e) { out.exec = `${e.name}: ${e.message}`; }
-        ta.remove();
-        return out;
-      })));
-      console.log('BWDIAG wrap', JSON.stringify(await page.evaluate(() => {
-        const realWrite = navigator.clipboard.writeText.bind(navigator.clipboard);
-        navigator.clipboard.writeText = (text) => {
-          console.log(`write called, ${String(text).length} chars, focus ${document.hasFocus()}`);
-          return realWrite(text).then(
-            (v) => { console.log('write resolved'); return v; },
-            (e) => { console.log(`write rejected ${e.name}: ${e.message}`); throw e; }
-          );
-        };
-        const realExec = document.execCommand.bind(document);
-        document.execCommand = (cmd) => { const r = realExec(cmd); console.log(`exec ${cmd} -> ${r}, selection "${String(window.getSelection()).length}"`); return r; };
-        document.addEventListener("click", (e) => console.log(`click on ${e.target.tagName}.${e.target.className} testid=${e.target.closest("[data-testid]") ? e.target.closest("[data-testid]").dataset.testid : "-"} prevented=${e.defaultPrevented}`), true);
-        const b = document.querySelector("[data-testid=\"bw-support-copy-prompt\"]").getBoundingClientRect();
-        const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
-        console.log(`body ${document.body.className}`);
-        console.log(`scripts ${[...document.scripts].map((s) => (s.src ? s.src.split('/').pop() : 'inline')).join(' ')}`);
-        console.log(`hit ${hit && hit.tagName}.${hit && hit.className} scripts=${[...document.scripts].map((s) => s.src).filter((s) => s.includes("copy")).join(",")} bound=${typeof window.blueworxCopyField}`);
-        const field = document.getElementById('bw-support-prompt');
-        return { field: !!field, tag: field && field.tagName, hidden: field && field.hidden, display: field && getComputedStyle(field).display, len: field && field.value.length };
-      })));
       await button.click();
-      await page.waitForTimeout(3000);
-      console.log('BWDIAG labels', JSON.stringify(await page.evaluate(() => window.__bwLabels)));
       await expect(button).toHaveText('Copied');
 
       // Copying must not submit the form it sits inside.
