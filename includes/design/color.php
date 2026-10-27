@@ -164,14 +164,22 @@ function blueworx_color_readable_on( $color, $bg, $min = 4.5 ) {
 /**
  * The text colour for something filled with a colour.
  *
+ * The site's own text colour when it reads, so text keeps the site's ink.
+ * Otherwise white or black, whichever reads better — and one of the two always
+ * reaches 4.5:1 on any colour, so this never returns unreadable text.
+ *
  * @param string $fill The fill.
  * @param string $ink  The site's text colour.
- * @return string The ink or white, whichever reads better on the fill.
+ * @return string The ink, white or black.
  */
 function blueworx_color_text_on( $fill, $ink ) {
 	$ink = blueworx_color_normalize( $ink );
 
-	return blueworx_color_contrast( $ink, $fill ) >= blueworx_color_contrast( '#ffffff', $fill ) ? $ink : '#ffffff';
+	if ( '' !== $ink && blueworx_color_contrast( $ink, $fill ) >= 4.5 ) {
+		return $ink;
+	}
+
+	return blueworx_color_contrast( '#ffffff', $fill ) >= blueworx_color_contrast( '#000000', $fill ) ? '#ffffff' : '#000000';
 }
 
 /**

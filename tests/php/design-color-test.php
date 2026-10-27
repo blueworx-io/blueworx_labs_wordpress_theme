@@ -41,6 +41,10 @@ foreach ( array( '#f5d90a', '#808080', '#2f5bea', '#c6f24e', '#00ffff' ) as $col
 
 check( 'white text on brand blue', blueworx_color_text_on( '#2f5bea', '#16181d' ), '#ffffff' );
 check( 'ink text on yellow', blueworx_color_text_on( '#f5d90a', '#16181d' ), '#16181d' );
+check( 'black text on orange when the ink is light', blueworx_color_text_on( '#f08a2c', '#f2f2f2' ), '#000000' );
+foreach ( array( '#767676', '#8a8a8a', '#808080', '#f08a2c' ) as $fill ) {
+	check( "text always reads on $fill", blueworx_color_contrast( blueworx_color_text_on( $fill, '#f2f2f2' ), $fill ) >= 4.5, true );
+}
 
 $scale = blueworx_color_scale( '#2f5bea' );
 check( 'scale has ten steps', array_keys( $scale ), array( 50, 100, 200, 300, 400, 500, 600, 700, 800, 900 ) );
