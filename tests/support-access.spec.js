@@ -1558,6 +1558,8 @@ test.describe('Support access — key lifecycle', () => {
         document.addEventListener("click", (e) => console.log(`click on ${e.target.tagName}.${e.target.className} testid=${e.target.closest("[data-testid]") ? e.target.closest("[data-testid]").dataset.testid : "-"} prevented=${e.defaultPrevented}`), true);
         const b = document.querySelector("[data-testid=\"bw-support-copy-prompt\"]").getBoundingClientRect();
         const hit = document.elementFromPoint(b.left + b.width / 2, b.top + b.height / 2);
+        console.log(`body ${document.body.className}`);
+        console.log(`scripts ${[...document.scripts].map((s) => (s.src ? s.src.split('/').pop() : 'inline')).join(' ')}`);
         console.log(`hit ${hit && hit.tagName}.${hit && hit.className} scripts=${[...document.scripts].map((s) => s.src).filter((s) => s.includes("copy")).join(",")} bound=${typeof window.blueworxCopyField}`);
         const field = document.getElementById('bw-support-prompt');
         return { field: !!field, tag: field && field.tagName, hidden: field && field.hidden, display: field && getComputedStyle(field).display, len: field && field.value.length };
