@@ -1505,6 +1505,10 @@ test.describe('Support access — key lifecycle', () => {
   test('the panel offers a one-click Claude Code prompt carrying the fresh key', async ({
     page,
   }) => {
+    // A person's browser lets the page they clicked on write to the clipboard.
+    // The bare test browser CI installs does not, unless told to, and both copy
+    // routes then fail — which is the button working, not the button broken.
+    await page.context().grantPermissions(['clipboard-read', 'clipboard-write'], { origin: baseURL });
     await login(page);
     await page.goto(SUPPORT_PATH);
 
