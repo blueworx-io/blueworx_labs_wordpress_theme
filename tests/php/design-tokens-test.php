@@ -230,6 +230,19 @@ check( 'a plugin stack cannot break out', preg_match( '/[;{}<>]/', blueworx_desi
 check( 'a plugin font face cannot break out', preg_match( '/<|\}\s*<|;\s*\}\s*</', blueworx_design_font_face_css( $evil ) ), 0 );
 check( 'the css cannot break out', false === strpos( blueworx_design_css( $evil ), '</style' ), true );
 
+$GLOBALS['filters']['blueworx_design_fonts'] = function ( $fonts ) {
+	$fonts['unclosed'] = array(
+		'label'  => 'Unclosed',
+		'family' => 'Unclosed',
+		'stack'  => '"Syne, sans-serif',
+		'files'  => array(),
+	);
+	return $fonts;
+};
+$unclosed = blueworx_design_css( with( array( 'heading_font' => 'unclosed' ) ) );
+check( 'an unclosed quote in a plugin font leaves the quotes balanced', 0 === substr_count( $unclosed, '"' ) % 2, true );
+check( 'an unclosed quote does not swallow the phone sizes', (bool) preg_match( '/@media \(max-width:639px\)\{:root\{--text-display:40px;/', $unclosed ), true );
+
 $GLOBALS['filters']['blueworx_design_tokens'] = function ( $tokens ) {
 	$tokens['--color-primary'] = 'red;}</style>';
 	return $tokens;

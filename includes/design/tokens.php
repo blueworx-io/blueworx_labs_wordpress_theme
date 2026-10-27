@@ -64,7 +64,16 @@ function blueworx_design_type_scales( $name ) {
  * @return string
  */
 function blueworx_design_clean_font_value( $value ) {
-	return trim( preg_replace( '/[^A-Za-z0-9 ,"\'_.-]/', '', (string) $value ) );
+	$value = preg_replace( '/[^A-Za-z0-9 ,"\'_.-]/', '', (string) $value );
+
+	// A quote left open would run on through every style printed after it.
+	foreach ( array( '"', "'" ) as $quote ) {
+		if ( 0 !== substr_count( $value, $quote ) % 2 ) {
+			$value = str_replace( $quote, '', $value );
+		}
+	}
+
+	return trim( $value );
 }
 
 /**

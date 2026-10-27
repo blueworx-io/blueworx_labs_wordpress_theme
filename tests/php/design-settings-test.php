@@ -87,6 +87,17 @@ $GLOBALS['filters']['blueworx_design_fonts'] = function ( $fonts ) {
 };
 check( 'a plugin font can be chosen', blueworx_design_sanitize( array( 'heading_font' => 'syne' ) )['heading_font'], 'syne' );
 
+$GLOBALS['filters']['blueworx_design_fonts'] = function ( $fonts ) {
+	$fonts['broken']  = 'not a font';
+	$fonts['nostack'] = array( 'label' => 'No stack' );
+	return $fonts;
+};
+check( 'a malformed plugin font is left out', isset( blueworx_design_fonts()['broken'] ), false );
+check( 'a plugin font with no stack is left out', isset( blueworx_design_fonts()['nostack'] ), false );
+check( 'a malformed plugin font cannot be chosen', blueworx_design_sanitize( array( 'heading_font' => 'broken' ) )['heading_font'], 'sora' );
+check( 'the built-in fonts survive a bad plugin', isset( blueworx_design_fonts()['inter'] ), true );
+unset( $GLOBALS['filters']['blueworx_design_fonts'] );
+
 check( 'no presets by default', blueworx_design_presets(), array() );
 
 $GLOBALS['filters']['blueworx_design_presets'] = function () {

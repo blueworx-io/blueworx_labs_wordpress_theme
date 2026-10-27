@@ -189,7 +189,25 @@ function blueworx_design_fonts() {
 	 *
 	 * @param array $fonts Fonts keyed by id: label, family, stack, files.
 	 */
-	return (array) apply_filters( 'blueworx_design_fonts', $fonts );
+	$filtered = (array) apply_filters( 'blueworx_design_fonts', $fonts );
+	$valid    = array();
+
+	// A font is used on every request, so one a plugin got wrong is left out
+	// rather than allowed to break every page, admin included.
+	foreach ( $filtered as $id => $font ) {
+		if ( ! is_string( $id ) || ! is_array( $font ) || empty( $font['stack'] ) || ! is_string( $font['stack'] ) ) {
+			continue;
+		}
+
+		$valid[ $id ] = array(
+			'label'  => isset( $font['label'] ) && is_string( $font['label'] ) ? $font['label'] : $id,
+			'family' => isset( $font['family'] ) && is_string( $font['family'] ) ? $font['family'] : '',
+			'stack'  => $font['stack'],
+			'files'  => isset( $font['files'] ) && is_array( $font['files'] ) ? $font['files'] : array(),
+		);
+	}
+
+	return $valid;
 }
 
 /**
