@@ -59,7 +59,7 @@ $bw_open = static function ( $id, $sections ) {
 	$number = array_search( $id, array_keys( $sections ), true ) + 1;
 
 	printf(
-		'<section class="bw-ref-sec" id="%1$s" aria-labelledby="%1$s-title"><div class="bw-ref-sec__head"><span id="%1$s-title"><b>%2$02d</b>// %3$s</span></div>',
+		'<section class="bw-ref-sec" id="%1$s" aria-labelledby="%1$s-title"><div class="bw-ref-sec__head"><h2 id="%1$s-title"><b>%2$02d</b>// %3$s</h2></div>',
 		esc_attr( $id ),
 		(int) $number,
 		esc_html( $sections[ $id ] )
@@ -235,12 +235,12 @@ $bw_chevron = blueworx_design_reference_icon( 'expand', 18 );
 
 				foreach ( array(
 					array( 'Display', '--text-display', '<p style="margin:0;font-family:var(--font-heading);font-weight:700;font-size:var(--text-display);line-height:1.02">' . esc_html__( 'Big ideas, small words', 'blueworx-labs-wordpress' ) . '</p>' ),
-					array( 'H1', '--text-h1', '<h1>' . esc_html__( 'Welcome to the site', 'blueworx-labs-wordpress' ) . '</h1>' ),
-					array( 'H2', '--text-h2', '<h2>' . esc_html__( 'Our services', 'blueworx-labs-wordpress' ) . '</h2>' ),
-					array( 'H3', '--text-h3', '<h3>' . esc_html__( 'How booking works', 'blueworx-labs-wordpress' ) . '</h3>' ),
-					array( 'H4', '--text-h4', '<h4>' . esc_html__( 'Frequently asked questions', 'blueworx-labs-wordpress' ) . '</h4>' ),
-					array( 'H5', '--text-h5', '<h5>' . esc_html__( 'Opening times', 'blueworx-labs-wordpress' ) . '</h5>' ),
-					array( 'H6', '--text-h6', '<h6>' . esc_html__( 'Latest news', 'blueworx-labs-wordpress' ) . '</h6>' ),
+					array( 'H1', '--text-h1', '<h1 role="presentation">' . esc_html__( 'Welcome to the site', 'blueworx-labs-wordpress' ) . '</h1>' ),
+					array( 'H2', '--text-h2', '<h2 role="presentation">' . esc_html__( 'Our services', 'blueworx-labs-wordpress' ) . '</h2>' ),
+					array( 'H3', '--text-h3', '<h3 role="presentation">' . esc_html__( 'How booking works', 'blueworx-labs-wordpress' ) . '</h3>' ),
+					array( 'H4', '--text-h4', '<h4 role="presentation">' . esc_html__( 'Frequently asked questions', 'blueworx-labs-wordpress' ) . '</h4>' ),
+					array( 'H5', '--text-h5', '<h5 role="presentation">' . esc_html__( 'Opening times', 'blueworx-labs-wordpress' ) . '</h5>' ),
+					array( 'H6', '--text-h6', '<h6 role="presentation">' . esc_html__( 'Latest news', 'blueworx-labs-wordpress' ) . '</h6>' ),
 					array( __( 'Eyebrow', 'blueworx-labs-wordpress' ), '', '<p class="bw-ref-eyebrow" style="margin:0">' . esc_html__( 'New this season', 'blueworx-labs-wordpress' ) . '</p>' ),
 					array( __( 'Lead', 'blueworx-labs-wordpress' ), '--text-lead', '<p class="bw-ref-lead">' . esc_html__( 'An opening paragraph that sits under a page heading and sets the scene.', 'blueworx-labs-wordpress' ) . '</p>' ),
 					array( __( 'Body', 'blueworx-labs-wordpress' ), '--text-body', '<p>' . esc_html__( 'The size for most reading on the site. Lines stay under about 70 characters so long paragraphs are comfortable to read.', 'blueworx-labs-wordpress' ) . '</p>' ),
@@ -409,7 +409,7 @@ $bw_chevron = blueworx_design_reference_icon( 'expand', 18 );
 			</div>
 			<?php
 			$bw_frame(
-				'<div class="bw-ref-empty">' . blueworx_design_reference_icon( 'basket', 28 ) . '<h4>' . esc_html__( 'Your basket is empty', 'blueworx-labs-wordpress' ) . '</h4><p>' . esc_html__( 'Products you add will appear here until you check out.', 'blueworx-labs-wordpress' ) . '</p><button type="button" class="bw-ref-btn--secondary bw-ref-btn--small">' . esc_html__( 'Browse the shop', 'blueworx-labs-wordpress' ) . '</button></div>',
+				'<div class="bw-ref-empty">' . blueworx_design_reference_icon( 'basket', 28 ) . '<h4 role="presentation">' . esc_html__( 'Your basket is empty', 'blueworx-labs-wordpress' ) . '</h4><p>' . esc_html__( 'Products you add will appear here until you check out.', 'blueworx-labs-wordpress' ) . '</p><button type="button" class="bw-ref-btn--secondary bw-ref-btn--small">' . esc_html__( 'Browse the shop', 'blueworx-labs-wordpress' ) . '</button></div>',
 				__( 'Empty state', 'blueworx-labs-wordpress' ),
 				'surface'
 			);

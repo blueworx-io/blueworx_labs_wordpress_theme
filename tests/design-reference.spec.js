@@ -125,3 +125,38 @@ test.describe('Design system reference page', () => {
     }
   });
 });
+
+test.describe('Design system reference page, for people who cannot change the design', () => {
+  test.skip(
+    isPlaceholder || !ADMIN_USER || !ADMIN_PASS,
+    'No real staging/preview URL and/or WP_ADMIN_USER / WP_ADMIN_PASS configured yet.'
+  );
+
+  test('a signed-in member sees the normal site, not the design system', async ({ page }) => {
+    // The member global-setup.js adds: signed in, but not allowed to change the design.
+    await page.goto('/admin_login/');
+    await page.fill('#user_login', 'member');
+    await page.fill('#user_pass', 'wptest-member-pw');
+    await page.click('#wp-submit');
+    await expect(page.locator('#wpadminbar')).toHaveCount(1);
+
+    const response = await page.request.get(cacheBust(REFERENCE_PATH));
+    const html = await response.text();
+    expect(html).not.toContain('id="tokens"');
+    expect(html).not.toContain('design-reference');
+  });
+});
+
+test.describe('Design system reference page, read by a screen reader', () => {
+  test.skip(
+    isPlaceholder || !ADMIN_USER || !ADMIN_PASS,
+    'No real staging/preview URL and/or WP_ADMIN_USER / WP_ADMIN_PASS configured yet.'
+  );
+
+  test('one main heading, then a heading for each section', async ({ page }) => {
+    await login(page);
+    await page.goto(cacheBust(REFERENCE_PATH));
+    await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+    await expect(page.locator('main section[id] > .bw-ref-sec__head').getByRole('heading', { level: 2 })).toHaveCount(SECTIONS.length);
+  });
+});
