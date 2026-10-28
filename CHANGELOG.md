@@ -8,6 +8,13 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.0.3] - 2026-10-27
+
+### Changed
+- **Checks on a change now run faster.** The theme uses the newest shared test
+  setup, which keeps the test browser between runs and adds more test machines
+  as the tests grow. Nothing changes on a site.
+
 ## [2.0.2] - 2026-10-26
 
 ### Fixed
