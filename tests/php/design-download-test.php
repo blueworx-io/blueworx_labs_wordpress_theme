@@ -45,7 +45,15 @@ function esc_url_raw( $url ) {
 }
 
 function sanitize_title( $title ) {
-	$title = strtr( (string) $title, array( 'é' => 'e', 'è' => 'e', 'à' => 'a', 'ç' => 'c' ) );
+	$title = strtr(
+		(string) $title,
+		array(
+			'é' => 'e',
+			'è' => 'e',
+			'à' => 'a',
+			'ç' => 'c',
+		)
+	);
 	return trim( preg_replace( '/[^a-z0-9]+/', '-', strtolower( $title ) ), '-' );
 }
 
@@ -132,7 +140,7 @@ $GLOBALS['filters']['blueworx_design_fonts'] = function ( $fonts ) {
 	);
 	return $fonts;
 };
-$remote = blueworx_design_download_manifest( array_merge( blueworx_design_defaults(), array( 'heading_font' => 'remote' ) ) );
+$remote                                      = blueworx_design_download_manifest( array_merge( blueworx_design_defaults(), array( 'heading_font' => 'remote' ) ) );
 check( 'a font from another site is not fetched', isset( $remote['fonts/remote.woff2'] ), false );
 check( 'the README names a font it left out', false !== strpos( $remote['README.md']['content'], 'Remote Sans' ), true );
 

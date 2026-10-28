@@ -21,9 +21,9 @@ on:
 jobs:
   release:
     # v1.19.0 is the first foundation release that supports themes.
-    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/release-wordpress.yml@v1.19.0
+    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/release-wordpress.yml@v1.21.0
     with:
-      foundation_ref: v1.19.0
+      foundation_ref: v1.21.0
       # A theme: the version is read from style.css, and the zip's top folder is
       # blueworx-labs-wordpress-theme/, the theme's folder name on every site.
       theme_slug: blueworx-labs-wordpress-theme

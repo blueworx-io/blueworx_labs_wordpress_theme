@@ -42,7 +42,7 @@ function blueworx_design_download_folder( $site_name ) {
  */
 function blueworx_design_local_path( $url ) {
 	$roots = array(
-		BLUEWORX_LABS_URL                 => BLUEWORX_LABS_PATH,
+		BLUEWORX_LABS_URL                => BLUEWORX_LABS_PATH,
 		trailingslashit( content_url() ) => trailingslashit( WP_CONTENT_DIR ),
 	);
 
@@ -120,7 +120,7 @@ function blueworx_design_download_manifest( $settings = null ) {
 				continue;
 			}
 
-			$file                       = basename( $path );
+			$file                      = basename( $path );
 			$files[ 'fonts/' . $file ] = array( 'file' => $path );
 
 			$faces .= sprintf(

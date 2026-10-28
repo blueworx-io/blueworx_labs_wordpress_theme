@@ -136,8 +136,8 @@ function blueworx_design_tokens( $settings = null ) {
 		'error'   => '#c42b2b',
 		'info'    => '#0b6bcb',
 	) as $status => $base ) {
-		$tint                             = blueworx_color_mix( $base, $bg, 0.10 );
-		$t[ '--color-' . $status ]        = blueworx_color_readable_on( $base, $tint );
+		$tint                                = blueworx_color_mix( $base, $bg, 0.10 );
+		$t[ '--color-' . $status ]           = blueworx_color_readable_on( $base, $tint );
 		$t[ '--color-' . $status . '-tint' ] = $tint;
 	}
 
@@ -279,8 +279,8 @@ function blueworx_design_tokens_file( $settings = null ) {
 
 	$lines = static function ( $tokens, $indent, $text_label ) use ( $groups ) {
 		$groups['--text-'] = $text_label;
-		$out     = '';
-		$current = null;
+		$out               = '';
+		$current           = null;
 
 		foreach ( explode( ';', rtrim( blueworx_design_declarations( $tokens ), ';' ) ) as $declaration ) {
 			if ( '' === $declaration ) {
@@ -425,12 +425,12 @@ function blueworx_design_readability( $tokens = null ) {
  *               array( 'token', 'label', 'use' ).
  */
 function blueworx_design_palette() {
-	$rows = static function ( $list ) {
+	$rows = static function ( $group ) {
 		return array_map(
 			static function ( $row ) {
 				return array_combine( array( 'token', 'label', 'use' ), $row );
 			},
-			$list
+			$group
 		);
 	};
 

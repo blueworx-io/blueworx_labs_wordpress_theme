@@ -79,13 +79,13 @@ function blueworx_design_grade( $ratio ) {
 /**
  * One colour swatch: the colour, its readability grade, name, value and use.
  *
- * @param array  $tokens Named styles.
- * @param string $name   Named style.
- * @param string $label  What the team calls it.
- * @param string $use    What it is for.
+ * @param array  $tokens  Named styles.
+ * @param string $name    Named style.
+ * @param string $label   What the team calls it.
+ * @param string $purpose What it is for.
  * @return string HTML.
  */
-function blueworx_design_reference_swatch( $tokens, $name, $label, $use ) {
+function blueworx_design_reference_swatch( $tokens, $name, $label, $purpose ) {
 	$hex   = $tokens[ $name ];
 	$text  = blueworx_color_text_on( $hex, $tokens['--color-text'] );
 	$ratio = blueworx_color_contrast( $text, $hex );
@@ -99,7 +99,7 @@ function blueworx_design_reference_swatch( $tokens, $name, $label, $use ) {
 		esc_attr( sprintf( __( 'Text contrast %s:1', 'blueworx-labs-wordpress' ), number_format( $ratio, 1 ) ) ),
 		esc_html( blueworx_design_grade( $ratio ) ),
 		esc_html( $label ),
-		esc_html( $use )
+		esc_html( $purpose )
 	);
 }
 
