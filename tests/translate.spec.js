@@ -481,7 +481,17 @@ test.describe('BlueWorx on-page translation — display style', () => {
     await page.goto('/');
 
     await expect(page.locator(PILL_FLAG)).toBeVisible();
-    await expect(page.locator(PILL_FLAG)).toHaveText('🇬🇧');
+    // WordPress's own emoji script swaps a flag for a picture of one, with the
+    // flag as its alt text, in a browser that cannot draw flags — which the
+    // test browser CI installs cannot. Either way the visitor sees the flag.
+    await expect
+      .poll(() =>
+        page.locator(PILL_FLAG).evaluate((el) => {
+          const picture = el.querySelector('img.emoji');
+          return picture ? picture.alt : el.textContent;
+        })
+      )
+      .toBe('🇬🇧');
     expect(await widthOf(page, PILL_NAME)).toBeGreaterThan(1);
   });
 
