@@ -96,6 +96,36 @@ add_filter( 'blueworx_page_source', static function ( $label, $post_id ) {
 add_filter( 'blueworx_store_dashboard_url', static function ( $url ) {
 	return isset( $_GET['bw_claim'] ) ? home_url( '/claimed-fixture/' ) : $url; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
 } );
+
+// Supplies a design preset and a font the way Clubhouse V2 supplies its skins,
+// and reads the named styles back the way any plugin would, for
+// tests/design-system.spec.js.
+add_filter( 'blueworx_design_fonts', static function ( $fonts ) {
+	$fonts['fixture-mono'] = array( 'label' => 'Fixture Mono', 'family' => 'Fixture Mono', 'stack' => '"Fixture Mono", monospace', 'files' => array() );
+	return $fonts;
+} );
+
+add_filter( 'blueworx_design_presets', static function ( $presets ) {
+	$presets['fixture'] = array(
+		'label'       => 'Fixture preset',
+		'description' => 'A preset another plugin added.',
+		'settings'    => array( 'primary' => '#c6f24e', 'heading_font' => 'fixture-mono', 'corners' => 'square' ),
+	);
+	return $presets;
+} );
+
+add_action( 'wp_head', static function () {
+	if ( function_exists( 'blueworx_design_tokens' ) ) {
+		$tokens = blueworx_design_tokens();
+		printf( '<!-- design tokens seen: %d, primary: %s -->', count( $tokens ), esc_html( $tokens['--color-primary'] ) );
+	}
+} );
+
+// A plugin stylesheet that depends on the design system, as docs/design-system.md
+// tells plugins to write one. WordPress drops it wherever that handle is missing.
+add_action( 'admin_enqueue_scripts', static function () {
+	wp_enqueue_style( 'bw-test-design-dep', home_url( '/?bw-test-design-dep=1' ), array( 'blueworx-design' ), '1' );
+} );
 `;
 
 export default async function globalSetup() {
@@ -184,6 +214,7 @@ update_option( 'surecart_checkout_page_id', bw_fixture_page( 'checkout-fixture',
 update_option( 'surecart_order-confirmation_page_id', bw_fixture_page( 'thanks-fixture', 'Thank you fixture', '<p id="shop-content">THANKS CONTENT</p>' ) );
 update_option( 'surecart_dashboard_page_id', bw_fixture_page( 'dashboard-fixture', 'Dashboard fixture', '<p id="foreign-content">FOREIGN</p>' ) );
 bw_fixture_page( 'claimed-fixture', 'Claimed dashboard fixture', '<p id="claimed-content">CLAIMED</p>' );
+bw_fixture_page( 'design-colour-fixture', 'Colour fixture', '<p class="has-text-color" id="custom-colour" style="color:#ff0000">Red text</p>' );
 
 // A member who is not an administrator, for the dashboard specs.
 if ( ! get_user_by( 'login', 'member' ) ) {

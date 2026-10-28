@@ -252,6 +252,13 @@ function blueworx_get_feature_definitions() {
 			'detail'      => null,
 			'guide'       => false,
 		),
+		'site_styles'           => array(
+			'label'       => __( 'Site styles', 'blueworx-labs-wordpress' ),
+			'description' => __( 'Styles headings, text, links, buttons, forms, tables, FAQs and images on public pages from the site\'s design system. Off on sites that had the theme before 2.1.0, so their pages do not change until you choose.', 'blueworx-labs-wordpress' ),
+			'section'     => 'appearance',
+			'detail'      => null,
+			'guide'       => false,
+		),
 		'admin_bar'             => array(
 			'label'       => __( 'Toolbar cleanup', 'blueworx-labs-wordpress' ),
 			'description' => __( 'Takes the WordPress logo, Customize, update counter and Help drawer out of the black toolbar, and can hide the toolbar entirely on the front of the site.', 'blueworx-labs-wordpress' ),

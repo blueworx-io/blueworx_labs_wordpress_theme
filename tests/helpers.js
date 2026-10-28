@@ -223,6 +223,7 @@ const FEATURE_SECTIONS = {
   admin_bar: 'appearance',
   display_names: 'appearance',
   dashboard_widgets: 'appearance',
+  site_styles: 'appearance',
   store_pages: 'store',
 };
 

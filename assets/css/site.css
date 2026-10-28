@@ -1,0 +1,248 @@
+/*
+ * BlueWorx site styles.
+ *
+ * Styles plain WordPress content on public pages from the site's design
+ * system. Every value here is a named style (see docs/design-system.md), so
+ * changing the design on BlueWorx > Design restyles all of it.
+ *
+ * Element rules sit inside :where(), which gives them no weight: a plugin's
+ * own styles, or a block's, always win over these without a fight.
+ *
+ * Loaded only while the Site styles switch is on.
+ */
+
+body {
+	margin: 0;
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: var(--font-body);
+	font-size: var(--text-body);
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* Headings */
+
+:where(h1, h2, h3, h4, h5, h6) {
+	margin: 0 0 var(--space-4);
+	color: var(--color-text);
+	font-family: var(--font-heading);
+	font-weight: 600;
+}
+
+:where(h1) { font-size: var(--text-h1); font-weight: 700; line-height: 1.1; }
+:where(h2) { font-size: var(--text-h2); font-weight: 700; line-height: 1.15; }
+:where(h3) { font-size: var(--text-h3); line-height: 1.2; }
+:where(h4) { font-size: var(--text-h4); line-height: 1.3; }
+:where(h5) { font-size: var(--text-h5); line-height: 1.4; }
+
+:where(h6) {
+	font-size: var(--text-h6);
+	letter-spacing: 0.08em;
+	line-height: 1.4;
+	text-transform: uppercase;
+}
+
+/* Text */
+
+:where(p, ul, ol, dl, blockquote, figure, table, details) {
+	margin: 0 0 var(--space-4);
+}
+
+:where(.has-lead-font-size, .is-style-lead) {
+	color: var(--color-text-muted);
+	font-size: var(--text-lead);
+	line-height: 1.6;
+}
+
+:where(small, figcaption, .wp-element-caption) {
+	color: var(--color-text-muted);
+	font-size: var(--text-small);
+	line-height: 1.55;
+}
+
+:where(blockquote) {
+	padding-left: var(--space-4);
+	border-left: 3px solid var(--color-primary);
+}
+
+:where(hr) {
+	border: 0;
+	border-top: 1px solid var(--color-border);
+	margin: var(--space-8) 0;
+}
+
+:where(a) {
+	color: var(--color-link);
+	font-weight: 500;
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+/* A heavier underline rather than a new colour, so hover can never be the
+   one state that is hard to read. */
+:where(a:hover) {
+	text-decoration-thickness: 2px;
+}
+
+:where(:focus-visible) {
+	outline: none;
+	border-radius: var(--radius-sm);
+	box-shadow: var(--focus-ring);
+}
+
+/* Buttons */
+
+:where(.wp-element-button, .wp-block-button__link, button, input[type="submit"], input[type="button"]) {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2);
+	min-height: 44px;
+	padding: var(--space-3) var(--space-6);
+	border: 1px solid var(--color-primary);
+	border-radius: var(--radius-button);
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+	font-family: var(--font-body);
+	font-size: var(--text-body);
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	cursor: pointer;
+}
+
+:where(.wp-element-button, .wp-block-button__link, button, input[type="submit"], input[type="button"]):hover {
+	border-color: var(--color-primary-hover);
+	background: var(--color-primary-hover);
+	color: var(--color-on-primary);
+}
+
+:where(.wp-element-button, .wp-block-button__link, button, input[type="submit"], input[type="button"]):active {
+	border-color: var(--color-primary-pressed);
+	background: var(--color-primary-pressed);
+}
+
+:where(.is-style-outline) > :where(.wp-block-button__link) {
+	background: transparent;
+	color: var(--color-link);
+}
+
+/* Forms */
+
+:where(input:not([type="submit"], [type="button"], [type="checkbox"], [type="radio"]), select, textarea) {
+	box-sizing: border-box;
+	width: 100%;
+	min-height: 44px;
+	padding: var(--space-2) var(--space-3);
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-md);
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: var(--font-body);
+	font-size: var(--text-body);
+}
+
+:where(input, textarea)::placeholder {
+	color: var(--color-placeholder);
+	opacity: 1;
+}
+
+:where(label) {
+	display: inline-block;
+	margin-bottom: var(--space-1);
+	font-size: var(--text-small);
+	font-weight: 600;
+}
+
+/* Tables */
+
+:where(table) {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: var(--text-small);
+}
+
+:where(th, td) {
+	padding: var(--space-3) var(--space-4);
+	border-bottom: 1px solid var(--color-border);
+	text-align: left;
+}
+
+:where(thead th) {
+	background: var(--color-surface);
+	font-weight: 600;
+}
+
+/* FAQs: the Details block */
+
+:where(details) {
+	padding: var(--space-4) var(--space-6);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	background: var(--color-bg);
+}
+
+:where(details > summary) {
+	font-family: var(--font-heading);
+	font-size: var(--text-h5);
+	font-weight: 600;
+	cursor: pointer;
+}
+
+:where(details[open] > summary) {
+	margin-bottom: var(--space-3);
+}
+
+/* Images */
+
+:where(img, video) {
+	max-width: 100%;
+	height: auto;
+}
+
+:where(.wp-block-image img, .wp-block-cover) {
+	border-radius: var(--radius-lg);
+}
+
+/* Dark sections: the site's text colour as the background */
+
+:where(.is-style-dark, .has-ink-background-color) {
+	background: var(--color-text);
+	color: var(--color-bg);
+}
+
+:where(.is-style-dark, .has-ink-background-color) :where(h1, h2, h3, h4, h5, h6, a) {
+	color: inherit;
+}
+
+:where(.is-style-dark, .has-ink-background-color) :where(.wp-block-group, details) {
+	background: var(--color-dark-raised);
+}
+
+/* Layout */
+
+:where(main) {
+	box-sizing: border-box;
+	max-width: var(--width-page);
+	margin: 0 auto;
+	padding: var(--section-space) var(--gutter);
+}
+
+:where(.entry-content, article) > :where(*:not(.alignwide, .alignfull)) {
+	max-width: var(--width-reading);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+:where(.alignwide) {
+	max-width: var(--width-wide);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+:where(.alignfull) {
+	width: 100vw;
+	max-width: none;
+	margin-left: calc(50% - 50vw);
+}

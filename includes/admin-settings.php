@@ -35,6 +35,16 @@ function blueworx_register_settings_page() {
 		'blueworx_render_enhancements_page'
 	);
 
+	// Straight after Enhancements: the site's look is the next thing set up.
+	add_submenu_page(
+		'blueworx-labs-wordpress',
+		esc_html__( 'Design', 'blueworx-labs-wordpress' ),
+		esc_html__( 'Design', 'blueworx-labs-wordpress' ),
+		blueworx_design_capability(),
+		'blueworx-design',
+		'blueworx_render_design_page'
+	);
+
 	if ( blueworx_feature_enabled( 'menu_editor' ) ) {
 		add_submenu_page(
 			'blueworx-labs-wordpress',
