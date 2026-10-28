@@ -112,7 +112,10 @@ $GLOBALS['filters']['blueworx_design_presets'] = function () {
 		),
 	);
 };
-$GLOBALS['options']['blueworx_design'] = array( 'logo_dark' => 12, 'social' => array( 'x' => 'https://x.com/site' ) );
+$GLOBALS['options']['blueworx_design']         = array(
+	'logo_dark' => 12,
+	'social'    => array( 'x' => 'https://x.com/site' ),
+);
 check( 'preset applies', blueworx_design_apply_preset( 'court' ), true );
 check( 'preset colour saved', blueworx_design_settings()['primary'], '#c6f24e' );
 check( 'preset bad value cleaned', blueworx_design_settings()['corners'], 'rounded' );

@@ -136,8 +136,8 @@ function blueworx_design_tokens( $settings = null ) {
 		'error'   => '#c42b2b',
 		'info'    => '#0b6bcb',
 	) as $status => $base ) {
-		$tint                             = blueworx_color_mix( $base, $bg, 0.10 );
-		$t[ '--color-' . $status ]        = blueworx_color_readable_on( $base, $tint );
+		$tint                                = blueworx_color_mix( $base, $bg, 0.10 );
+		$t[ '--color-' . $status ]           = blueworx_color_readable_on( $base, $tint );
 		$t[ '--color-' . $status . '-tint' ] = $tint;
 	}
 
