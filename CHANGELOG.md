@@ -8,6 +8,13 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.3.0] - 2026-10-28
+
+### Added
+- **Download the design system.** One button, on the Design screen and the
+  design system page, gives a zip of the site's colours, fonts, logos and
+  named styles, with a short read-me, ready for designers and other tools.
+
 ## [2.2.0] - 2026-10-28
 
 ### Added

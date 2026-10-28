@@ -414,3 +414,58 @@ function blueworx_design_readability( $tokens = null ) {
 
 	return $rows;
 }
+
+/**
+ * The colours the design system names, in groups, with what each is for.
+ *
+ * One list for the design system page and the download's colours.json, so the
+ * two can never describe the palette differently.
+ *
+ * @return array Groups 'brand', 'neutrals' and 'messages', each a list of
+ *               array( 'token', 'label', 'use' ).
+ */
+function blueworx_design_palette() {
+	$rows = static function ( $group ) {
+		return array_map(
+			static function ( $row ) {
+				return array_combine( array( 'token', 'label', 'use' ), $row );
+			},
+			$group
+		);
+	};
+
+	return array(
+		'brand'    => $rows(
+			array(
+				array( '--color-primary', __( 'Main colour', 'blueworx-labs-wordpress' ), __( 'Buttons, highlights, anything active', 'blueworx-labs-wordpress' ) ),
+				array( '--color-primary-hover', __( 'Main, hover', 'blueworx-labs-wordpress' ), __( 'Buttons under the pointer', 'blueworx-labs-wordpress' ) ),
+				array( '--color-primary-pressed', __( 'Main, pressed', 'blueworx-labs-wordpress' ), __( 'Buttons being pressed', 'blueworx-labs-wordpress' ) ),
+				array( '--color-primary-tint', __( 'Main, tint', 'blueworx-labs-wordpress' ), __( 'Selected rows, soft fills', 'blueworx-labs-wordpress' ) ),
+				array( '--color-link', __( 'Links', 'blueworx-labs-wordpress' ), __( 'The main colour as text', 'blueworx-labs-wordpress' ) ),
+				array( '--color-accent', __( 'Second colour', 'blueworx-labs-wordpress' ), __( 'Badges and offers. Never text', 'blueworx-labs-wordpress' ) ),
+				array( '--color-accent-text', __( 'Second colour as text', 'blueworx-labs-wordpress' ), __( 'When it has to be words', 'blueworx-labs-wordpress' ) ),
+				array( '--color-accent-tint', __( 'Second colour, tint', 'blueworx-labs-wordpress' ), __( 'Offer banners', 'blueworx-labs-wordpress' ) ),
+			)
+		),
+		'neutrals' => $rows(
+			array(
+				array( '--color-bg', __( 'Background', 'blueworx-labs-wordpress' ), __( 'The page', 'blueworx-labs-wordpress' ) ),
+				array( '--color-surface', __( 'Panel', 'blueworx-labs-wordpress' ), __( 'Panels, alternate bands', 'blueworx-labs-wordpress' ) ),
+				array( '--color-border', __( 'Line', 'blueworx-labs-wordpress' ), __( 'Lines and card edges', 'blueworx-labs-wordpress' ) ),
+				array( '--color-border-strong', __( 'Strong line', 'blueworx-labs-wordpress' ), __( 'Form field edges', 'blueworx-labs-wordpress' ) ),
+				array( '--color-placeholder', __( 'Placeholder', 'blueworx-labs-wordpress' ), __( 'Hints inside empty fields', 'blueworx-labs-wordpress' ) ),
+				array( '--color-text-muted', __( 'Secondary text', 'blueworx-labs-wordpress' ), __( 'Supporting text', 'blueworx-labs-wordpress' ) ),
+				array( '--color-text', __( 'Text', 'blueworx-labs-wordpress' ), __( 'Body text, headings, dark bands', 'blueworx-labs-wordpress' ) ),
+				array( '--color-dark-raised', __( 'Panel on dark', 'blueworx-labs-wordpress' ), __( 'Panels inside dark bands', 'blueworx-labs-wordpress' ) ),
+			)
+		),
+		'messages' => $rows(
+			array(
+				array( '--color-success', __( 'Success', 'blueworx-labs-wordpress' ), __( 'Paid, confirmed, saved', 'blueworx-labs-wordpress' ) ),
+				array( '--color-warning', __( 'Warning', 'blueworx-labs-wordpress' ), __( 'Needs attention soon', 'blueworx-labs-wordpress' ) ),
+				array( '--color-error', __( 'Error', 'blueworx-labs-wordpress' ), __( 'Failed, invalid, danger', 'blueworx-labs-wordpress' ) ),
+				array( '--color-info', __( 'Information', 'blueworx-labs-wordpress' ), __( 'Neutral information', 'blueworx-labs-wordpress' ) ),
+			)
+		),
+	);
+}

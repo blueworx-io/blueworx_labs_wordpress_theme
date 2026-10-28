@@ -24,6 +24,7 @@ $blueworx_tagline  = wp_specialchars_decode( (string) get_bloginfo( 'description
 $blueworx_heading  = $blueworx_fonts[ $blueworx_settings['heading_font'] ];
 $blueworx_body     = $blueworx_fonts[ $blueworx_settings['body_font'] ];
 $blueworx_icon_url = get_site_icon_url( 128 );
+$blueworx_palette  = blueworx_design_palette();
 
 $blueworx_sections = array(
 	'overview'   => __( 'Overview', 'blueworx-labs-wordpress' ),
@@ -109,6 +110,7 @@ $blueworx_chevron = blueworx_design_reference_icon( 'expand', 18 );
 			?>
 		</span>
 		<span class="bw-ref-bar__meta"><?php echo esc_html( 'BlueWorx Enhance ' . BLUEWORX_LABS_VERSION . ' · ' . wp_date( get_option( 'date_format' ) ) ); ?></span>
+		<a class="wp-element-button bw-ref-btn--small" href="<?php echo esc_url( blueworx_design_download_url() ); ?>"><?php esc_html_e( 'Download design system', 'blueworx-labs-wordpress' ); ?></a>
 	</div>
 
 	<nav class="bw-ref-jump" aria-label="<?php esc_attr_e( 'Sections', 'blueworx-labs-wordpress' ); ?>">
@@ -146,17 +148,8 @@ $blueworx_chevron = blueworx_design_reference_icon( 'expand', 18 );
 				<span class="bw-ref-label"><?php esc_html_e( 'Brand', 'blueworx-labs-wordpress' ); ?></span>
 				<div class="bw-ref-swatches">
 					<?php
-					foreach ( array(
-						array( '--color-primary', __( 'Main colour', 'blueworx-labs-wordpress' ), __( 'Buttons, highlights, anything active', 'blueworx-labs-wordpress' ) ),
-						array( '--color-primary-hover', __( 'Main, hover', 'blueworx-labs-wordpress' ), __( 'Buttons under the pointer', 'blueworx-labs-wordpress' ) ),
-						array( '--color-primary-pressed', __( 'Main, pressed', 'blueworx-labs-wordpress' ), __( 'Buttons being pressed', 'blueworx-labs-wordpress' ) ),
-						array( '--color-primary-tint', __( 'Main, tint', 'blueworx-labs-wordpress' ), __( 'Selected rows, soft fills', 'blueworx-labs-wordpress' ) ),
-						array( '--color-link', __( 'Links', 'blueworx-labs-wordpress' ), __( 'The main colour as text', 'blueworx-labs-wordpress' ) ),
-						array( '--color-accent', __( 'Second colour', 'blueworx-labs-wordpress' ), __( 'Badges and offers. Never text', 'blueworx-labs-wordpress' ) ),
-						array( '--color-accent-text', __( 'Second colour as text', 'blueworx-labs-wordpress' ), __( 'When it has to be words', 'blueworx-labs-wordpress' ) ),
-						array( '--color-accent-tint', __( 'Second colour, tint', 'blueworx-labs-wordpress' ), __( 'Offer banners', 'blueworx-labs-wordpress' ) ),
-					) as $blueworx_swatch ) {
-						echo blueworx_design_reference_swatch( $blueworx_tokens, $blueworx_swatch[0], $blueworx_swatch[1], $blueworx_swatch[2] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where it is built.
+					foreach ( $blueworx_palette['brand'] as $blueworx_swatch ) {
+						echo blueworx_design_reference_swatch( $blueworx_tokens, $blueworx_swatch['token'], $blueworx_swatch['label'], $blueworx_swatch['use'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where it is built.
 					}
 					?>
 				</div>
@@ -173,17 +166,8 @@ $blueworx_chevron = blueworx_design_reference_icon( 'expand', 18 );
 				<span class="bw-ref-label"><?php esc_html_e( 'Neutrals', 'blueworx-labs-wordpress' ); ?></span>
 				<div class="bw-ref-swatches">
 					<?php
-					foreach ( array(
-						array( '--color-bg', __( 'Background', 'blueworx-labs-wordpress' ), __( 'The page', 'blueworx-labs-wordpress' ) ),
-						array( '--color-surface', __( 'Panel', 'blueworx-labs-wordpress' ), __( 'Panels, alternate bands', 'blueworx-labs-wordpress' ) ),
-						array( '--color-border', __( 'Line', 'blueworx-labs-wordpress' ), __( 'Lines and card edges', 'blueworx-labs-wordpress' ) ),
-						array( '--color-border-strong', __( 'Strong line', 'blueworx-labs-wordpress' ), __( 'Form field edges', 'blueworx-labs-wordpress' ) ),
-						array( '--color-placeholder', __( 'Placeholder', 'blueworx-labs-wordpress' ), __( 'Hints inside empty fields', 'blueworx-labs-wordpress' ) ),
-						array( '--color-text-muted', __( 'Secondary text', 'blueworx-labs-wordpress' ), __( 'Supporting text', 'blueworx-labs-wordpress' ) ),
-						array( '--color-text', __( 'Text', 'blueworx-labs-wordpress' ), __( 'Body text, headings, dark bands', 'blueworx-labs-wordpress' ) ),
-						array( '--color-dark-raised', __( 'Panel on dark', 'blueworx-labs-wordpress' ), __( 'Panels inside dark bands', 'blueworx-labs-wordpress' ) ),
-					) as $blueworx_swatch ) {
-						echo blueworx_design_reference_swatch( $blueworx_tokens, $blueworx_swatch[0], $blueworx_swatch[1], $blueworx_swatch[2] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where it is built.
+					foreach ( $blueworx_palette['neutrals'] as $blueworx_swatch ) {
+						echo blueworx_design_reference_swatch( $blueworx_tokens, $blueworx_swatch['token'], $blueworx_swatch['label'], $blueworx_swatch['use'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where it is built.
 					}
 					?>
 				</div>
@@ -192,13 +176,8 @@ $blueworx_chevron = blueworx_design_reference_icon( 'expand', 18 );
 				<span class="bw-ref-label"><?php esc_html_e( 'Messages', 'blueworx-labs-wordpress' ); ?></span>
 				<div class="bw-ref-swatches">
 					<?php
-					foreach ( array(
-						array( '--color-success', __( 'Success', 'blueworx-labs-wordpress' ), __( 'Paid, confirmed, saved', 'blueworx-labs-wordpress' ) ),
-						array( '--color-warning', __( 'Warning', 'blueworx-labs-wordpress' ), __( 'Needs attention soon', 'blueworx-labs-wordpress' ) ),
-						array( '--color-error', __( 'Error', 'blueworx-labs-wordpress' ), __( 'Failed, invalid, danger', 'blueworx-labs-wordpress' ) ),
-						array( '--color-info', __( 'Information', 'blueworx-labs-wordpress' ), __( 'Neutral information', 'blueworx-labs-wordpress' ) ),
-					) as $blueworx_swatch ) {
-						echo blueworx_design_reference_swatch( $blueworx_tokens, $blueworx_swatch[0], $blueworx_swatch[1], $blueworx_swatch[2] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where it is built.
+					foreach ( $blueworx_palette['messages'] as $blueworx_swatch ) {
+						echo blueworx_design_reference_swatch( $blueworx_tokens, $blueworx_swatch['token'], $blueworx_swatch['label'], $blueworx_swatch['use'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where it is built.
 					}
 					?>
 				</div>
