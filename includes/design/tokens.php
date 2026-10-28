@@ -279,8 +279,8 @@ function blueworx_design_tokens_file( $settings = null ) {
 
 	$lines = static function ( $tokens, $indent, $text_label ) use ( $groups ) {
 		$groups['--text-'] = $text_label;
-		$out     = '';
-		$current = null;
+		$out               = '';
+		$current           = null;
 
 		foreach ( explode( ';', rtrim( blueworx_design_declarations( $tokens ), ';' ) ) as $declaration ) {
 			if ( '' === $declaration ) {
