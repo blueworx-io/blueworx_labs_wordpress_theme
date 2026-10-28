@@ -361,7 +361,13 @@ function blueworx_render_design_page() {
 	$choices = blueworx_design_choices();
 	$presets = blueworx_design_presets();
 	$allowed = blueworx_design_screen_allowed_html();
-	$actions = '';
+	$actions = blueworx_ds_button(
+		array(
+			'label' => __( 'View design system', 'blueworx-labs-wordpress' ),
+			'icon'  => 'eye',
+			'href'  => blueworx_design_reference_url(),
+		)
+	);
 
 	// The preset picker is a form of its own in the header, outside the settings
 	// form, so Enter pressed in a settings box can only ever save.
@@ -372,7 +378,7 @@ function blueworx_render_design_page() {
 			$options[ $id ] = $preset['label'] ?? $id;
 		}
 
-		$actions = sprintf(
+		$actions .= sprintf(
 			'<form method="post" action="%1$s"><input type="hidden" name="action" value="blueworx_apply_design_preset" />%2$s',
 			esc_url( admin_url( 'admin-post.php' ) ),
 			wp_nonce_field( 'blueworx_apply_design_preset', '_wpnonce', true, false )
