@@ -3,7 +3,7 @@ on: pull_request
 jobs:
   guardrails:
     # v1.19.0 is the first foundation release that supports themes.
-    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/ci-wordpress.yml@v1.19.0
+    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/ci-wordpress.yml@v1.21.0
     with:
       # A theme, not a plugin: the version comes from style.css and the test
       # site switches the theme on rather than activating a plugin.
@@ -11,16 +11,12 @@ jobs:
       # Provision a disposable WordPress on the runner rather than pointing at a
       # staging host. See docs/wordpress-test-harness.md in the foundation.
       use_local_wordpress: true
-      # The suite is long enough that it, not the static checks, sets how long a
-      # PR takes. Each shard is its own runner with its own WordPress, which is
-      # what makes this safe — the specs mutate site-wide state, so they must
-      # never share one site. Do NOT raise `workers` in playwright.config.js to
-      # chase the same win; that shares the site and corrupts runs.
-      #
-      # Playwright shards by spec FILE here (fullyParallel is false), so the
-      # slowest single file is the floor — more shards than this buys nothing
-      # until the big spec files are split up.
-      shards: 3
+      # No `shards`: the foundation sizes the split from the suite (one runner
+      # per 150 tests), so it grows as tests are added. Each shard is its own
+      # runner with its own WordPress, which is what makes this safe — the specs
+      # mutate site-wide state, so they must never share one site. Do NOT raise
+      # `workers` in playwright.config.js to chase the same win; that shares the
+      # site and corrupts runs.
       # This plugin moves the login screen off wp-login.php, which 301s away.
       # Without this every admin spec fails at the sign-in step.
       wp_login_path: admin_login
@@ -35,7 +31,7 @@ jobs:
       # Bump this whenever the design system changes upstream: the sync check
       # compares our copy against the foundation AT THIS REF, so a component
       # added upstream and copied here fails until the ref moves with it.
-      foundation_ref: v1.19.0
+      foundation_ref: v1.21.0
       # TEMPORARY. The newer foundation carries a newer design
       # system than this theme's copy, which came over from the plugin as it was.
       # Back to the default (error) once the copy is brought up to date.

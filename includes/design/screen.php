@@ -164,13 +164,13 @@ add_action( 'admin_post_blueworx_apply_design_preset', 'blueworx_design_handle_p
  * The hex box is the one that is sent, so the screen still works without its
  * script, and an empty box can mean "work it out".
  *
- * @param string $key      Setting name.
- * @param string $value    Current colour, or empty.
- * @param string $fallback What the picker shows while the box is empty.
- * @param string $empty    Placeholder for an empty box; empty when one is required.
+ * @param string $key         Setting name.
+ * @param string $value       Current colour, or empty.
+ * @param string $fallback    What the picker shows while the box is empty.
+ * @param string $placeholder Placeholder for an empty box; empty when one is required.
  * @return string HTML.
  */
-function blueworx_design_color_control( $key, $value, $fallback, $empty = '' ) {
+function blueworx_design_color_control( $key, $value, $fallback, $placeholder = '' ) {
 	$id    = 'blueworx_design_' . $key;
 	$attrs = array(
 		'autocomplete'            => 'off',
@@ -178,8 +178,8 @@ function blueworx_design_color_control( $key, $value, $fallback, $empty = '' ) {
 		'aria-label'              => __( 'Hex code', 'blueworx-labs-wordpress' ),
 	);
 
-	if ( '' !== $empty ) {
-		$attrs['placeholder'] = $empty;
+	if ( '' !== $placeholder ) {
+		$attrs['placeholder'] = $placeholder;
 	}
 
 	// Written out rather than through blueworx_ds_input(): the swatch is the
@@ -417,7 +417,6 @@ function blueworx_render_design_page() {
 			),
 		)
 	);
-
 
 	$notices = blueworx_design_saved_notice() . blueworx_design_readability_notice( blueworx_design_tokens( $s ) );
 

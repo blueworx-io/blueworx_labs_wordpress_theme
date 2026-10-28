@@ -31,6 +31,13 @@ history is in the plugin's own repository,
   system. It is on for new sites. Sites that already had the theme keep their
   current look until it is switched on.
 
+## [2.0.3] - 2026-10-27
+
+### Changed
+- **Checks on a change now run faster.** The theme uses the newest shared test
+  setup, which keeps the test browser between runs and adds more test machines
+  as the tests grow. Nothing changes on a site.
+
 ## [2.0.2] - 2026-10-26
 
 ### Fixed

@@ -190,7 +190,7 @@ $pale = blueworx_design_readability( blueworx_design_tokens( with( array( 'text'
 check( 'pale body text is flagged', array_column( $pale, 'passes', 'label' )['Body text on the background'], false );
 check( 'a mid-grey brand colour still gets readable button text', array_column( blueworx_design_readability( blueworx_design_tokens( with( array( 'primary' => '#8a8a8a' ) ) ) ), 'passes', 'label' )['Button text on the main colour'], true );
 
-$dark = blueworx_design_tokens( with( $looks['dark'] ) );
+$dark   = blueworx_design_tokens( with( $looks['dark'] ) );
 $report = array_column( blueworx_design_readability( $dark ), 'passes', 'label' );
 foreach ( array( 'Button text on the main colour', 'Button text on hover', 'Button text when pressed', 'Links on the background' ) as $pair ) {
 	check( "the report checks: $pair", isset( $report[ $pair ] ), true );
@@ -225,7 +225,7 @@ $GLOBALS['filters']['blueworx_design_fonts'] = function ( $fonts ) {
 	);
 	return $fonts;
 };
-$evil = with( array( 'heading_font' => 'evil' ) );
+$evil                                        = with( array( 'heading_font' => 'evil' ) );
 check( 'a plugin stack cannot break out', preg_match( '/[;{}<>]/', blueworx_design_tokens( $evil )['--font-heading'] ), 0 );
 check( 'a plugin font face cannot break out', preg_match( '/<|\}\s*<|;\s*\}\s*</', blueworx_design_font_face_css( $evil ) ), 0 );
 check( 'the css cannot break out', false === strpos( blueworx_design_css( $evil ), '</style' ), true );
@@ -239,7 +239,7 @@ $GLOBALS['filters']['blueworx_design_fonts'] = function ( $fonts ) {
 	);
 	return $fonts;
 };
-$unclosed = blueworx_design_css( with( array( 'heading_font' => 'unclosed' ) ) );
+$unclosed                                    = blueworx_design_css( with( array( 'heading_font' => 'unclosed' ) ) );
 check( 'an unclosed quote in a plugin font leaves the quotes balanced', 0 === substr_count( $unclosed, '"' ) % 2, true );
 check( 'an unclosed quote does not swallow the phone sizes', (bool) preg_match( '/@media \(max-width:639px\)\{:root\{--text-display:40px;/', $unclosed ), true );
 
