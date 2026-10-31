@@ -8,6 +8,14 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.3.1] - 2026-10-31
+
+### Fixed
+- **The login page no longer shows errors before you sign in.** "The username
+  field is empty" appeared as soon as the page opened.
+- **Edit Menu is readable again.** Each menu item sits on one line with its
+  arrows, instead of being spread down the card.
+
 ## [2.3.0] - 2026-10-28
 
 ### Added
