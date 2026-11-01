@@ -8,6 +8,14 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.4.0] - 2026-11-01
+
+### Added
+- **Merge users.** Turn two accounts for the same person into one from the
+  Users list. Profile details, posts, comments, roles, SureCart purchases and
+  LearnDash courses move to the account you keep, and the other is deleted.
+  Off until you switch it on under Enhancements. Nobody is emailed.
+
 ## [2.3.1] - 2026-10-31
 
 ### Fixed
