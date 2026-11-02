@@ -8,6 +8,13 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.5.0] - 2026-11-02
+
+### Changed
+- **Merge users is quicker to use.** Results show as you type, with no page
+  reload, and the search icon sits inside the box. Picking an account shows
+  both side by side, and you choose which one to keep from there.
+
 ## [2.4.0] - 2026-11-01
 
 ### Added
