@@ -89,9 +89,9 @@ function blueworx_page_lock_shape( $content ) {
 			continue;
 		}
 
-		$node                 = array( $name, array() );
-		$stack[ $depth ][]    = $node;
-		$index                = count( $stack[ $depth ] ) - 1;
+		$node              = array( $name, array() );
+		$stack[ $depth ][] = $node;
+		$index             = count( $stack[ $depth ] ) - 1;
 
 		if ( ! $void ) {
 			$stack[] = &$stack[ $depth ][ $index ][1];
@@ -104,12 +104,12 @@ function blueworx_page_lock_shape( $content ) {
 /**
  * Whether two pieces of content differ in shape.
  *
- * @param string $old Content as it was saved.
- * @param string $new Content being saved.
+ * @param string $before Content as it was saved.
+ * @param string $after  Content being saved.
  * @return bool
  */
-function blueworx_page_lock_structure_changed( $old, $new ) {
-	return blueworx_page_lock_shape( $old ) !== blueworx_page_lock_shape( $new );
+function blueworx_page_lock_structure_changed( $before, $after ) {
+	return blueworx_page_lock_shape( $before ) !== blueworx_page_lock_shape( $after );
 }
 
 /**
@@ -182,10 +182,9 @@ function blueworx_page_lock_guard_meta( $check, $post_id, $meta_key ) {
  * Refuses a REST save that would change a locked page's shape.
  *
  * @param stdClass|WP_Error $prepared The post as prepared for the database.
- * @param WP_REST_Request   $request  The request.
  * @return stdClass|WP_Error
  */
-function blueworx_page_lock_rest_guard( $prepared, $request ) {
+function blueworx_page_lock_rest_guard( $prepared ) {
 	if ( is_wp_error( $prepared ) || empty( $prepared->ID ) || ! isset( $prepared->post_content ) ) {
 		return $prepared;
 	}
@@ -303,7 +302,7 @@ if ( blueworx_feature_enabled( 'page_lock' ) ) {
 		'init',
 		function () {
 			foreach ( blueworx_page_lock_post_types() as $type ) {
-				add_filter( 'rest_pre_insert_' . $type, 'blueworx_page_lock_rest_guard', 10, 2 );
+				add_filter( 'rest_pre_insert_' . $type, 'blueworx_page_lock_rest_guard' );
 			}
 		}
 	);
