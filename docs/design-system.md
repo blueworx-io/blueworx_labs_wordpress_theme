@@ -121,7 +121,15 @@ Settings a preset can set: `primary`, `accent` (empty for automatic),
 ## Base styles
 
 With the **Site styles** switch on (Enhancements › Appearance), the theme also
-styles plain WordPress content — headings, links, buttons, forms, tables, the
-Details block and images — from these names. Those rules carry no weight, so a
-plugin's own styles always win. Sites that had the theme before 2.1.0 start
-with the switch off.
+styles plain WordPress content from these names: headings, links, buttons,
+forms, tables, the Details block and images, and the block editor's layout
+blocks — buttons rows, columns, groups with a background, covers, quotes and
+pull quotes, separators, the table block, media and text, and lists. The same
+rules reach the block editor's canvas, so a page looks the same while editing
+as it does live, and wide and full width are offered. Those rules carry no
+weight, so a plugin's own styles always win.
+
+Sites that had the theme before 2.1.0 start with the switch off, and stay off
+until somebody turns it on: a live site's look must never change because the
+theme updated. The Design screen says so when the switch is off. New sites
+start with it on.

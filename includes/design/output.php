@@ -150,3 +150,84 @@ function blueworx_design_editor_supports() {
 	add_theme_support( 'editor-font-sizes', $font_sizes );
 }
 add_action( 'after_setup_theme', 'blueworx_design_editor_supports' );
+
+/**
+ * Replaces WordPress's own button colours and block gap with the site's.
+ *
+ * Core's theme.json paints every button dark grey (#32373c) with class-level
+ * weight, which beats site.css: its rules sit in :where() so a plugin's own
+ * styles always win, and that means core's win too. Changing the defaults at
+ * source keeps both halves honest: the site's buttons take the site's colours,
+ * in the editor and on the page, and site.css keeps carrying no weight.
+ *
+ * Only with Site styles on, for the same reason as blueworx_design_editor_supports().
+ *
+ * @param WP_Theme_JSON_Data $theme_json Core's default settings and styles.
+ * @return WP_Theme_JSON_Data
+ */
+function blueworx_design_button_defaults( $theme_json ) {
+	if ( ! blueworx_feature_enabled( 'site_styles' ) ) {
+		return $theme_json;
+	}
+
+	$button = array(
+		'color'      => array(
+			'text'       => 'var(--color-on-primary)',
+			'background' => 'var(--color-primary)',
+		),
+		'border'     => array(
+			'radius' => 'var(--radius-button)',
+			'width'  => '0',
+		),
+		'spacing'    => array(
+			'padding' => array(
+				'top'    => 'var(--space-3)',
+				'right'  => 'var(--space-6)',
+				'bottom' => 'var(--space-3)',
+				'left'   => 'var(--space-6)',
+			),
+		),
+		'typography' => array(
+			'fontFamily'     => 'var(--font-body)',
+			'fontSize'       => 'var(--text-body)',
+			'fontWeight'     => '600',
+			'lineHeight'     => '1.2',
+			'textDecoration' => 'none',
+		),
+		':hover'     => array(
+			'color' => array(
+				'text'       => 'var(--color-on-primary)',
+				'background' => 'var(--color-primary-hover)',
+			),
+		),
+		':focus'     => array(
+			'color' => array(
+				'text'       => 'var(--color-on-primary)',
+				'background' => 'var(--color-primary-hover)',
+			),
+		),
+		':active'    => array(
+			'color' => array(
+				'text'       => 'var(--color-on-primary)',
+				'background' => 'var(--color-primary-pressed)',
+			),
+		),
+	);
+
+	return $theme_json->update_with(
+		array(
+			'version' => 3,
+			'styles'  => array(
+				'elements' => array(
+					'button' => $button,
+				),
+				// The same gap site.css sets on the page, so columns and buttons
+				// rows sit the same way in the editor's canvas.
+				'spacing'  => array(
+					'blockGap' => 'var(--space-6)',
+				),
+			),
+		)
+	);
+}
+add_filter( 'wp_theme_json_data_default', 'blueworx_design_button_defaults' );

@@ -8,6 +8,22 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.6.0] - 2026-11-07
+
+### Added
+- **Pages built from standard blocks use the site's design.** Buttons,
+  columns, bands with a background, covers, quotes, separators, tables and
+  media-and-text blocks all take the site's colours, fonts, spacing and
+  corners, and look the same in the editor as on the live page. Wide and full
+  width are offered when editing. Needs Site styles on; sites that had the
+  theme before 2.1.0 keep it off until you choose, so nothing changes on
+  update.
+
+### Fixed
+- **Buttons take the site's main colour.** WordPress's own dark grey button
+  colour was winning over the site's; it now follows the design, in the
+  editor and on the page.
+
 ## [2.5.0] - 2026-11-02
 
 ### Changed
