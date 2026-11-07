@@ -8,6 +8,15 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.7.0] - 2026-11-07
+
+### Added
+- **Locked pages.** An administrator can lock a page from the editor's
+  sidebar. Clients can then change its words and images but not add, move or
+  remove blocks, in the editor or through a connected tool, and only an
+  administrator can unlock it. Locked pages are marked in the Pages list. On
+  by default under Enhancements, Content.
+
 ## [2.6.0] - 2026-11-07
 
 ### Added
