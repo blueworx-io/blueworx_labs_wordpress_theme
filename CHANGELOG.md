@@ -8,6 +8,17 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.16.0] - 2026-11-08
+
+### Added
+- **A product feed for Klaviyo.** The Klaviyo screen shows a feed address,
+  with a secret in it, that lists every published SureCart product the way
+  Klaviyo's catalogue import expects: name, link, image, description, price,
+  currency and stock. Paste it into Klaviyo under Content, Products, and
+  emails can show real products with live prices and recommend them. Built
+  in the background, rebuilt every hour and when a product is saved, so a
+  fetch never slows the store. "Make a new address" stops the old one.
+
 ## [2.15.0] - 2026-11-08
 
 ### Added

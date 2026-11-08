@@ -321,6 +321,17 @@ Administrators and the BlueWorx support roles are never sent.
 batches of 25; `blueworx_klaviyo_users_start_sync()` starts the same from
 code.
 
+## The product feed
+
+`/wp-json/blueworx/v1/klaviyo/feed?key=…` lists every published SureCart
+product for Klaviyo's custom catalogue import: `$id`, `$title`, `$link`,
+`$image_link`, `$description`, `$price`, `currency`, and when SureCart
+tracks stock `$inventory_quantity` and `$inventory_policy`. Each item is
+built from `blueworx_klaviyo_viewed_product_details()`, so the Viewed Product
+filter shapes the feed too. `blueworx_klaviyo_feed_items( $items )` adds,
+drops or changes items. The feed is kept and rebuilt every hour, and when a
+product is saved; a wrong key gets a 404.
+
 ## When sending goes wrong
 
 A send that fails for good fires `blueworx_klaviyo_gave_up( $label, $email,
