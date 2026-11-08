@@ -645,7 +645,7 @@ function blueworx_view_as_shown_caps( $user_id ) {
 	// built a user object would arrive straight back here.
 	static $busy = false;
 
-	if ( $busy || ! $user_id || (int) $user_id !== blueworx_view_as_swapping() ) {
+	if ( $busy || ! $user_id || blueworx_view_as_swapping() !== (int) $user_id ) {
 		return null;
 	}
 

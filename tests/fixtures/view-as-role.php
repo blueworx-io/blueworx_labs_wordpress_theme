@@ -41,6 +41,7 @@ if ( ! $user ) {
 
 // Read past every cache and filter: the row is the truth.
 $read = static function ( $key ) use ( $wpdb, $user ) {
+	// phpcs:ignore WordPress.DB.DirectDatabaseQuery -- The stored row is the fact under test; a cached or filtered read would hide the bug.
 	return $wpdb->get_var( $wpdb->prepare( "SELECT meta_value FROM {$wpdb->usermeta} WHERE user_id = %d AND meta_key = %s", $user->ID, $key ) );
 };
 
