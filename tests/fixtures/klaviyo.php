@@ -37,6 +37,8 @@
  *   role <json>           Sets a user's role: { id, role }.
  *   public <key>          Saves the public key; an empty key clears it.
  *   product               Creates a stand-in SureCart product and prints {id, url}.
+ *   page                  Creates a published page and prints {id, url}.
+ *   pageevent <json>      Sets a page's Klaviyo event: { post_id, name }; an empty name clears it.
  *   off                   Switches the function off.
  *   cleanup               Removes everything, the test double included.
  *
@@ -348,6 +350,38 @@ switch ( $command ) {
 		);
 		break;
 
+	case 'page':
+		$existing = get_page_by_path( 'klaviyo-landing', OBJECT, 'page' );
+		$post_id  = $existing ? $existing->ID : wp_insert_post(
+			array(
+				'post_type'    => 'page',
+				'post_status'  => 'publish',
+				'post_name'    => 'klaviyo-landing',
+				'post_title'   => 'Klaviyo landing',
+				'post_content' => '<!-- wp:paragraph --><p>Book a demo.</p><!-- /wp:paragraph -->',
+			)
+		);
+		delete_post_meta( $post_id, '_blueworx_klaviyo_event' );
+		klaviyo_fixture_print(
+			array(
+				'id'  => $post_id,
+				'url' => get_permalink( $post_id ),
+			)
+		);
+		break;
+
+	case 'pageevent':
+		if ( '' === (string) $json['name'] ) {
+			delete_post_meta( (int) $json['post_id'], '_blueworx_klaviyo_event' );
+		} else {
+			update_post_meta( (int) $json['post_id'], '_blueworx_klaviyo_event', (string) $json['name'] );
+		}
+		if ( function_exists( 'blueworx_purge_site_cache' ) ) {
+			blueworx_purge_site_cache( 'Klaviyo page event fixture' );
+		}
+		klaviyo_fixture_print( 'ok' );
+		break;
+
 	case 'off':
 		update_option( 'blueworx_feature_klaviyo', '0' );
 		klaviyo_fixture_print( 'ok' );
@@ -377,6 +411,10 @@ switch ( $command ) {
 		$product = get_page_by_path( 'test-racket', OBJECT, 'sc_product' );
 		if ( $product ) {
 			wp_delete_post( $product->ID, true );
+		}
+		$landing = get_page_by_path( 'klaviyo-landing', OBJECT, 'page' );
+		if ( $landing ) {
+			wp_delete_post( $landing->ID, true );
 		}
 		if ( is_file( $double ) ) {
 			unlink( $double );

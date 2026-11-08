@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.15.0] - 2026-11-08
+
+### Added
+- **Any page can send a Klaviyo event when viewed.** A Klaviyo panel in the
+  editor's sidebar, on every page, post and public post type: tick the box,
+  name the event, and every view by a visitor Klaviyo knows reaches their
+  profile as that event, with the page's title and address. For thank-you,
+  landing and pricing pages. Sent by the site script, so administrators are
+  never counted and the same consent rules apply.
+
 ## [2.14.0] - 2026-11-08
 
 ### Added
