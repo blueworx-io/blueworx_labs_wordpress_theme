@@ -36,6 +36,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 function blueworx_labs_deactivate_site() {
 	blueworx_support_on_deactivate();
 	blueworx_external_on_deactivate();
+
+	// Guarded: the lifecycle checks load this file without the connection.
+	if ( function_exists( 'blueworx_klaviyo_on_deactivate' ) ) {
+		blueworx_klaviyo_on_deactivate();
+	}
 }
 
 /**
