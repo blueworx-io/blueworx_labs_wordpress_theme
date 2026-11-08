@@ -15,7 +15,7 @@ const DIST = 'dist';
 // on whatever site installs it.
 // The page templates WordPress picks from are root files, so each is listed:
 // a template missing from the zip falls back to index.php without a word.
-const TEMPLATES = ['header.php', 'footer.php', 'page.php', 'single.php', 'home.php', 'archive.php', 'search.php', 'parts'];
+const TEMPLATES = ['header.php', 'footer.php', 'page.php', 'single.php', 'home.php', 'archive.php', 'search.php', '404.php', 'template-legal.php', 'parts'];
 const REQUIRED = ['functions.php', 'style.css', 'index.php', 'readme.txt', 'includes', 'assets', 'plugin-update-checker', ...TEMPLATES];
 const OPTIONAL = ['languages'];
 const INCLUDE = [...REQUIRED, ...OPTIONAL];
