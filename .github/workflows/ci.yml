@@ -3,7 +3,7 @@ on: pull_request
 jobs:
   guardrails:
     # v1.19.0 is the first foundation release that supports themes.
-    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/ci-wordpress.yml@v1.21.0
+    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/ci-wordpress.yml@v1.22.0
     with:
       # A theme, not a plugin: the version comes from style.css and the test
       # site switches the theme on rather than activating a plugin.
@@ -31,11 +31,7 @@ jobs:
       # Bump this whenever the design system changes upstream: the sync check
       # compares our copy against the foundation AT THIS REF, so a component
       # added upstream and copied here fails until the ref moves with it.
-      foundation_ref: v1.21.0
-      # TEMPORARY. The newer foundation carries a newer design
-      # system than this theme's copy, which came over from the plugin as it was.
-      # Back to the default (error) once the copy is brought up to date.
-      design_system_sync: warn
+      foundation_ref: v1.22.0
       # Our design system copy matches the foundation, so the sync check stays
       # strict (its default). Adherence is the one we cannot pass yet: the admin
       # re-skin is still hand-styled, and the components we invented for it are
