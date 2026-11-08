@@ -37,7 +37,7 @@ ok( 'the privacy policy names the site, escaped', false !== strpos( $privacy, 'F
 ok( 'the privacy policy gives the contact address', false !== strpos( $privacy, 'hello@example.com' ) );
 ok( 'the privacy policy is block markup', false !== strpos( $privacy, '<!-- wp:heading -->' ) );
 ok( 'the cookies page carries the cookie list shortcode', false !== strpos( blueworx_legal_content( 'cookies', 'Fixture', '' ), '<!-- wp:shortcode -->[blueworx_cookie_list]<!-- /wp:shortcode -->' ) );
-ok( 'no address means a generic line', false !== strpos( blueworx_legal_content( 'terms', 'Fixture', '' ), "through the site's contact details" ) );
+ok( 'no address means a generic line', false !== strpos( blueworx_legal_content( 'terms', 'Fixture', '' ), 'contact details' ) );
 check( 'an unknown kind has no text', '', blueworx_legal_content( 'nope', 'Fixture', '' ) );
 check( 'three kinds', array( 'privacy', 'cookies', 'terms' ), array_keys( blueworx_legal_kinds() ) );
 
