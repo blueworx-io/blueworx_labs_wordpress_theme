@@ -160,6 +160,33 @@ add_filter(
 	}
 );
 
+// SureCart is not on the test site, so its product type is stood in for and
+// the price comes from the filter a site plugin would use.
+add_action(
+	'init',
+	static function () {
+		if ( ! post_type_exists( 'sc_product' ) ) {
+			register_post_type(
+				'sc_product',
+				array(
+					'public'  => true,
+					'label'   => 'Products (test double)',
+					'rewrite' => array( 'slug' => 'test-products' ),
+				)
+			);
+		}
+	}
+);
+
+add_filter(
+	'blueworx_klaviyo_viewed_product',
+	static function ( $details ) {
+		$details['Price']    = 129.5;
+		$details['Currency'] = 'AUD';
+		return $details;
+	}
+);
+
 add_filter(
 	'blueworx_klaviyo_sources',
 	static function ( $sources ) {

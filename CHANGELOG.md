@@ -8,6 +8,17 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.9.0] - 2026-11-08
+
+### Added
+- **Klaviyo sees your visitors.** With the public API key saved, Klaviyo's
+  own script is on every public page, so Klaviyo knows who is active on the
+  site and its sign-up forms and pop-ups work. People who are signed in are
+  identified by email, and a SureCart product page sends Viewed Product with
+  the product's name, price and picture. Administrators are never tracked.
+  Until cookie consent arrives (#4), the script loads for every visitor, the
+  same as the tracking codes.
+
 ## [2.8.0] - 2026-11-08
 
 ### Added

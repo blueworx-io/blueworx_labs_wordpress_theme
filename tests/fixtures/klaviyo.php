@@ -21,6 +21,8 @@
  *   drain                 Runs the queue and prints {calls, jobs, log, profiles}.
  *   due                   Makes every waiting job due now.
  *   state                 Prints {calls, jobs, log, profiles} without running.
+ *   public <key>          Saves the public key; an empty key clears it.
+ *   product               Creates a stand-in SureCart product and prints {id, url}.
  *   off                   Switches the function off.
  *   cleanup               Removes everything, the test double included.
  *
@@ -183,6 +185,30 @@ switch ( $command ) {
 		klaviyo_fixture_print( klaviyo_fixture_state() );
 		break;
 
+	case 'public':
+		update_option( 'blueworx_klaviyo_public_key', (string) $arg, 'no' );
+		klaviyo_fixture_print( 'ok' );
+		break;
+
+	case 'product':
+		$existing = get_page_by_path( 'test-racket', OBJECT, 'sc_product' );
+		$post_id  = $existing ? $existing->ID : wp_insert_post(
+			array(
+				'post_type'   => 'sc_product',
+				'post_status' => 'publish',
+				'post_name'   => 'test-racket',
+				'post_title'  => 'Test racket',
+			)
+		);
+		flush_rewrite_rules();
+		klaviyo_fixture_print(
+			array(
+				'id'  => $post_id,
+				'url' => get_permalink( $post_id ),
+			)
+		);
+		break;
+
 	case 'off':
 		update_option( 'blueworx_feature_klaviyo', '0' );
 		klaviyo_fixture_print( 'ok' );
@@ -194,6 +220,10 @@ switch ( $command ) {
 		delete_option( 'blueworx_klaviyo_private_key' );
 		delete_option( 'blueworx_klaviyo_public_key' );
 		wp_clear_scheduled_hook( 'blueworx_klaviyo_tick' );
+		$product = get_page_by_path( 'test-racket', OBJECT, 'sc_product' );
+		if ( $product ) {
+			wp_delete_post( $product->ID, true );
+		}
 		if ( is_file( $double ) ) {
 			unlink( $double );
 		}

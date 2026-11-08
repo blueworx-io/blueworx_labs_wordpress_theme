@@ -176,6 +176,33 @@ Return an array of plans (possibly empty), or a `WP_Error` to have the job
 tried again. Plans from a resolver go through the `blueworx_klaviyo_plan`
 filter too, with the resolver's name as the source.
 
+## Tracking visitors
+
+With a public key saved, Klaviyo's own script is on every public page, a
+signed-in person is identified by email, and a SureCart product page sends
+`Viewed Product`. Three filters shape that:
+
+- `blueworx_klaviyo_tracking_allowed( $allowed )` — whether this visitor is
+  tracked at all. Everyone but administrators by default. Cookie consent
+  plugs in here.
+- `blueworx_klaviyo_viewed_product( $details, $post_id )` — the product's
+  `ProductName`, `ProductID`, `URL`, `ImageURL`, `Price` and `Currency`,
+  read from SureCart when it is there. Add `Brand` or `Categories` here.
+- `blueworx_klaviyo_page_events( $events, $post_id )` — the events this page
+  sends as it loads. Add one for a page your plugin knows something about:
+
+```php
+add_filter( 'blueworx_klaviyo_page_events', function ( $events, $post_id ) {
+	if ( 'guide' === get_post_type( $post_id ) ) {
+		$events[] = array(
+			'name'       => 'Viewed Guide',
+			'properties' => array( 'title' => get_the_title( $post_id ) ),
+		);
+	}
+	return $events;
+}, 10, 2 );
+```
+
 ## Knowing when something went through
 
 `blueworx_klaviyo_sent( $plan )` fires once a plan has reached Klaviyo, for a
