@@ -70,7 +70,7 @@ $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 // Kept under the plugin's name: client plugins such as Clubhouse check it to
 // know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
-	define( 'BLUEWORX_LABS_VERSION', '2.18.0' );
+	define( 'BLUEWORX_LABS_VERSION', '2.19.0' );
 }
 
 // The template directory, never the stylesheet one, so a child theme still
@@ -106,6 +106,7 @@ require_once BLUEWORX_LABS_PATH . 'includes/design/screen.php';
 require_once BLUEWORX_LABS_PATH . 'includes/design/reference.php';
 require_once BLUEWORX_LABS_PATH . 'includes/design/download.php';
 require_once BLUEWORX_LABS_PATH . 'includes/frame.php';
+require_once BLUEWORX_LABS_PATH . 'includes/blog.php';
 require_once BLUEWORX_LABS_PATH . 'includes/upgrade.php';
 require_once BLUEWORX_LABS_PATH . 'includes/theme-lifecycle.php';
 require_once BLUEWORX_LABS_PATH . 'includes/admin-design.php';
