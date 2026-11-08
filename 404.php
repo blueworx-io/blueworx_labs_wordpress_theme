@@ -10,6 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// With the 1.x plugin still active the theme's code has not loaded. See parts/plain.php.
+if ( ! function_exists( 'blueworx_frame_enabled' ) ) {
+	require get_template_directory() . '/parts/plain.php';
+	return;
+}
+
 get_header();
 
 echo blueworx_404_html( // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Built from escaped parts; the search form is WordPress's own.
