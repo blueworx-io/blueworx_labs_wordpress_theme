@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.12.0] - 2026-11-08
+
+### Added
+- **Abandoned checkouts reach Klaviyo.** On a SureCart site, the moment a
+  customer at the checkout has given an email, Klaviyo gets Started Checkout
+  with the items, the total and a link back to the checkout, so its
+  abandoned-cart emails can run. A changed cart sends it again with the new
+  contents; the same cart saved again is sent once. Test checkouts stay out
+  until the store box asks for them.
+
 ## [2.11.0] - 2026-11-08
 
 ### Added

@@ -279,6 +279,24 @@ a live one: `blueworx_klaviyo_surecart_record( $short, $type, $id )` answers a
 record as plain arrays, and `blueworx_klaviyo_store_currency( $currency )`
 says the store's currency when a record does not carry one.
 
+## Abandoned checkouts
+
+On a SureCart site, the moment a checkout has an email the connection sends
+`Started Checkout`: the value is the checkout total, and the properties carry
+`Items` (each with `ProductID`, `ProductName`, `Quantity`, `ItemPrice`,
+`RowTotal`, `ProductURL`, `ImageURL`), `ItemNames`, `CheckoutURL` and
+`checkout_id`. Those are the names Klaviyo's own abandoned-cart templates
+use. A changed cart sends the event again with the new contents; the same
+cart saved again is sent once. A `Placed Order` afterwards is what lets the
+flow in Klaviyo stand down. Nothing is needed from a SureCart account: the
+checkout is read as SureCart's form saves it through this site.
+
+Two filters: `blueworx_klaviyo_checkout_page_url( $url )` is the checkout
+page (SureCart's, or /checkout/), and `blueworx_klaviyo_checkout_url( $url,
+$checkout )` is the link back with the checkout's ID on it. A plugin that
+knows a checkout from elsewhere can hand it to
+`blueworx_klaviyo_checkout_noticed( $checkout )` as a plain array.
+
 ## Knowing when something went through
 
 `blueworx_klaviyo_sent( $plan )` fires once a plan has reached Klaviyo, for a
