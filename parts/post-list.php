@@ -27,5 +27,5 @@ if ( have_posts() ) {
 
 	blueworx_blog_pagination();
 } else {
-	echo blueworx_blog_empty_html( is_search() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where built.
+	echo blueworx_blog_empty_html( is_search(), is_404() ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- Escaped where built.
 }

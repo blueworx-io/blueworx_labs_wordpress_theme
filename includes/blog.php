@@ -24,10 +24,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * prefix; what was searched for on a search page; and "Blog" when the front
  * page is the list of posts and nothing names it.
  *
- * @param array<string,mixed> $context is_home, is_search, is_archive, posts_page_title, archive_title, search_query.
+ * @param array<string,mixed> $context is_404, is_home, is_search, is_archive, posts_page_title, archive_title, search_query.
  * @return string Plain text.
  */
 function blueworx_blog_list_title( $context ) {
+	if ( ! empty( $context['is_404'] ) ) {
+		return __( 'Page not found', 'blueworx-labs-wordpress' );
+	}
+
 	if ( ! empty( $context['is_search'] ) ) {
 		return sprintf(
 			/* translators: %s: what was searched for. */
@@ -172,12 +176,17 @@ function blueworx_blog_list_head_html( $title, $description = '' ) {
  * What a list page says when it has nothing to list.
  *
  * @param bool $is_search Whether this was a search.
+ * @param bool $is_404    Whether nothing lives at this address at all.
  * @return string
  */
-function blueworx_blog_empty_html( $is_search ) {
-	$text = $is_search
-		? __( 'Nothing matched that search. Try a different word.', 'blueworx-labs-wordpress' )
-		: __( 'No posts yet.', 'blueworx-labs-wordpress' );
+function blueworx_blog_empty_html( $is_search, $is_404 = false ) {
+	if ( $is_404 ) {
+		$text = __( 'That page has moved or never existed.', 'blueworx-labs-wordpress' );
+	} else {
+		$text = $is_search
+			? __( 'Nothing matched that search. Try a different word.', 'blueworx-labs-wordpress' )
+			: __( 'No posts yet.', 'blueworx-labs-wordpress' );
+	}
 
 	return '<p class="blueworx-list__empty">' . blueworx_frame_e( $text ) . '</p>';
 }
@@ -240,6 +249,7 @@ function blueworx_blog_current_list_title() {
 
 	return blueworx_blog_list_title(
 		array(
+			'is_404'           => is_404(),
 			'is_home'          => is_home(),
 			'is_search'        => is_search(),
 			'is_archive'       => is_archive(),

@@ -41,6 +41,18 @@ check(
 		)
 	)
 );
+check(
+	'a missing page says so, whatever else is true',
+	'Page not found',
+	blueworx_blog_list_title(
+		array(
+			'is_404'           => true,
+			'is_home'          => true,
+			'posts_page_title' => 'News',
+		)
+	)
+);
+ok( 'and the empty text says so too', false !== strpos( blueworx_blog_empty_html( false, true ), 'never existed' ) );
 check( 'a front page of posts is called Blog', 'Blog', blueworx_blog_list_title( array( 'is_home' => true ) ) );
 check(
 	'an archive is named after itself',
