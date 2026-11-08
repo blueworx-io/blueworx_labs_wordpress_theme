@@ -8,6 +8,22 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.22.0] - 2026-11-08
+
+### Added
+- **Cookie consent, through SureCookie.** A new Cookie consent switch under
+  Enhancements, Analytics & Tracking. Switching it on installs the free
+  SureCookie plugin from wordpress.org, switches it on and sets it up the
+  house way: ask first, block tracking until the visitor agrees, keep a
+  consent log, scanner off, banner linking to the cookies and privacy pages.
+  SureCookie's own menu is taken away; a Cookie consent screen here holds
+  the banner's heading and message, where it sits, and whether a small
+  button lets visitors change their mind. If the install cannot happen, the
+  screen says why and offers the manual route. Tag Manager and Analytics
+  now wait for analytics consent and the Meta pixel for marketing consent,
+  and each starts the moment the visitor agrees, with no reload. Switching
+  it off deactivates SureCookie and the codes load as before.
+
 ## [2.21.0] - 2026-11-08
 
 ### Added

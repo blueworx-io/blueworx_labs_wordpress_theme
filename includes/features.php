@@ -213,6 +213,14 @@ function blueworx_get_feature_definitions() {
 			'default'     => '0',
 			'guide'       => false,
 		),
+		'cookie_consent'        => array(
+			'label'       => __( 'Cookie consent', 'blueworx-labs-wordpress' ),
+			'description' => __( 'Asks visitors before any tracking code runs. Switching it on installs the free SureCookie plugin from wordpress.org, sets it up the house way and takes its own screens out of the menu; the banner\'s words live on a Cookie consent page here. Off by default.', 'blueworx-labs-wordpress' ),
+			'section'     => 'tracking',
+			'detail'      => 'cookie_consent',
+			'default'     => '0',
+			'guide'       => false,
+		),
 		'klaviyo'               => array(
 			'label'       => __( 'Klaviyo connection', 'blueworx-labs-wordpress' ),
 			'description' => __( 'Connects the site to its Klaviyo account, so sign-ups, orders and visits reach Klaviyo without anyone exporting lists. Nothing waits for Klaviyo, and a log shows every send. Off until you switch it on and add its keys.', 'blueworx-labs-wordpress' ),
@@ -367,6 +375,22 @@ function blueworx_set_feature_enabled( $key, $on ) {
 	if ( $on && ! $was_on ) {
 		blueworx_on_feature_switched_on( $key );
 	}
+
+	if ( ! $on && $was_on ) {
+		blueworx_on_feature_switched_off( $key );
+	}
+}
+
+/**
+ * Does the tidying a function needs when it is switched off.
+ *
+ * @param string $key Feature key that has just gone from on to off.
+ * @return void
+ */
+function blueworx_on_feature_switched_off( $key ) {
+	if ( 'cookie_consent' === $key && function_exists( 'blueworx_consent_on_switched_off' ) ) {
+		blueworx_consent_on_switched_off();
+	}
 }
 
 /**
@@ -382,6 +406,11 @@ function blueworx_set_feature_enabled( $key, $on ) {
  * @return void
  */
 function blueworx_on_feature_switched_on( $key ) {
+	if ( 'cookie_consent' === $key && function_exists( 'blueworx_consent_on_switched_on' ) ) {
+		blueworx_consent_on_switched_on();
+		return;
+	}
+
 	if ( 'external_access' !== $key ) {
 		return;
 	}
