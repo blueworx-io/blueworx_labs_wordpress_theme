@@ -257,7 +257,7 @@ body {
 :where(.wp-block-buttons) {
 	display: flex;
 	flex-wrap: wrap;
-	margin: 0 0 var(--space-4);
+	margin-block-end: var(--space-4);
 }
 
 :where(.wp-block-buttons > .wp-block-button) {
@@ -265,7 +265,7 @@ body {
 }
 
 :where(.wp-block-columns) {
-	margin: 0 0 var(--space-6);
+	margin-block-end: var(--space-6);
 }
 
 /* A group with a background, or a cover, is a band: room inside and the
