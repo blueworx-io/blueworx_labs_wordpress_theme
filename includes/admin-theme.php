@@ -361,6 +361,17 @@ function blueworx_login_card_heading( $message ) {
 		return $message;
 	}
 
+	// The "check your email" stop after a reset or registration request is the
+	// sign-in action with a flag, so it would otherwise be headed "Welcome Back".
+	// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only, on a public screen WordPress has already routed.
+	if ( isset( $_GET['checkemail'] ) ) {
+		return sprintf(
+			'<p class="bw-login-title">%s</p><p class="bw-login-subtitle">%s</p>',
+			esc_html__( 'Check Your Email', 'blueworx-labs-wordpress' ),
+			esc_html__( 'We&#8217;ve sent you a link. Follow it to carry on.', 'blueworx-labs-wordpress' )
+		) . $message;
+	}
+
 	switch ( blueworx_login_action() ) {
 		case 'lostpassword':
 		case 'retrievepassword':
