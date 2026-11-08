@@ -203,6 +203,34 @@ add_filter( 'blueworx_klaviyo_page_events', function ( $events, $post_id ) {
 }, 10, 2 );
 ```
 
+## Website forms
+
+An admin connects forms on the Klaviyo screen; nothing in code is needed.
+Each connection names the form, a list, the consent wording and a source tag.
+Three kinds of form are understood:
+
+- **Elementor**, by the Form Name set on the form.
+- **SureForms**, by the form's ID.
+- **Any HTML form**, by the `id` on its `<form>` tag: a small script on the
+  page copies what was typed to `/wp-json/blueworx/v1/klaviyo/form` as the
+  form submits, leaving the form's own handler alone.
+
+A plugin with a form of its own kind calls the same function the three
+adapters do, with the fields as name, label, value and (for a tick box)
+checked:
+
+```php
+blueworx_klaviyo_form_submitted( 'html', 'my-form-id', array(
+	array( 'name' => 'email', 'label' => 'Email', 'value' => $email ),
+	array( 'name' => 'fname', 'label' => 'First name', 'value' => $first ),
+	array( 'name' => 'news',  'label' => 'Email me', 'value' => 'on', 'checked' => true ),
+), get_permalink() );
+```
+
+The connection must exist for that kind and id; the plugin only reports the
+submission. Every form send goes through `blueworx_klaviyo_plan` with the
+source `forms`, so a site can still add to it there.
+
 ## Knowing when something went through
 
 `blueworx_klaviyo_sent( $plan )` fires once a plan has reached Klaviyo, for a
