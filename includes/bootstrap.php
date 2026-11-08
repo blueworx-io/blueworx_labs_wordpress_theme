@@ -70,7 +70,7 @@ $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 // Kept under the plugin's name: client plugins such as Clubhouse check it to
 // know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
-	define( 'BLUEWORX_LABS_VERSION', '2.15.0' );
+	define( 'BLUEWORX_LABS_VERSION', '2.16.0' );
 }
 
 // The template directory, never the stylesheet one, so a child theme still
@@ -168,6 +168,7 @@ require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/checkout.php';
 require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/users.php';
 require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/alerts.php';
 require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/page-events.php';
+require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/feed.php';
 require_once BLUEWORX_LABS_PATH . 'includes/media-tools.php';
 require_once BLUEWORX_LABS_PATH . 'includes/content-tools.php';
 require_once BLUEWORX_LABS_PATH . 'includes/revisions.php';

@@ -38,6 +38,7 @@
  *   public <key>          Saves the public key; an empty key clears it.
  *   product               Creates a stand-in SureCart product and prints {id, url}.
  *   page                  Creates a published page and prints {id, url}.
+ *   feedkey               Prints the product feed's secret, making one if needed.
  *   pageevent <json>      Sets a page's Klaviyo event: { post_id, name }; an empty name clears it.
  *   off                   Switches the function off.
  *   cleanup               Removes everything, the test double included.
@@ -100,6 +101,7 @@ function klaviyo_fixture_reset() {
 		delete_option( 'blueworx_klaviyo_' . $setting );
 	}
 	delete_option( 'blueworx_klaviyo_store_last_refused' );
+	delete_option( 'blueworx_klaviyo_feed_cache' );
 	delete_transient( 'blueworx_klaviyo_pruned' );
 	delete_transient( 'blueworx_klaviyo_lock' );
 	delete_transient( 'blueworx_klaviyo_lists' );
@@ -350,6 +352,10 @@ switch ( $command ) {
 		);
 		break;
 
+	case 'feedkey':
+		klaviyo_fixture_print( blueworx_klaviyo_feed_secret() );
+		break;
+
 	case 'page':
 		$existing = get_page_by_path( 'klaviyo-landing', OBJECT, 'page' );
 		$post_id  = $existing ? $existing->ID : wp_insert_post(
@@ -399,6 +405,7 @@ switch ( $command ) {
 		delete_option( 'blueworx_klaviyo_public_key' );
 		delete_option( 'blueworx_klaviyo_users_sync' );
 		delete_option( 'blueworx_klaviyo_alert_email' );
+		delete_option( 'blueworx_klaviyo_feed_secret' );
 		foreach ( get_users(
 			array(
 				'search'         => 'klaviyo-*',
