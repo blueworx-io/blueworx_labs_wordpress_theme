@@ -365,3 +365,12 @@ define( 'BLUEWORX_KLAVIYO_PUBLIC_KEY', 'AbC123' );
 | `blueworx_klaviyo_connected()` | On, with a private key |
 | `blueworx_klaviyo_public_key()` | The site's public key, for anything front-end |
 | `blueworx_klaviyo_lists()` | The account's lists, names keyed by ID, remembered for ten minutes |
+
+## Cookie consent
+
+With the theme's Cookie consent function on, Klaviyo's script and the page's
+calls to it wait for marketing consent in the browser (held back the way
+SureCookie blocks a script) and start the moment the visitor agrees. A
+visitor who withdraws has Klaviyo's cookie cleared and nothing more sent.
+`blueworx_klaviyo_tracking_allowed` is for keeping the script off a visitor
+altogether, not for consent.

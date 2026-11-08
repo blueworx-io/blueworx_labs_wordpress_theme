@@ -11,6 +11,7 @@
 // A command-line script WordPress never loads: its stubs have to carry core's
 // own unprefixed names, and its working variables are never seen by a site.
 // phpcs:disable WordPress.NamingConventions.PrefixAllGlobals
+// phpcs:disable WordPress.WP.EnqueuedResources -- Tag strings under test, never printed.
 
 require __DIR__ . '/stubs.php';
 
@@ -229,5 +230,17 @@ $line = blueworx_klaviyo_tracking_test_line(
 );
 check( 'and says so, without failing, when there is no public key', $line['lines'][0], 'No public API key yet, so visitors are not tracked.' );
 check( 'the test still passes', $line['ok'], true );
+
+// Holding the script back for consent: only the opening tag changes, through the gate.
+$gate   = static function ( $opening ) {
+	return '<script type="text/plain" data-surecookie-category="marketing">';
+};
+$script = '<script src="https://static.klaviyo.com/onsite/js/AbC123/klaviyo.js" id="klaviyo-onsite-js" async></script>';
+check( 'the opening tag is replaced and the rest kept', '<script type="text/plain" data-surecookie-category="marketing"></script>', blueworx_klaviyo_gate_script_html( $script, $gate ) );
+check( 'an inline script keeps its body', '<script type="text/plain" data-surecookie-category="marketing">var a = 1;</script>', blueworx_klaviyo_gate_script_html( '<script id="x">var a = 1;</script>', $gate ) );
+check( 'no script tag means no change', '<style>a{}</style>', blueworx_klaviyo_gate_script_html( '<style>a{}</style>', $gate ) );
+check( 'no gate means no change', $script, blueworx_klaviyo_gate_script_html( $script, null ) );
+check( 'other handles are left alone', '<script>x</script>', blueworx_klaviyo_gate_script_tag( '<script>x</script>', 'jquery' ) );
+check( 'with consent off, Klaviyo is left alone too', $script, blueworx_klaviyo_gate_script_tag( $script, 'klaviyo-onsite' ) );
 
 finish();

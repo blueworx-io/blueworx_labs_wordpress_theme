@@ -7,6 +7,12 @@
  *
  * What to say comes from the server in blueworxKlaviyoTracking: who the
  * signed-in person is, which events this page sends, and the product viewed.
+ *
+ * With cookie consent on, this whole script is held back by the consent tool
+ * until the visitor agrees to marketing cookies, so by the time it runs they
+ * have. If they later withdraw, the consent tool says so with a
+ * surecookie_changed event: Klaviyo's cookie is cleared and nothing more is
+ * sent from this page.
  */
 (function () {
 	'use strict';
@@ -20,6 +26,42 @@
 	var klaviyo = window.klaviyo;
 
 	if ( ! klaviyo ) {
+		return;
+	}
+
+	/**
+	 * Clears a cookie on this host and every parent domain, which is where
+	 * Klaviyo sets its own.
+	 *
+	 * @param {string} name Cookie name.
+	 */
+	function clearCookie( name ) {
+		var parts = window.location.hostname.split( '.' );
+		var expired = '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
+
+		document.cookie = name + expired;
+
+		while ( parts.length > 1 ) {
+			document.cookie = name + expired + '; domain=.' + parts.join( '.' );
+			document.cookie = name + expired + '; domain=' + parts.join( '.' );
+			parts.shift();
+		}
+	}
+
+	// Consent withdrawn: Klaviyo's cookie goes, and this page says nothing more.
+	window.addEventListener( 'surecookie_changed', function ( event ) {
+		var detail = event && event.detail;
+		var marketing = detail && detail.preferences && detail.preferences.marketing === true;
+
+		if ( marketing ) {
+			return;
+		}
+
+		window.blueworxKlaviyoStopped = true;
+		clearCookie( '__kla_id' );
+	} );
+
+	if ( window.blueworxKlaviyoStopped ) {
 		return;
 	}
 
