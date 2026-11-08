@@ -12,6 +12,11 @@
  */
 
 body {
+	/* The gap WordPress leaves between blocks, and inside buttons rows and
+	   columns. Core reads this one variable everywhere it spaces blocks, so
+	   setting it to a named style keeps the page and the editor's canvas in
+	   step (the editor gets the same value from blueworx_design_button_defaults). */
+	--wp--style--block-gap: var(--space-6);
 	margin: 0;
 	background: var(--color-bg);
 	color: var(--color-text);
@@ -245,4 +250,85 @@ body {
 	width: 100vw;
 	max-width: none;
 	margin-left: calc(50% - 50vw);
+}
+
+/* Layout blocks: the standard blocks a page is built from */
+
+:where(.wp-block-buttons) {
+	display: flex;
+	flex-wrap: wrap;
+	margin-block-end: var(--space-4);
+}
+
+:where(.wp-block-buttons > .wp-block-button) {
+	margin: 0;
+}
+
+:where(.wp-block-columns) {
+	margin-block-end: var(--space-6);
+}
+
+/* A group with a background, or a cover, is a band: room inside and the
+   site's corners. A full-width band keeps square corners so it runs edge
+   to edge cleanly. */
+:where(.wp-block-group.has-background, .wp-block-cover) {
+	padding: var(--space-8) var(--gutter);
+	border-radius: var(--radius-lg);
+}
+
+:where(.wp-block-group.has-background.alignfull, .wp-block-cover.alignfull) {
+	border-radius: 0;
+}
+
+:where(.wp-block-cover) {
+	min-height: 320px;
+}
+
+:where(.wp-block-cover__inner-container) {
+	max-width: var(--width-reading);
+}
+
+:where(.wp-block-quote.is-style-large, .wp-block-quote.is-style-plain, .wp-block-pullquote) {
+	padding: var(--space-6);
+	border: 0;
+	border-left: 3px solid var(--color-accent);
+	font-family: var(--font-heading);
+	font-size: var(--text-h4);
+	line-height: 1.4;
+	text-align: left;
+}
+
+:where(.wp-block-quote cite, .wp-block-pullquote cite) {
+	display: block;
+	margin-top: var(--space-3);
+	color: var(--color-text-muted);
+	font-family: var(--font-body);
+	font-size: var(--text-small);
+	font-style: normal;
+}
+
+:where(.wp-block-separator) {
+	border: 0;
+	border-top: 1px solid var(--color-border);
+	margin: var(--space-8) auto;
+}
+
+:where(.wp-block-separator:not(.is-style-wide, .is-style-dots)) {
+	width: var(--space-24);
+}
+
+:where(.wp-block-table table) {
+	margin: 0;
+}
+
+:where(.wp-block-media-text__media img) {
+	border-radius: var(--radius-lg);
+}
+
+:where(.wp-block-list li, .wp-block-list ul, .wp-block-list ol) {
+	margin-bottom: var(--space-1);
+}
+
+:where(.wp-block-list ul, .wp-block-list ol) {
+	margin-top: var(--space-1);
 }

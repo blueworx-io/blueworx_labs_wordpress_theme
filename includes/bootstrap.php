@@ -70,7 +70,7 @@ $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 // Kept under the plugin's name: client plugins such as Clubhouse check it to
 // know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
-	define( 'BLUEWORX_LABS_VERSION', '2.5.0' );
+	define( 'BLUEWORX_LABS_VERSION', '2.6.0' );
 }
 
 // The template directory, never the stylesheet one, so a child theme still
@@ -207,6 +207,9 @@ function blueworx_theme_supports() {
 	add_theme_support( 'custom-logo' );
 	add_theme_support( 'responsive-embeds' );
 	add_theme_support( 'automatic-feed-links' );
+	// Wide and full alignment for the block editor's layout blocks; site.css
+	// carries the matching .alignwide and .alignfull rules.
+	add_theme_support( 'align-wide' );
 	add_theme_support( 'html5', array( 'search-form', 'comment-list', 'gallery', 'caption', 'style', 'script', 'navigation-widgets' ) );
 }
 add_action( 'after_setup_theme', 'blueworx_theme_supports' );
