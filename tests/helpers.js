@@ -209,6 +209,7 @@ const FEATURE_SECTIONS = {
   comments: 'content',
   page_excerpts: 'content',
   content_tools: 'content',
+  page_lock: 'content',
   revisions: 'content',
   robots_txt: 'content',
   tracking_codes: 'tracking',
