@@ -8,6 +8,13 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.23.1] - 2026-11-08
+
+### Changed
+- **The shared admin design system is up to date.** The theme's copy now
+  matches the foundation's (v1.22.0), and the check that keeps it matching
+  blocks a change again instead of only warning.
+
 ## [2.23.0] - 2026-11-08
 
 ### Changed
