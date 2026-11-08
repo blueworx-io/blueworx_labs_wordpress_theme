@@ -8,6 +8,20 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.17.0] - 2026-11-08
+
+### Added
+- **A header and footer on every public page.** With Site styles on, every
+  page the theme draws gets the same header, with the site's logo or name,
+  the header menu and a menu button on phones, and the same footer, with the
+  footer menu, the social links from the Design screen, the privacy policy
+  and the copyright line. Set the menus under Appearance, Menus; until then
+  the site's pages stand in. Both take their colours, fonts and spacing from
+  the site's design system. A plugin that draws its own header and footer
+  turns the theme's off with the blueworx_site_frame filter, and adds a
+  button to the header with blueworx_header_actions. Sites that had the
+  theme before, with Site styles off, see no change.
+
 ## [2.16.0] - 2026-11-08
 
 ### Added

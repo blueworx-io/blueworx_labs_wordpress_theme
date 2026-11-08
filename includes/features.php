@@ -276,7 +276,7 @@ function blueworx_get_feature_definitions() {
 		),
 		'site_styles'           => array(
 			'label'       => __( 'Site styles', 'blueworx-labs-wordpress' ),
-			'description' => __( 'Styles headings, text, links, buttons, forms, tables, FAQs and images on public pages from the site\'s design system. Off on sites that had the theme before 2.1.0, so their pages do not change until you choose.', 'blueworx-labs-wordpress' ),
+			'description' => __( 'The theme\'s look on public pages: the header and footer with their menus, and headings, text, links, buttons, forms, tables, FAQs and images styled from the site\'s design system. Off on sites that had the theme before 2.1.0, so their pages do not change until you choose.', 'blueworx-labs-wordpress' ),
 			'section'     => 'appearance',
 			'detail'      => null,
 			'guide'       => false,
