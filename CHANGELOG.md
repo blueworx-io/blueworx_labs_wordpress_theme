@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.18.0] - 2026-11-08
+
+### Added
+- **A Plugin check under the BlueWorx menu.** It lists every installed
+  plugin and marks each one Approved or Not approved against the BlueWorx
+  approved list, which the site fetches once a day. While any plugin is not
+  on the list, a notice on every admin screen links to the check. Nothing is
+  ever deactivated or removed. Clubhouse V1 is not on the list, so it is
+  flagged on a theme site.
+
 ## [2.17.1] - 2026-11-08
 
 ### Fixed
