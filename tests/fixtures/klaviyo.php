@@ -27,6 +27,7 @@
  *   html <json>           Posts to the HTML form address: { form, page, fields }.
  *   records <json>        The SureCart records the double serves, by type and id.
  *   store <json>          Saves store settings: secret, list, box, test_mode.
+ *   checkout <json>       A checkout SureCart's form has just saved; prints what happened to it.
  *   public <key>          Saves the public key; an empty key clears it.
  *   product               Creates a stand-in SureCart product and prints {id, url}.
  *   off                   Switches the function off.
@@ -243,6 +244,11 @@ switch ( $command ) {
 			}
 		}
 		klaviyo_fixture_print( 'ok' );
+		break;
+
+	case 'checkout':
+		// Takes a checkout as SureCart's form saves it: id, status, email, line_items, total_amount.
+		klaviyo_fixture_print( blueworx_klaviyo_checkout_noticed( $json ) );
 		break;
 
 	case 'public':
