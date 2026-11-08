@@ -203,6 +203,16 @@ add_filter( 'blueworx_klaviyo_page_events', function ( $events, $post_id ) {
 }, 10, 2 );
 ```
 
+## Page events
+
+Any public post can send an event of its own when viewed: the editor's
+Klaviyo panel saves the name in the post meta `_blueworx_klaviyo_event`, and
+the page's events then carry `{ name, properties: { PageTitle, URL, PostType } }`
+through the same `blueworx_klaviyo_page_events` filter as above. Set the meta
+from code to mark pages in bulk, and
+`blueworx_klaviyo_page_event_post_types( $types )` to change which post
+types get the panel.
+
 ## Website forms
 
 An admin connects forms on the Klaviyo screen; nothing in code is needed.
