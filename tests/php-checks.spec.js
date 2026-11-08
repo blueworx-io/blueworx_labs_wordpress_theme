@@ -23,6 +23,7 @@ const SCRIPTS = [
   'rest-users-test.php',
   'guides-access-test.php',
   'view-as-access-test.php',
+  'view-as-role-swap-test.php',
   'display-names-test.php',
   'auto-updates-test.php',
   'app-screens-test.php',
