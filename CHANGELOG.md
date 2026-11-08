@@ -8,6 +8,18 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.20.0] - 2026-11-08
+
+### Changed
+- **"View as" now changes the role other plugins see.** Previewing a role
+  used to change only what you were allowed to do, so shop, membership and
+  club plugins that check the role by name still showed you the admin
+  version. Now they show what that member sees. Your account is never
+  changed: saving your profile, or a plugin updating you mid-preview, cannot
+  leave you on the previewed role, and ending the preview, or just closing
+  the tab, leaves you exactly as you were. Website users mid-preview are not
+  sent to Klaviyo as members.
+
 ## [2.19.0] - 2026-11-08
 
 ### Added
