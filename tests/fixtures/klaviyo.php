@@ -14,6 +14,10 @@
  *   double                Installs the test double only, for the screen test.
  *   reset                 Clears the queue, log, double's memory and calls.
  *   fail <n>              The next n requests to Klaviyo answer 503.
+ *   refuse <n>            The next n requests to Klaviyo answer 401, as a bad key would.
+ *   mail                  Prints the emails the site has tried to send.
+ *   alerts <json>         Sets alert state: last_sent (timestamp).
+ *   tick                  Runs the five-minute tick.
  *   profiles <json>       The profiles the double holds, keyed by email.
  *   identify <json>       Calls blueworx_klaviyo_identify( email, properties, args ).
  *   track <json>          Calls blueworx_klaviyo_track( event, email, properties, args ).
@@ -82,13 +86,17 @@ require_once ABSPATH . 'wp-admin/includes/user.php';
 function klaviyo_fixture_reset() {
 	global $wpdb;
 
-	foreach ( array( 'job_', 'double_call_', 'seen_', 'sub_' ) as $family ) {
+	foreach ( array( 'job_', 'double_call_', 'double_mail_', 'seen_', 'sub_' ) as $family ) {
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'blueworx_klaviyo_' . $family ) . '%' ) );
 	}
 
 	delete_option( 'blueworx_klaviyo_log' );
 	delete_option( 'blueworx_klaviyo_double_profiles' );
 	delete_option( 'blueworx_klaviyo_double_fail' );
+	delete_option( 'blueworx_klaviyo_double_refuse' );
+	foreach ( array( 'alert_pending', 'alert_last_sent', 'alert_key_refused', 'last_sent_at' ) as $setting ) {
+		delete_option( 'blueworx_klaviyo_' . $setting );
+	}
 	delete_option( 'blueworx_klaviyo_store_last_refused' );
 	delete_transient( 'blueworx_klaviyo_pruned' );
 	delete_transient( 'blueworx_klaviyo_lock' );
@@ -163,6 +171,37 @@ switch ( $command ) {
 	case 'fail':
 		update_option( 'blueworx_klaviyo_double_fail', (int) $arg, 'no' );
 		klaviyo_fixture_print( 'ok' );
+		break;
+
+	case 'refuse':
+		update_option( 'blueworx_klaviyo_double_refuse', (int) $arg, 'no' );
+		klaviyo_fixture_print( 'ok' );
+		break;
+
+	case 'mail':
+		wp_cache_flush();
+		$rows = $GLOBALS['wpdb']->get_col( $GLOBALS['wpdb']->prepare( "SELECT option_value FROM {$GLOBALS['wpdb']->options} WHERE option_name LIKE %s ORDER BY option_name ASC", $GLOBALS['wpdb']->esc_like( 'blueworx_klaviyo_double_mail_' ) . '%' ) );
+		klaviyo_fixture_print(
+			array_map(
+				static function ( $row ) {
+					return json_decode( maybe_unserialize( $row ), true );
+				},
+				$rows
+			)
+		);
+		break;
+
+	case 'alerts':
+		if ( isset( $json['last_sent'] ) ) {
+			update_option( 'blueworx_klaviyo_alert_last_sent', (int) $json['last_sent'], 'no' );
+		}
+		klaviyo_fixture_print( 'ok' );
+		break;
+
+	case 'tick':
+		delete_transient( 'blueworx_klaviyo_lock' );
+		do_action( 'blueworx_klaviyo_tick' );
+		klaviyo_fixture_print( klaviyo_fixture_state() );
 		break;
 
 	case 'profiles':
@@ -325,6 +364,7 @@ switch ( $command ) {
 		delete_option( 'blueworx_klaviyo_private_key' );
 		delete_option( 'blueworx_klaviyo_public_key' );
 		delete_option( 'blueworx_klaviyo_users_sync' );
+		delete_option( 'blueworx_klaviyo_alert_email' );
 		foreach ( get_users(
 			array(
 				'search'         => 'klaviyo-*',
