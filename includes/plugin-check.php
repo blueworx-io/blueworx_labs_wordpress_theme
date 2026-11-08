@@ -363,7 +363,7 @@ function blueworx_render_plugin_check_page() {
 	$rows = '';
 
 	foreach ( $result['installed'] as $file => $data ) {
-		$is_active = in_array( $file, $active, true );
+		$is_active  = in_array( $file, $active, true );
 		$is_flagged = is_array( $flagged ) && isset( $flagged[ $file ] );
 
 		if ( null === $flagged ) {

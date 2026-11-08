@@ -96,7 +96,7 @@ check( 'no list known gives null, not an empty list', $none['plugins'], null );
 $GLOBALS['filters']['blueworx_approved_plugins'] = static function () {
 	return array( 'hello' => array() );
 };
-$supplied = blueworx_plugin_check_list();
+$supplied                                        = blueworx_plugin_check_list();
 check( 'the filter can supply the list', array_keys( $supplied['plugins'] ), array( 'hello' ) );
 
 // The notice.
