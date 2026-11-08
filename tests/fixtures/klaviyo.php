@@ -25,6 +25,8 @@
  *   elementor <json>      Fires Elementor's form hook: { name, fields }.
  *   sureforms <json>      Fires SureForms' hook: { form_id, data }.
  *   html <json>           Posts to the HTML form address: { form, page, fields }.
+ *   records <json>        The SureCart records the double serves, by type and id.
+ *   store <json>          Saves store settings: secret, list, box, test_mode.
  *   public <key>          Saves the public key; an empty key clears it.
  *   product               Creates a stand-in SureCart product and prints {id, url}.
  *   off                   Switches the function off.
@@ -73,13 +75,15 @@ require $wp_load;
 function klaviyo_fixture_reset() {
 	global $wpdb;
 
-	foreach ( array( 'job_', 'double_call_' ) as $family ) {
+	foreach ( array( 'job_', 'double_call_', 'seen_', 'sub_' ) as $family ) {
 		$wpdb->query( $wpdb->prepare( "DELETE FROM {$wpdb->options} WHERE option_name LIKE %s", $wpdb->esc_like( 'blueworx_klaviyo_' . $family ) . '%' ) );
 	}
 
 	delete_option( 'blueworx_klaviyo_log' );
 	delete_option( 'blueworx_klaviyo_double_profiles' );
 	delete_option( 'blueworx_klaviyo_double_fail' );
+	delete_option( 'blueworx_klaviyo_store_last_refused' );
+	delete_transient( 'blueworx_klaviyo_pruned' );
 	delete_transient( 'blueworx_klaviyo_lock' );
 	delete_transient( 'blueworx_klaviyo_lists' );
 	delete_transient( 'blueworx_klaviyo_notice' );
@@ -221,6 +225,26 @@ switch ( $command ) {
 		);
 		break;
 
+	case 'records':
+		update_option( 'blueworx_klaviyo_double_records', $json, 'no' );
+		klaviyo_fixture_print( 'ok' );
+		break;
+
+	case 'store':
+		// Takes any of: secret, list, box, test_mode.
+		foreach ( array(
+			'secret'    => 'store_webhook_secret',
+			'list'      => 'store_list',
+			'box'       => 'store_checkout_box',
+			'test_mode' => 'store_test_mode',
+		) as $key => $setting ) {
+			if ( array_key_exists( $key, $json ) ) {
+				update_option( 'blueworx_klaviyo_' . $setting, (string) $json[ $key ], 'no' );
+			}
+		}
+		klaviyo_fixture_print( 'ok' );
+		break;
+
 	case 'public':
 		update_option( 'blueworx_klaviyo_public_key', (string) $arg, 'no' );
 		klaviyo_fixture_print( 'ok' );
@@ -254,6 +278,10 @@ switch ( $command ) {
 		klaviyo_fixture_reset();
 		delete_option( 'blueworx_feature_klaviyo' );
 		delete_option( 'blueworx_klaviyo_forms' );
+		delete_option( 'blueworx_klaviyo_double_records' );
+		foreach ( array( 'store_webhook_secret', 'store_list', 'store_checkout_box', 'store_test_mode' ) as $setting ) {
+			delete_option( 'blueworx_klaviyo_' . $setting );
+		}
 		delete_option( 'blueworx_klaviyo_private_key' );
 		delete_option( 'blueworx_klaviyo_public_key' );
 		wp_clear_scheduled_hook( 'blueworx_klaviyo_tick' );

@@ -231,6 +231,54 @@ The connection must exist for that kind and id; the plugin only reports the
 submission. Every form send goes through `blueworx_klaviyo_plan` with the
 source `forms`, so a site can still add to it there.
 
+## The SureCart store
+
+On a SureCart site, the Klaviyo screen shows a webhook address to add in the
+SureCart dashboard with its signing secret. Every delivery is checked and
+queued, then looked up in the background. The events:
+
+| SureCart | Klaviyo event | Revenue |
+| --- | --- | --- |
+| A purchase with no subscription | `Placed Order` | what was paid |
+| A purchase that starts a subscription | `Started Subscription` | what was paid |
+| A later payment | `Subscription Renewed` | what the period charged |
+| A failed payment | `Payment Failed` | none |
+| Set to cancel, or cancelled outright | `Subscription Cancelled` | none |
+| A different price or product | `Plan Changed` | none |
+| A refund | `Refunded` | none; the amount is a property |
+
+Every event carries `product_name`, `product_slug`, `product_id`, `price_id`,
+`billing_interval`, `amount`, `currency`, `subscription_id` and the dates. The
+profile keeps `surecart_customer_id`, `membership_status`, `membership_plan`,
+`billing_interval`, `next_renewal_date`, `membership_start_date`,
+`membership_end_date` and `last_order_date` up to date. A ticked checkout box
+sets `marketing_consent` and subscribes to the Members list.
+
+Every store send goes through `blueworx_klaviyo_plan` with the source
+`store`, which is where a site's own rules go. The worked example: a site
+that sells one special product and wants it marked on the profile.
+
+```php
+add_filter( 'blueworx_klaviyo_plan', function ( $plan, $source ) {
+	if ( 'store' !== $source || empty( $plan['event']['properties']['product_slug'] ) ) {
+		return $plan;
+	}
+	if ( 'founding-membership' === $plan['event']['properties']['product_slug'] ) {
+		$plan['profile']['founding_member'] = true;
+		$plan['guard']['founding_status']   = 'paid';   // never overwrites a value marketing set
+		if ( 'Started Subscription' === $plan['event']['name'] ) {
+			$plan['profile']['membership_start_date'] = '2027-01-15';   // everyone starts together
+		}
+	}
+	return $plan;
+}, 10, 2 );
+```
+
+Two more filters stand in for SureCart on a test site, and can override it on
+a live one: `blueworx_klaviyo_surecart_record( $short, $type, $id )` answers a
+record as plain arrays, and `blueworx_klaviyo_store_currency( $currency )`
+says the store's currency when a record does not carry one.
+
 ## Knowing when something went through
 
 `blueworx_klaviyo_sent( $plan )` fires once a plan has reached Klaviyo, for a

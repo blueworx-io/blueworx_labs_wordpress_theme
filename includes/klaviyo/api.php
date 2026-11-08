@@ -249,6 +249,9 @@ function blueworx_klaviyo_normalize_plan( $plan ) {
 		'unset'   => array_values( array_filter( array_map( 'strval', isset( $plan['unset'] ) ? (array) $plan['unset'] : array() ) ) ),
 		'event'   => array(),
 		'list'    => isset( $plan['list'] ) ? trim( (string) $plan['list'] ) : '',
+		// Anything the sender wants back once the plan has gone through, via
+		// the blueworx_klaviyo_sent action. Carried, never sent.
+		'after'   => isset( $plan['after'] ) && is_array( $plan['after'] ) ? $plan['after'] : array(),
 	);
 
 	foreach ( blueworx_klaviyo_protected_properties() as $name ) {
@@ -274,7 +277,7 @@ function blueworx_klaviyo_normalize_plan( $plan ) {
 		$clean['label'] = $clean['event'] ? $clean['event']['name'] : __( 'Profile update', 'blueworx-labs-wordpress' );
 	}
 
-	if ( ! $clean['profile'] && ! $clean['fill'] && ! $clean['guard'] && ! $clean['unset'] && ! $clean['event'] && '' === $clean['list'] ) {
+	if ( ! $clean['profile'] && ! $clean['fill'] && ! $clean['guard'] && ! $clean['unset'] && ! $clean['event'] && '' === $clean['list'] && ! $clean['after'] ) {
 		return null;
 	}
 

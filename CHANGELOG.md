@@ -8,6 +8,19 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.11.0] - 2026-11-08
+
+### Added
+- **The store sends to Klaviyo.** On a SureCart site, add the webhook address
+  shown on BlueWorx, Klaviyo to the SureCart dashboard with its signing
+  secret, and every order and subscription reaches Klaviyo: Placed Order,
+  Started Subscription, Subscription Renewed, Payment Failed, Subscription
+  Cancelled, Plan Changed and Refunded, each with the product, price, dates
+  and IDs in the store's own currency. Customers who tick the marketing box at
+  checkout join the Members list; unticked never does. Each event reaches
+  Klaviyo once however many times SureCart retries, and a wrong secret refuses
+  every delivery and says so on the screen.
+
 ## [2.10.0] - 2026-11-08
 
 ### Added
