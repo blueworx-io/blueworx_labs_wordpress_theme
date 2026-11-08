@@ -308,15 +308,17 @@ function blueworx_klaviyo_subscribe_body( $email, $list_id ) {
  * @return array {
  *     @type bool   $ok    Whether it all went through.
  *     @type bool   $retry Whether trying again might help.
- *     @type string $error What went wrong.
+ *     @type string $error  What went wrong.
+ *     @type int    $status The HTTP status that decided it.
  * }
  */
 function blueworx_klaviyo_send_plan( $plan ) {
 	$failed = static function ( $result ) {
 		return array(
-			'ok'    => false,
-			'retry' => blueworx_klaviyo_is_retryable( $result['status'] ),
-			'error' => $result['error'],
+			'ok'     => false,
+			'retry'  => blueworx_klaviyo_is_retryable( $result['status'] ),
+			'error'  => $result['error'],
+			'status' => (int) $result['status'],
 		);
 	};
 
@@ -375,9 +377,10 @@ function blueworx_klaviyo_send_plan( $plan ) {
 	}
 
 	return array(
-		'ok'    => true,
-		'retry' => false,
-		'error' => '',
+		'ok'     => true,
+		'retry'  => false,
+		'error'  => '',
+		'status' => 200,
 	);
 }
 

@@ -311,6 +311,16 @@ Administrators and the BlueWorx support roles are never sent.
 batches of 25; `blueworx_klaviyo_users_start_sync()` starts the same from
 code.
 
+## When sending goes wrong
+
+A send that fails for good fires `blueworx_klaviyo_gave_up( $label, $email,
+$detail )`; a key Klaviyo refuses fires `blueworx_klaviyo_key_refused(
+$detail )`. The theme emails on both: failures grouped into one email an
+hour, the key once until it works again. `blueworx_klaviyo_alert_recipients(
+$emails )` changes who gets them; the default is the address on the Klaviyo
+screen, or the site's admin email. `blueworx_klaviyo_setting( 'last_sent_at' )`
+is when the last send went through.
+
 ## Knowing when something went through
 
 `blueworx_klaviyo_sent( $plan )` fires once a plan has reached Klaviyo, for a

@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.14.0] - 2026-11-08
+
+### Added
+- **An email when Klaviyo sending goes wrong.** A send that fails for good
+  is emailed to the site's admin email, or an address set on the Klaviyo
+  screen, with the reason and a link to the log: one email an hour at most,
+  listing everything that failed in it. A private key Klaviyo refuses is
+  emailed once, and not again until a key has worked. The Klaviyo screen now
+  shows when the last send went through.
+
 ## [2.13.0] - 2026-11-08
 
 ### Added

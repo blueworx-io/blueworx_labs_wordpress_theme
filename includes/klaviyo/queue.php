@@ -244,12 +244,21 @@ function blueworx_klaviyo_process_job( $name, $job ) {
 		$outcome = blueworx_klaviyo_send_plan( $plan );
 
 		if ( ! $outcome['ok'] ) {
+			if ( in_array( isset( $outcome['status'] ) ? (int) $outcome['status'] : 0, array( 401, 403 ), true ) ) {
+				/**
+				 * Fires when Klaviyo refuses the private API key.
+				 *
+				 * @param string $error What Klaviyo said.
+				 */
+				do_action( 'blueworx_klaviyo_key_refused', $outcome['error'] );
+			}
+
 			if ( $outcome['retry'] ) {
 				blueworx_klaviyo_retry_job( $name, $job, $plan['label'], $plan['email'], $outcome['error'] );
 				return;
 			}
 
-			blueworx_klaviyo_log( $plan['label'], $plan['email'], 'failed', $outcome['error'] );
+			blueworx_klaviyo_give_up( $plan['label'], $plan['email'], $outcome['error'] );
 			continue;
 		}
 
@@ -281,7 +290,7 @@ function blueworx_klaviyo_retry_job( $name, $job, $label, $email, $message ) {
 	$attempts = isset( $job['attempts'] ) ? (int) $job['attempts'] : 0;
 
 	if ( $attempts >= count( $delays ) ) {
-		blueworx_klaviyo_log( $label, $email, 'failed', $message );
+		blueworx_klaviyo_give_up( $label, $email, $message );
 		delete_option( $name );
 		return;
 	}
@@ -292,6 +301,27 @@ function blueworx_klaviyo_retry_job( $name, $job, $label, $email, $message ) {
 	update_option( $name, $job, 'no' );
 
 	blueworx_klaviyo_log( $label, $email, 'retrying', $message );
+}
+
+/**
+ * Writes a send off: a failed line in the log, and word to whoever listens.
+ *
+ * @param string $label   What it was.
+ * @param string $email   Who it was about.
+ * @param string $message What went wrong.
+ * @return void
+ */
+function blueworx_klaviyo_give_up( $label, $email, $message ) {
+	blueworx_klaviyo_log( $label, $email, 'failed', $message );
+
+	/**
+	 * Fires when a send has failed for good and will not be tried again.
+	 *
+	 * @param string $label   What it was.
+	 * @param string $email   Who it was about.
+	 * @param string $message What went wrong.
+	 */
+	do_action( 'blueworx_klaviyo_gave_up', $label, $email, $message );
 }
 
 /**

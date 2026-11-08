@@ -20,6 +20,7 @@
  *
  * Behaviour is steered by two options:
  *   blueworx_klaviyo_double_fail      How many more requests answer 503.
+ *   blueworx_klaviyo_double_refuse    How many more requests answer 401, as a bad key would.
  *   blueworx_klaviyo_double_profiles  Profiles Klaviyo "holds", keyed by email.
  */
 add_filter(
@@ -64,6 +65,14 @@ add_filter(
 			update_option( 'blueworx_klaviyo_double_fail', $fail - 1, 'no' );
 
 			return $answer( 503, array( 'errors' => array( array( 'detail' => 'The double is down' ) ) ) );
+		}
+
+		$refuse = (int) get_option( 'blueworx_klaviyo_double_refuse', 0 );
+
+		if ( $refuse > 0 ) {
+			update_option( 'blueworx_klaviyo_double_refuse', $refuse - 1, 'no' );
+
+			return $answer( 401, array( 'errors' => array( array( 'detail' => 'Missing or invalid private key.' ) ) ) );
 		}
 
 		$path     = (string) wp_parse_url( $url, PHP_URL_PATH );
@@ -129,6 +138,32 @@ add_filter(
 	},
 	10,
 	3
+);
+
+/**
+ * Catches every email the site tries to send, so a test can read it and nothing
+ * leaves the test site.
+ */
+add_filter(
+	'pre_wp_mail',
+	static function ( $short, $atts ) {
+		add_option(
+			'blueworx_klaviyo_double_mail_' . str_pad( (string) hrtime( true ), 24, '0', STR_PAD_LEFT ),
+			wp_json_encode(
+				array(
+					'to'      => $atts['to'],
+					'subject' => $atts['subject'],
+					'message' => $atts['message'],
+				)
+			),
+			'',
+			'no'
+		);
+
+		return true;
+	},
+	10,
+	2
 );
 
 /**
