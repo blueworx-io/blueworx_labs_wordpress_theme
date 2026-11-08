@@ -869,6 +869,7 @@ function blueworx_klaviyo_store_accept_event( $event ) {
 		'surecart:' . $event['id'],
 		array(
 			'label'    => $event['type'],
+			'source'   => 'store',
 			'resolver' => 'surecart',
 			'data'     => array(
 				'type'     => $event['type'],

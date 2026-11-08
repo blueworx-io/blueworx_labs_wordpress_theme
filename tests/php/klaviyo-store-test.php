@@ -448,4 +448,30 @@ check(
 );
 check( 'and leaves other jobs alone', blueworx_klaviyo_store_resolve( null, 'other', array() ), null );
 
+// A site's own rules see store sends worked out in the background, with the
+// source 'store', the same as everything queued straight away.
+$GLOBALS['filters']['blueworx_klaviyo_resolve_job'] = 'blueworx_klaviyo_store_resolve';
+$GLOBALS['filters']['blueworx_klaviyo_plan']        = static function ( $plan, $source ) {
+	if ( 'store' === $source ) {
+		$plan['profile']['founding_member'] = true;
+	}
+	return $plan;
+};
+
+$plans = blueworx_klaviyo_job_plans(
+	array(
+		'source'   => 'store',
+		'resolver' => 'surecart',
+		'data'     => array(
+			'type' => 'purchase.created',
+			'id'   => 'pur2',
+		),
+	)
+);
+
+check( 'plans worked out in the background pass the plan filter', $plans[0]['profile']['founding_member'], true );
+check( 'with the store as their source', $plans[0]['event']['name'], 'Placed Order' );
+
+unset( $GLOBALS['filters']['blueworx_klaviyo_plan'], $GLOBALS['filters']['blueworx_klaviyo_resolve_job'] );
+
 finish();
