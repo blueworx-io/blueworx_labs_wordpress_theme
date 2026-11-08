@@ -157,6 +157,7 @@ require_once BLUEWORX_LABS_PATH . 'includes/dashboard-widgets.php';
 require_once BLUEWORX_LABS_PATH . 'includes/security-hardening.php';
 require_once BLUEWORX_LABS_PATH . 'includes/robots-txt.php';
 require_once BLUEWORX_LABS_PATH . 'includes/tracking-codes.php';
+require_once BLUEWORX_LABS_PATH . 'includes/plugin-check.php';
 require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/settings.php';
 require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/client.php';
 require_once BLUEWORX_LABS_PATH . 'includes/klaviyo/queue.php';

@@ -101,6 +101,15 @@ function blueworx_register_settings_page() {
 
 	add_submenu_page(
 		'blueworx-labs-wordpress',
+		esc_html__( 'Plugin check', 'blueworx-labs-wordpress' ),
+		esc_html__( 'Plugin check', 'blueworx-labs-wordpress' ),
+		'manage_options',
+		'blueworx-plugin-check',
+		'blueworx_render_plugin_check_page'
+	);
+
+	add_submenu_page(
+		'blueworx-labs-wordpress',
 		esc_html__( 'Support access', 'blueworx-labs-wordpress' ),
 		esc_html__( 'Support access', 'blueworx-labs-wordpress' ),
 		'manage_options',
