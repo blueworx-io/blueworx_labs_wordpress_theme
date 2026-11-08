@@ -194,7 +194,22 @@ function blueworx_klaviyo_job_plans( $job ) {
 		return new WP_Error( 'blueworx_klaviyo_no_resolver', sprintf( 'Nothing knows how to work out a "%s" job.', (string) $job['resolver'] ) );
 	}
 
-	return $plans;
+	// Plans worked out here have not been past the plan filter yet, so a
+	// site's own rules see these sends the same as every other.
+	$source = isset( $job['source'] ) && '' !== (string) $job['source'] ? (string) $job['source'] : (string) $job['resolver'];
+
+	return array_values(
+		array_filter(
+			array_map(
+				static function ( $plan ) use ( $source ) {
+					$plan = blueworx_klaviyo_normalize_plan( $plan );
+
+					return $plan ? blueworx_klaviyo_normalize_plan( apply_filters( 'blueworx_klaviyo_plan', $plan, $source ) ) : null;
+				},
+				$plans
+			)
+		)
+	);
 }
 
 /**

@@ -160,6 +160,37 @@ add_filter(
 	}
 );
 
+/**
+ * Stands in for SureCart's records, from whatever the fixture has seeded, and
+ * for the two look-ups that need a SureCart account.
+ */
+add_filter(
+	'blueworx_klaviyo_surecart_record',
+	static function ( $short, $type, $id ) {
+		$records = get_option( 'blueworx_klaviyo_double_records', array() );
+
+		return isset( $records[ $type ][ $id ] ) ? $records[ $type ][ $id ] : new WP_Error( 'not_found', 'No such record.' );
+	},
+	10,
+	3
+);
+
+add_filter(
+	'blueworx_klaviyo_payment_number',
+	static function () {
+		return 2;
+	}
+);
+
+add_filter(
+	'blueworx_klaviyo_subscription_for_order',
+	static function ( $short, $order ) {
+		return isset( $order['subscription_for_test'] ) ? $order['subscription_for_test'] : '';
+	},
+	10,
+	2
+);
+
 // SureCart is not on the test site, so its product type is stood in for and
 // the price comes from the filter a site plugin would use.
 add_action(
