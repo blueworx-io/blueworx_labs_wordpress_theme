@@ -8,6 +8,18 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.10.0] - 2026-11-08
+
+### Added
+- **Any form can feed Klaviyo.** On BlueWorx, Klaviyo, add a form connection:
+  which form (an Elementor form by name, a SureForms form by ID, or any HTML
+  form by the id on its tag), which Klaviyo list, the consent wording shown
+  beside the button, and a short source tag. Each sign-up is identified by
+  email, recorded as Submitted Form, and subscribed to the list when they
+  agreed. A form with a marketing tick box respects it: unticked is never
+  subscribed. Fields are found by their labels, so a form can change without
+  breaking the connection.
+
 ## [2.9.0] - 2026-11-08
 
 ### Added

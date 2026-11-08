@@ -21,6 +21,10 @@
  *   drain                 Runs the queue and prints {calls, jobs, log, profiles}.
  *   due                   Makes every waiting job due now.
  *   state                 Prints {calls, jobs, log, profiles} without running.
+ *   forms <json>          Saves the form connections and prints them back.
+ *   elementor <json>      Fires Elementor's form hook: { name, fields }.
+ *   sureforms <json>      Fires SureForms' hook: { form_id, data }.
+ *   html <json>           Posts to the HTML form address: { form, page, fields }.
  *   public <key>          Saves the public key; an empty key clears it.
  *   product               Creates a stand-in SureCart product and prints {id, url}.
  *   off                   Switches the function off.
@@ -185,6 +189,38 @@ switch ( $command ) {
 		klaviyo_fixture_print( klaviyo_fixture_state() );
 		break;
 
+	case 'forms':
+		update_option( 'blueworx_klaviyo_forms', $json, 'no' );
+		klaviyo_fixture_print( blueworx_klaviyo_form_connections() );
+		break;
+
+	case 'elementor':
+		// Takes the form's name and its fields keyed by id, each with title, value and type.
+		$_POST['referrer'] = 'https://example.test/elementor-page/';
+		do_action( 'elementor_pro/forms/new_record', new Klaviyo_Double_Record( $json['name'], $json['fields'] ), null ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores -- Elementor's own hook name.
+		klaviyo_fixture_print( 'fired' );
+		break;
+
+	case 'sureforms':
+		// Takes the form's id and the posted data keyed by SureForms' field names.
+		do_action( 'srfm_submission_accepted', 1, (int) $json['form_id'], $json['data'] );
+		klaviyo_fixture_print( 'fired' );
+		break;
+
+	case 'html':
+		// Takes the form's id, the page, and the fields with name, label, value and checked.
+		$request = new WP_REST_Request( 'POST', '/blueworx/v1/klaviyo/form' );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body( wp_json_encode( $json ) );
+		$response = rest_do_request( $request );
+		klaviyo_fixture_print(
+			array(
+				'status' => $response->get_status(),
+				'data'   => $response->get_data(),
+			)
+		);
+		break;
+
 	case 'public':
 		update_option( 'blueworx_klaviyo_public_key', (string) $arg, 'no' );
 		klaviyo_fixture_print( 'ok' );
@@ -217,6 +253,7 @@ switch ( $command ) {
 	case 'cleanup':
 		klaviyo_fixture_reset();
 		delete_option( 'blueworx_feature_klaviyo' );
+		delete_option( 'blueworx_klaviyo_forms' );
 		delete_option( 'blueworx_klaviyo_private_key' );
 		delete_option( 'blueworx_klaviyo_public_key' );
 		wp_clear_scheduled_hook( 'blueworx_klaviyo_tick' );

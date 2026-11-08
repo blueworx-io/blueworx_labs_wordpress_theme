@@ -187,6 +187,60 @@ add_filter(
 	}
 );
 
+/**
+ * Stands in for Elementor's form record, which has the two methods the
+ * connection reads.
+ */
+if ( ! class_exists( 'Klaviyo_Double_Record' ) ) {
+	// phpcs:ignore Squiz.Commenting.ClassComment.Missing -- Described above.
+	class Klaviyo_Double_Record {
+		/**
+		 * Form name.
+		 *
+		 * @var string
+		 */
+		private $name;
+
+		/**
+		 * Fields keyed by id.
+		 *
+		 * @var array
+		 */
+		private $fields;
+
+		/**
+		 * Constructor.
+		 *
+		 * @param string $name   Form name.
+		 * @param array  $fields Fields keyed by id.
+		 */
+		public function __construct( $name, $fields ) {
+			$this->name   = $name;
+			$this->fields = $fields;
+		}
+
+		/**
+		 * A form setting.
+		 *
+		 * @param string $setting Setting name.
+		 * @return string
+		 */
+		public function get_form_settings( $setting ) {
+			return 'form_name' === $setting ? $this->name : '';
+		}
+
+		/**
+		 * A record property.
+		 *
+		 * @param string $property Property name.
+		 * @return array
+		 */
+		public function get( $property ) {
+			return 'fields' === $property ? $this->fields : array();
+		}
+	}
+}
+
 add_filter(
 	'blueworx_klaviyo_sources',
 	static function ( $sources ) {
