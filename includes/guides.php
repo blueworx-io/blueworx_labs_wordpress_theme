@@ -1843,6 +1843,39 @@ function blueworx_get_feature_guide_tasks() {
 			),
 		),
 
+		'klaviyo'         => array(
+			array(
+				'slug'  => '',
+				'title' => $t( 'Connecting Klaviyo' ),
+				'body'  => blueworx_guide_body(
+					array(
+						'where' => $t( 'BlueWorx > Klaviyo' ),
+						'steps' => array(
+							$t( 'In Klaviyo, open *Settings*, then *API keys*, and create a private key with full access to Profiles, Events, Lists and Subscriptions.' ),
+							$t( 'Paste it into *Private API key*. Copy the six-character public key from the same screen into *Public API key*.' ),
+							$t( 'Press *Save and test connection*.' ),
+						),
+						'then'  => $t( 'The notice says whether the key works and names the lists it can see. The badge at the top turns to *Connected*. The key is never shown again in full; to change it, paste a new one over the top.' ),
+					)
+				),
+			),
+			array(
+				'slug'  => 'log',
+				'title' => $t( 'Checking what has gone to Klaviyo' ),
+				'body'  => blueworx_guide_body(
+					array(
+						'where' => $t( 'BlueWorx > Klaviyo log' ),
+						'steps' => array(
+							$t( 'Open *Klaviyo log*.' ),
+							$t( 'Find the person by their email address. The newest sends are at the top.' ),
+							$t( 'Read the *Outcome* column. *Will try again* needs nothing from you. *Failed* means it did not reach Klaviyo, with the reason underneath.' ),
+						),
+						'then'  => $t( 'The last 100 sends are kept. Nothing here holds up a form or a checkout: if Klaviyo is down, visitors carry on as normal and the send tries again later.' ),
+					)
+				),
+			),
+		),
+
 		'media_tools'     => array(
 			array(
 				'slug'  => '',

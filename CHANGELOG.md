@@ -8,6 +8,19 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.8.0] - 2026-11-08
+
+### Added
+- **Klaviyo connection.** Connect a site to its Klaviyo account from BlueWorx,
+  Klaviyo: paste the account's keys, press Save and test connection, and the
+  screen names the lists it can see. Everything sent to Klaviyo goes through a
+  queue, so a form or a checkout never waits for Klaviyo, and a Klaviyo that is
+  down is retried for six hours. A log keeps the last 100 sends. Nothing sends
+  yet on its own: visitor tracking, forms and the store each arrive in their
+  own update, and a plugin built for the site can send through the connection
+  now (see docs/klaviyo-api.md). Off by default under Enhancements, Analytics
+  & Tracking.
+
 ## [2.7.0] - 2026-11-07
 
 ### Added

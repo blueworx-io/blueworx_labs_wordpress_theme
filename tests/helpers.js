@@ -213,6 +213,7 @@ const FEATURE_SECTIONS = {
   revisions: 'content',
   robots_txt: 'content',
   tracking_codes: 'tracking',
+  klaviyo: 'tracking',
   media_tools: 'media',
   translate: 'translation',
   emails: 'notifications',

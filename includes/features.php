@@ -213,6 +213,13 @@ function blueworx_get_feature_definitions() {
 			'default'     => '0',
 			'guide'       => false,
 		),
+		'klaviyo'               => array(
+			'label'       => __( 'Klaviyo connection', 'blueworx-labs-wordpress' ),
+			'description' => __( 'Connects the site to its Klaviyo account, so sign-ups, orders and visits reach Klaviyo without anyone exporting lists. Nothing waits for Klaviyo, and a log shows every send. Off until you switch it on and add its keys.', 'blueworx-labs-wordpress' ),
+			'section'     => 'tracking',
+			'detail'      => 'klaviyo',
+			'default'     => '0',
+		),
 		'media_tools'           => array(
 			'label'       => __( 'Media tools', 'blueworx-labs-wordpress' ),
 			'description' => __( 'Replace a file without breaking the links to it, shrink oversized photos as they are uploaded, and optionally allow SVG logos.', 'blueworx-labs-wordpress' ),
