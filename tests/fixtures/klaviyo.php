@@ -28,6 +28,9 @@
  *   records <json>        The SureCart records the double serves, by type and id.
  *   store <json>          Saves store settings: secret, list, box, test_mode.
  *   checkout <json>       A checkout SureCart's form has just saved; prints what happened to it.
+ *   user <json>           Makes a user (wp_insert_user fields) and prints {id}.
+ *   login <id>            Fires the sign-in hook for that user.
+ *   role <json>           Sets a user's role: { id, role }.
  *   public <key>          Saves the public key; an empty key clears it.
  *   product               Creates a stand-in SureCart product and prints {id, url}.
  *   off                   Switches the function off.
@@ -67,6 +70,9 @@ if ( 'setup' === $command || 'double' === $command ) {
 define( 'WP_CLI', true );
 define( 'WP_USE_THEMES', false );
 require $wp_load;
+
+// Deleting a user is an admin-screen function WordPress does not load on its own.
+require_once ABSPATH . 'wp-admin/includes/user.php';
 
 /**
  * Clears the queue, the log, the double's memory and the recorded calls.
@@ -251,6 +257,34 @@ switch ( $command ) {
 		klaviyo_fixture_print( blueworx_klaviyo_checkout_noticed( $json ) );
 		break;
 
+	case 'user':
+		// Takes wp_insert_user's fields. Logins beginning klaviyo- are removed by cleanup.
+		$existing = get_user_by( 'login', $json['user_login'] );
+		if ( $existing ) {
+			wp_delete_user( $existing->ID );
+		}
+		if ( empty( $json['user_pass'] ) ) {
+			$json['user_pass'] = 'wptest-klaviyo-pw';
+		}
+		$user_id = wp_insert_user( $json );
+		klaviyo_fixture_print( array( 'id' => is_wp_error( $user_id ) ? 0 : $user_id ) );
+		break;
+
+	case 'login':
+		$user = get_userdata( (int) $arg );
+		delete_transient( 'blueworx_klaviyo_login_' . (int) $arg );
+		do_action( 'wp_login', $user ? $user->user_login : '', $user );
+		klaviyo_fixture_print( 'fired' );
+		break;
+
+	case 'role':
+		$user = get_userdata( (int) $json['id'] );
+		if ( $user ) {
+			$user->set_role( $json['role'] );
+		}
+		klaviyo_fixture_print( 'ok' );
+		break;
+
 	case 'public':
 		update_option( 'blueworx_klaviyo_public_key', (string) $arg, 'no' );
 		klaviyo_fixture_print( 'ok' );
@@ -290,6 +324,15 @@ switch ( $command ) {
 		}
 		delete_option( 'blueworx_klaviyo_private_key' );
 		delete_option( 'blueworx_klaviyo_public_key' );
+		delete_option( 'blueworx_klaviyo_users_sync' );
+		foreach ( get_users(
+			array(
+				'search'         => 'klaviyo-*',
+				'search_columns' => array( 'user_login' ),
+			)
+		) as $made ) {
+			wp_delete_user( $made->ID );
+		}
 		wp_clear_scheduled_hook( 'blueworx_klaviyo_tick' );
 		$product = get_page_by_path( 'test-racket', OBJECT, 'sc_product' );
 		if ( $product ) {

@@ -8,6 +8,17 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.13.0] - 2026-11-08
+
+### Added
+- **Website accounts reach Klaviyo.** Everyone with an account is kept up to
+  date in Klaviyo as they register, sign in or change role: name, site role,
+  join date and last sign-in, plus a Created Account event for a new
+  account, so a welcome flow can run for people who never buy anything.
+  Administrators and support roles are never sent, and nobody is added to a
+  list. A button on the Klaviyo screen sends every existing account once, in
+  small batches, for a site switching Klaviyo on with users already in place.
+
 ## [2.12.0] - 2026-11-08
 
 ### Added

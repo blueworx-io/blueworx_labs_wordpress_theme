@@ -297,6 +297,20 @@ $checkout )` is the link back with the checkout's ID on it. A plugin that
 knows a checkout from elsewhere can hand it to
 `blueworx_klaviyo_checkout_noticed( $checkout )` as a plain array.
 
+## Website users
+
+Every account is sent as it registers, signs in or changes role, with the
+source `users`: `first_name`, `last_name`, `external_id` (the user ID),
+`site_role`, `account_created` and, after a sign-in, `last_login`. A new
+account is also a `Created Account` event, recorded once per account. Nothing
+here puts anyone on a list.
+
+Administrators and the BlueWorx support roles are never sent.
+`blueworx_klaviyo_user_excluded_roles(  )` adds or removes roles. The
+"Send every account" button on the Klaviyo screen runs through the queue in
+batches of 25; `blueworx_klaviyo_users_start_sync()` starts the same from
+code.
+
 ## Knowing when something went through
 
 `blueworx_klaviyo_sent( $plan )` fires once a plan has reached Klaviyo, for a
