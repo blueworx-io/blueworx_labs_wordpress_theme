@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.25.0] - 2026-11-09
+
+### Added
+- **Basic SEO, built in.** Switch on Basic SEO under Enhancements and set a
+  site name, a default description and a default share image on Theme > SEO.
+  Every page then shows a proper title, description and image in search
+  results and when it is shared, using the page's own excerpt and featured
+  image where it has them. If SureRank or another SEO plugin is active, the
+  theme steps back so nothing is written twice. Off by default.
+
 ## [2.24.0] - 2026-11-09
 
 ### Added
