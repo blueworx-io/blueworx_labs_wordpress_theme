@@ -8,6 +8,19 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.21.0] - 2026-11-08
+
+### Added
+- **Legal pages and a proper not-found page.** Every site gets a privacy
+  policy, a cookies page and terms and conditions: ordinary pages, on a new
+  Legal page template with the date they last changed, with starter text
+  that names the site. A new site gets them published, so its footer is
+  complete from the first day; a site that already ran the theme gets them
+  as drafts to read and publish. The cookies page lists the cookies the site
+  actually sets, including the tracking codes and Klaviyo when they are on,
+  and plugins can add theirs. A missing address now gets a page that says
+  so, with a search box and the way home.
+
 ## [2.20.0] - 2026-11-08
 
 ### Changed

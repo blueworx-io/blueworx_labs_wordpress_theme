@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @return int Current migration version.
  */
 function blueworx_get_labs_db_version() {
-	return 15;
+	return 16;
 }
 
 /**
@@ -697,6 +697,24 @@ function blueworx_migrate_site_styles_default() {
 }
 
 /**
+ * Gives every site its legal pages.
+ *
+ * A fresh site gets the privacy policy, cookies page and terms published, so
+ * its footer is complete from the start. A site that already ran the theme
+ * gets them as drafts: its owner reads them and publishes when ready, and the
+ * footer shows nothing new until then.
+ *
+ * @return void
+ */
+function blueworx_migrate_legal_pages() {
+	if ( ! function_exists( 'blueworx_legal_ensure_pages' ) ) {
+		return;
+	}
+
+	blueworx_legal_ensure_pages( ! blueworx_should_opt_out_of_new_default( null !== get_option( 'blueworx_labs_db_version', null ) ) );
+}
+
+/**
  * Runs any pending one-time migrations.
  *
  * Cheap on every request: a single get_option compare when already current.
@@ -772,6 +790,12 @@ function blueworx_run_pending_labs_migrations() {
 	// Before the version row write below, like the other opt-outs.
 	if ( $stored_version < 15 ) {
 		blueworx_migrate_site_styles_default();
+	}
+
+	// Also before the version row write: a fresh site publishes its legal
+	// pages, a site that ran before gets drafts.
+	if ( $stored_version < 16 ) {
+		blueworx_migrate_legal_pages();
 	}
 
 	update_option( 'blueworx_labs_db_version', $current_version );
