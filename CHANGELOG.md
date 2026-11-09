@@ -8,6 +8,17 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.24.0] - 2026-11-09
+
+### Added
+- **A Theme menu.** A new Theme row sits directly below BlueWorx and holds
+  the screens that shape the site itself.
+
+### Changed
+- **Design and Cache have moved to the Theme menu.** Design is now called
+  Design System. Existing links and bookmarks to both screens still work,
+  and the Cache switch stays on Enhancements.
+
 ## [2.23.2] - 2026-11-08
 
 ### Fixed

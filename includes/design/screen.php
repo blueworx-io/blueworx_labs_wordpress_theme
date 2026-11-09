@@ -413,7 +413,7 @@ function blueworx_render_design_page() {
 
 	blueworx_open_admin_page(
 		array(
-			'title'   => __( 'Design', 'blueworx-labs-wordpress' ),
+			'title'   => __( 'Design System', 'blueworx-labs-wordpress' ),
 			'lede'    => __( 'The site\'s brand and look. Every public page, the editor and our plugins take their colours, fonts, sizes and corners from here.', 'blueworx-labs-wordpress' ),
 			'actions' => $actions,
 			// novalidate: the server cleans every value, and a browser refusing to

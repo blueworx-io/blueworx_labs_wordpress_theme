@@ -1732,7 +1732,7 @@ function blueworx_get_feature_guide_tasks() {
 				'title' => $t( 'Clearing the cache when something looks stale' ),
 				'body'  => blueworx_guide_body(
 					array(
-						'where' => $t( 'BlueWorx > Cache' ),
+						'where' => $t( 'Theme > Cache' ),
 						'steps' => array(
 							$t( 'Press *Refresh cache now*.' ),
 							$t( 'Wait for the confirmation.' ),
@@ -1754,7 +1754,7 @@ function blueworx_get_feature_guide_tasks() {
 						'steps' => array(
 							$t( 'Press *Publish* or *Save* as normal.' ),
 						),
-						'then'  => $t( 'Every cached page is thrown away for you, so what you just changed is what people see. BlueWorx > Cache shows when it last happened and why. You only need the button there if something still looks old.' ),
+						'then'  => $t( 'Every cached page is thrown away for you, so what you just changed is what people see. Theme > Cache shows when it last happened and why. You only need the button there if something still looks old.' ),
 					)
 				),
 			),

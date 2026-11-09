@@ -19,6 +19,7 @@ function blueworx_get_default_admin_menu_order() {
 	return array(
 		'index.php',
 		'blueworx-labs-wordpress',
+		'blueworx-theme',
 		'blueworx-guides',
 		'edit.php',
 		'upload.php',
@@ -126,6 +127,7 @@ function blueworx_get_default_visible_admin_menu_slugs() {
 	return array(
 		'index.php',
 		'blueworx-labs-wordpress',
+		'blueworx-theme',
 		'blueworx-guides',
 		'edit.php',
 		'upload.php',
@@ -189,7 +191,7 @@ function blueworx_compute_default_admin_menu_arrangement() {
 	$core    = blueworx_get_core_admin_menu_slugs();
 
 	$pinned_top = array();
-	foreach ( array( 'index.php', 'blueworx-labs-wordpress' ) as $pinned_slug ) {
+	foreach ( array( 'index.php', 'blueworx-labs-wordpress', 'blueworx-theme' ) as $pinned_slug ) {
 		if ( in_array( $pinned_slug, $present, true ) ) {
 			$pinned_top[] = $pinned_slug;
 		}
@@ -295,7 +297,19 @@ function blueworx_get_saved_admin_menu_order() {
 		return blueworx_get_default_admin_menu_order();
 	}
 
-	return array_values( array_unique( array_filter( array_map( 'sanitize_text_field', $saved_order ) ) ) );
+	$saved_order = array_values( array_unique( array_filter( array_map( 'sanitize_text_field', $saved_order ) ) ) );
+
+	// An order saved before the Theme menu existed does not name it. Slot it in
+	// directly below BlueWorx rather than leaving it to trail its group.
+	if ( ! in_array( 'blueworx-theme', $saved_order, true ) ) {
+		$after = array_search( 'blueworx-labs-wordpress', $saved_order, true );
+
+		if ( false !== $after ) {
+			array_splice( $saved_order, $after + 1, 0, array( 'blueworx-theme' ) );
+		}
+	}
+
+	return $saved_order;
 }
 
 /**
