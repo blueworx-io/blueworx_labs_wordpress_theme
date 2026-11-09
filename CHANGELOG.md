@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.23.0] - 2026-11-08
+
+### Changed
+- **Klaviyo's site script waits for cookie consent.** With Cookie consent on,
+  Klaviyo's script and the page's calls to it are held back until the
+  visitor agrees to marketing cookies, start the moment they do with no
+  reload, and stop, with Klaviyo's cookie cleared, if they withdraw.
+  Sending from the site itself (forms, the store, website users) is not
+  affected: that rests on the consent given on the form or at checkout.
+
 ## [2.22.0] - 2026-11-08
 
 ### Added

@@ -10,9 +10,13 @@
  * Nothing loads without a public key, on an admin screen, or for an
  * administrator: their own browsing of the site would only muddy the numbers.
  *
- * Nothing here waits for cookie consent yet. That arrives with the consent
- * work in issue #4, the same way as the tracking codes: the
- * blueworx_klaviyo_tracking_allowed filter is where it will plug in.
+ * Cookie consent: while the theme's consent function is in force, Klaviyo's
+ * script and the page's calls to it are written the way SureCookie blocks a
+ * script, so the browser holds them until the visitor agrees to marketing
+ * cookies, and SureCookie runs them the moment they do, with no reload. If
+ * the visitor later withdraws, the page's script clears Klaviyo's cookie and
+ * stops calling it. The blueworx_klaviyo_tracking_allowed filter stays for a
+ * plugin that wants to keep the script off some visitors altogether.
  *
  * @package BlueWorxLabs
  */
@@ -43,7 +47,9 @@ function blueworx_klaviyo_tracking_active() {
 	/**
 	 * Whether this visitor is tracked by Klaviyo's script.
 	 *
-	 * Cookie consent plugs in here: return false until the visitor has agreed.
+	 * Cookie consent does not use this: it holds the script back in the
+	 * browser instead, so a cached page is right for every visitor. Return
+	 * false here to keep the script off a visitor altogether.
 	 *
 	 * @param bool $allowed True for everyone but administrators.
 	 */
@@ -238,6 +244,57 @@ function blueworx_klaviyo_tracking_enqueue() {
 	);
 }
 add_action( 'wp_enqueue_scripts', 'blueworx_klaviyo_tracking_enqueue' );
+
+/** The script handles that wait for marketing consent. */
+const BLUEWORX_KLAVIYO_GATED_HANDLES = array( 'klaviyo-onsite', 'blueworx-klaviyo-tracking' );
+
+/**
+ * Rewrites a printed script tag's opening so the browser holds it. Pure.
+ *
+ * WordPress prints the whole element; only its opening tag changes, through
+ * the gate handed in, which is the consent module's.
+ *
+ * @param string   $html The element as WordPress prints it.
+ * @param callable $gate Takes an opening tag and returns the held-back one.
+ * @return string
+ */
+function blueworx_klaviyo_gate_script_html( $html, $gate ) {
+	$html = (string) $html;
+
+	if ( ! is_callable( $gate ) || ! preg_match( '/<script\b[^>]*>/i', $html, $m ) ) {
+		return $html;
+	}
+
+	return str_replace( $m[0], (string) call_user_func( $gate, $m[0] ), $html );
+}
+
+/**
+ * Holds Klaviyo's script, and the page's calls to it, until marketing consent.
+ *
+ * The page's own data (the identify and events, printed before the script)
+ * is plain text with no cookies in it, so it stays as it is.
+ *
+ * @param string $tag    The element as WordPress prints it.
+ * @param string $handle The script's handle.
+ * @return string
+ */
+function blueworx_klaviyo_gate_script_tag( $tag, $handle ) {
+	if ( ! in_array( (string) $handle, BLUEWORX_KLAVIYO_GATED_HANDLES, true ) ) {
+		return $tag;
+	}
+
+	if ( ! function_exists( 'blueworx_consent_active' ) || ! blueworx_consent_active() || ! function_exists( 'blueworx_consent_gate_script_tag' ) ) {
+		return $tag;
+	}
+
+	return blueworx_klaviyo_gate_script_html(
+		$tag,
+		static function ( $opening ) {
+			return blueworx_consent_gate_script_tag( $opening, 'marketing', 'Klaviyo' );
+		}
+	);
+}
+add_filter( 'script_loader_tag', 'blueworx_klaviyo_gate_script_tag', 10, 2 );
 
 /**
  * Clears cached pages when the public key or the switch changes, so the
