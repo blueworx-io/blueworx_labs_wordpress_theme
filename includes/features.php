@@ -114,6 +114,13 @@ function blueworx_get_feature_definitions() {
 			'default'     => '0',
 			'guide'       => false,
 		),
+		'user_export'           => array(
+			'label'       => __( 'Export users', 'blueworx-labs-wordpress' ),
+			'description' => __( 'Adds an Export link to the bottom of the Users menu, which downloads every user as an Excel spreadsheet. Administrators only. Passwords and sign-in details are never included.', 'blueworx-labs-wordpress' ),
+			'section'     => 'security',
+			'detail'      => null,
+			'guide'       => false,
+		),
 		'view_as_role'          => array(
 			'label'       => __( 'View the admin as another role', 'blueworx-labs-wordpress' ),
 			'description' => __( 'Puts a control in the sidebar that shows the admin area the way one of your other roles sees it, to check what that role can and cannot reach. Anyone who edits the site can use it, and only ever downwards — an editor can look as an author, never the other way about. One click puts you back.', 'blueworx-labs-wordpress' ),

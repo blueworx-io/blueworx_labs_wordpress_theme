@@ -8,6 +8,15 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.26.0] - 2026-11-09
+
+### Added
+- **Export users to Excel.** An Export link at the bottom of the Users menu
+  downloads every user as a spreadsheet: their account details plus any extra
+  profile fields your plugins have added. Administrators only, and passwords
+  and sign-in details are never included. Switch it off under Enhancements if
+  you don't want it.
+
 ## [2.25.0] - 2026-11-09
 
 ### Added
