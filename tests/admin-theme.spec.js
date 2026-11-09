@@ -507,7 +507,7 @@ test.describe('BlueWorx admin theme', () => {
     await expect(row).not.toHaveClass(/bw-group-start/);
   });
 
-  test('Guides is its own row in Overview, directly below BlueWorx', async ({ page }) => {
+  test('Guides is its own row in Overview, below BlueWorx and Theme', async ({ page }) => {
     await login(page);
     await page.goto(DASH_PATH);
 
@@ -519,7 +519,8 @@ test.describe('BlueWorx admin theme', () => {
     const guides = slugs.findIndex((h) => h && h.includes('page=blueworx-guides'));
 
     expect(blueworx).toBeGreaterThanOrEqual(0);
-    expect(guides).toBe(blueworx + 1);
+    // Theme sits between the two.
+    expect(guides).toBe(blueworx + 2);
 
     // Same group as BlueWorx, so it must not open one of its own.
     await expect(page.locator('#adminmenu > li.menu-top').nth(guides)).not.toHaveClass(

@@ -164,8 +164,8 @@ test.describe('BlueWorx > Design', () => {
 
   test('the team changes the main colour and the whole site follows', async ({ page }) => {
     await page.goto(DESIGN_PATH);
-    await expect(page.getByRole('heading', { name: 'Design', level: 1 })).toBeVisible();
-    await expect(page.locator('#adminmenu a[href$="page=blueworx-design"]')).toHaveText('Design');
+    await expect(page.getByRole('heading', { name: 'Design System', level: 1 })).toBeVisible();
+    await expect(page.locator('#adminmenu .wp-submenu a[href$="page=blueworx-design"]')).toHaveText('Design System');
 
     await saveDesign(page, { primary: '#0A7D5C' });
     await expect(page.locator('.bw-notice--success')).toContainText('Saved');

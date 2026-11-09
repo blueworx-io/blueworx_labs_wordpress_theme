@@ -62,6 +62,8 @@ function blueworx_get_admin_menu_group_rules() {
 		// Overview, not Site. BlueWorx is this plugin's own console and belongs
 		// beside the Dashboard it extends, not at the bottom of the sidebar.
 		'blueworx-labs-wordpress' => 'overview',
+		// The theme's own screens, directly below BlueWorx.
+		'blueworx-theme'          => 'overview',
 		// Overview, directly after BlueWorx. Guides is a top-level row of its
 		// own (see blueworx_register_guides_page()) because it explains the
 		// whole site rather than one plugin's screens.

@@ -35,15 +35,7 @@ function blueworx_register_settings_page() {
 		'blueworx_render_enhancements_page'
 	);
 
-	// Straight after Enhancements: the site's look is the next thing set up.
-	add_submenu_page(
-		'blueworx-labs-wordpress',
-		esc_html__( 'Design', 'blueworx-labs-wordpress' ),
-		esc_html__( 'Design', 'blueworx-labs-wordpress' ),
-		blueworx_design_capability(),
-		'blueworx-design',
-		'blueworx_render_design_page'
-	);
+	// Design System and Cache live under the Theme menu, see includes/theme-menu.php.
 
 	if ( blueworx_feature_enabled( 'menu_editor' ) ) {
 		add_submenu_page(
@@ -53,17 +45,6 @@ function blueworx_register_settings_page() {
 			'manage_options',
 			'blueworx-edit-menu',
 			'blueworx_render_edit_menu_page'
-		);
-	}
-
-	if ( blueworx_feature_enabled( 'cache_manual' ) ) {
-		add_submenu_page(
-			'blueworx-labs-wordpress',
-			esc_html__( 'Cache', 'blueworx-labs-wordpress' ),
-			esc_html__( 'Cache', 'blueworx-labs-wordpress' ),
-			'manage_options',
-			'blueworx-cache',
-			'blueworx_render_cache_page'
 		);
 	}
 

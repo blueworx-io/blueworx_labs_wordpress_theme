@@ -46,7 +46,7 @@ function blueworx_admin_design_screens() {
 		'toplevel_page_blueworx-labs-wordpress',
 		'toplevel_page_blueworx-guides',
 		'blueworx_page_blueworx-edit-menu',
-		'blueworx_page_blueworx-cache',
+		'theme_page_blueworx-cache',
 		'blueworx_page_blueworx-support',
 		'blueworx_page_blueworx-mcp',
 		'admin_page_blueworx-mcp',
@@ -212,7 +212,7 @@ function blueworx_enqueue_admin_assets( $hook_suffix ) {
 	$allowed_screens = array(
 		'toplevel_page_blueworx-labs-wordpress',
 		'blueworx_page_blueworx-edit-menu',
-		'blueworx_page_blueworx-cache',
+		'theme_page_blueworx-cache',
 		'toplevel_page_blueworx-guides',
 		'blueworx_page_blueworx-support',
 		'blueworx_page_blueworx-sso',
