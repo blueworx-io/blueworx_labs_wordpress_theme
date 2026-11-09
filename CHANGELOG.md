@@ -8,6 +8,17 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.19.0] - 2026-11-08
+
+### Added
+- **Blog and post pages.** With Site styles on, the theme draws the list of
+  posts, category, tag, date and author pages, search results and single
+  posts: cards with the picture, date and excerpt, a by-line with the date,
+  author and categories, tags, previous and next links, and page numbers
+  under a long list. Headings drop WordPress's "Category:" prefix, and an
+  empty search says so. All inside the header and footer, in the site's
+  design.
+
 ## [2.18.0] - 2026-11-08
 
 ### Added
