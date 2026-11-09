@@ -7,7 +7,7 @@
  * with a nonce — markup moved, that contract did not.
  */
 
-import { test, expect, login } from './helpers.js';
+import { test, expect, login, saveEnhancements } from './helpers.js';
 
 const CACHE_PATH = '/wp-admin/admin.php?page=blueworx-cache';
 
@@ -73,6 +73,20 @@ test.describe('BlueWorx cache screen', () => {
         headers: { 'X-WP-Nonce': nonce },
       });
     }
+  });
+
+  test('saving Enhancements refreshes the cache and the screen says so', async ({ page }) => {
+    // The Enhancements switches (Site styles among them) and the translation
+    // widget change what visitors see, so a save must clear the cached pages.
+    await login(page);
+    await page.goto('/wp-admin/admin.php?page=blueworx-labs-wordpress');
+    await saveEnhancements(page);
+
+    await page.goto(CACHE_PATH);
+
+    const row = page.locator('.bw-dl').filter({ hasText: /Last refreshed/i });
+    await expect(row).toContainText(/ago/i);
+    await expect(row).toContainText(/Enhancements/i);
   });
 
   test('carries the design system, not the old form table', async ({ page }) => {

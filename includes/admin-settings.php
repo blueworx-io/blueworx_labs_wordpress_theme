@@ -319,6 +319,19 @@ function blueworx_get_site_protection_roles( $area ) {
 }
 
 /**
+ * Clears the page cache after the Enhancements screen is saved.
+ *
+ * The translation widget saves through the same form, so this covers it too.
+ *
+ * @return void
+ */
+function blueworx_feature_settings_refresh_cache() {
+	if ( function_exists( 'blueworx_purge_site_cache' ) ) {
+		blueworx_purge_site_cache( 'Enhancements' );
+	}
+}
+
+/**
  * Saves all feature toggles and their detail settings from the settings page.
  *
  * @return void
@@ -380,6 +393,10 @@ function blueworx_save_feature_settings() {
 	blueworx_save_media_tools_settings();
 	blueworx_save_content_tools_settings();
 	blueworx_save_revisions_settings();
+
+	// Switches and translation settings change what visitors see (Site styles,
+	// the translate widget), so the cached pages go the moment this saves.
+	blueworx_feature_settings_refresh_cache();
 
 	set_transient( 'blueworx_labs_notice', __( 'Settings saved.', 'blueworx-labs-wordpress' ), 30 );
 

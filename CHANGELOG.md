@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.17.1] - 2026-11-08
+
+### Fixed
+- **Saving Enhancements clears the cache.** Saving the Enhancements screen,
+  including the feature switches, Site styles and the translation widget
+  settings, now clears the site's page cache straight away, the way the
+  Design and Tracking codes screens already did. Visitors see the change as
+  soon as it is saved, and the Cache screen shows "Enhancements" as the last
+  refresh.
+
 ## [2.17.0] - 2026-11-08
 
 ### Added
