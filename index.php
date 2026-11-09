@@ -1,11 +1,9 @@
 <?php
 /**
- * The page frame every public page falls back to.
+ * The page every public request falls back to when no closer template fits.
  *
- * Deliberately bare for now. A client plugin such as Clubhouse draws its own
- * pages, and the theme's own header, footer and page templates move in from
- * Clubhouse in a later release. Until then this keeps any other page working:
- * WordPress's head and footer still run, so plugins can add what they need.
+ * Pages have page.php. Everything else lands here: it draws whatever the loop
+ * holds, one article after another, inside the frame.
  *
  * @package BlueWorxLabs
  */
@@ -14,17 +12,15 @@
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
-?><!doctype html>
-<html <?php language_attributes(); ?>>
-<head>
-<meta charset="<?php bloginfo( 'charset' ); ?>">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<?php wp_head(); ?>
-</head>
-<body <?php body_class(); ?>>
-<?php wp_body_open(); ?>
-<main id="content">
-<?php
+
+// With the 1.x plugin still active the theme's code has not loaded. See parts/plain.php.
+if ( ! function_exists( 'blueworx_frame_enabled' ) ) {
+	require get_template_directory() . '/parts/plain.php';
+	return;
+}
+
+get_header();
+
 if ( have_posts() ) {
 	while ( have_posts() ) {
 		the_post();
@@ -40,8 +36,5 @@ if ( have_posts() ) {
 	<h1><?php echo is_404() ? esc_html__( 'Page not found', 'blueworx-labs-wordpress' ) : esc_html__( 'Nothing here yet', 'blueworx-labs-wordpress' ); ?></h1>
 	<?php
 }
-?>
-</main>
-<?php wp_footer(); ?>
-</body>
-</html>
+
+get_footer();

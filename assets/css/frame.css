@@ -1,0 +1,423 @@
+/*
+ * The page frame: header and footer.
+ *
+ * Every value is a named style from the site's design system (see
+ * docs/design-system.md), so the frame follows the design the way the content
+ * does. Loaded only with Site styles on, beside site.css.
+ *
+ * Unlike site.css these rules carry weight: the frame is the theme's own
+ * markup, nothing else styles it, and a plugin that wants a different header
+ * replaces it rather than restyling this one.
+ *
+ * The menu folds into a drawer below 900px. That number is mirrored in
+ * includes/frame.php and assets/js/frame.js.
+ */
+
+/* ─── Skip link ─── */
+
+.blueworx-skip {
+	position: absolute;
+	top: var(--space-2);
+	left: var(--space-2);
+	z-index: 100;
+	padding: var(--space-2) var(--space-4);
+	border-radius: var(--radius-md);
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+	font-weight: 600;
+	text-decoration: none;
+	transform: translateY(-200%);
+}
+
+.blueworx-skip:focus {
+	transform: none;
+}
+
+/* ─── Header ─── */
+
+.blueworx-header {
+	position: sticky;
+	top: var(--wp-admin--admin-bar--height, 0px);
+	z-index: 50;
+	border-bottom: 1px solid var(--color-border);
+	background: var(--color-bg);
+}
+
+.blueworx-header__inner {
+	display: flex;
+	align-items: center;
+	gap: var(--space-6);
+	box-sizing: border-box;
+	max-width: var(--width-wide);
+	min-height: 72px;
+	margin: 0 auto;
+	padding: var(--space-3) var(--gutter);
+}
+
+.blueworx-brand {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	color: var(--color-text);
+	font-family: var(--font-heading);
+	font-size: var(--text-h5);
+	font-weight: 700;
+	line-height: 1;
+	text-decoration: none;
+}
+
+.blueworx-brand__logo {
+	display: block;
+	width: auto;
+	max-width: 200px;
+	max-height: 44px;
+}
+
+.blueworx-header__nav {
+	flex: 1 1 auto;
+	display: flex;
+	justify-content: center;
+	min-width: 0;
+}
+
+.blueworx-header__actions {
+	display: flex;
+	align-items: center;
+	gap: var(--space-3);
+	flex-shrink: 0;
+	margin-left: auto;
+}
+
+/* ─── The menu ─── */
+
+.blueworx-nav ul {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-1) var(--space-2);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.blueworx-nav li {
+	position: relative;
+	margin: 0;
+}
+
+.blueworx-nav a {
+	display: inline-block;
+	padding: var(--space-2) var(--space-3);
+	border-radius: var(--radius-md);
+	color: var(--color-text);
+	font-size: var(--text-body);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.blueworx-nav a:hover,
+.blueworx-nav a:focus-visible {
+	background: var(--color-surface);
+	color: var(--color-link);
+	text-decoration: none;
+}
+
+.blueworx-nav .current-menu-item > a,
+.blueworx-nav .current-menu-ancestor > a,
+.blueworx-nav .current_page_item > a {
+	color: var(--color-link);
+}
+
+/* A parent's sub-menu: hidden until the parent is hovered or holds focus,
+   so it needs no script and stays reachable by keyboard. */
+.blueworx-nav .sub-menu {
+	display: none;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	z-index: 60;
+	flex-direction: column;
+	gap: 0;
+	min-width: 220px;
+	padding: var(--space-2);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	background: var(--color-bg);
+	box-shadow: var(--shadow-md);
+}
+
+.blueworx-nav li:hover > .sub-menu,
+.blueworx-nav li:focus-within > .sub-menu {
+	display: flex;
+}
+
+.blueworx-nav .sub-menu a {
+	display: block;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+/* ─── Buttons in the header ─── */
+
+.blueworx-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--space-2);
+	min-height: 44px;
+	padding: var(--space-2) var(--space-4);
+	border: 1px solid var(--color-primary);
+	border-radius: var(--radius-button);
+	background: var(--color-primary);
+	color: var(--color-on-primary);
+	font-family: var(--font-body);
+	font-size: var(--text-body);
+	font-weight: 600;
+	line-height: 1.2;
+	text-decoration: none;
+	white-space: nowrap;
+}
+
+.blueworx-btn:hover,
+.blueworx-btn:focus-visible {
+	border-color: var(--color-primary-hover);
+	background: var(--color-primary-hover);
+	color: var(--color-on-primary);
+	text-decoration: none;
+}
+
+.blueworx-btn--secondary {
+	border-color: var(--color-border-strong);
+	background: transparent;
+	color: var(--color-text);
+}
+
+.blueworx-btn--secondary:hover,
+.blueworx-btn--secondary:focus-visible {
+	border-color: var(--color-primary);
+	background: var(--color-primary-tint);
+	color: var(--color-link);
+}
+
+/* ─── The phone drawer ─── */
+
+.blueworx-menu {
+	display: none;
+	position: relative;
+}
+
+.blueworx-menu__button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 44px;
+	height: 44px;
+	border: 1px solid var(--color-border-strong);
+	border-radius: var(--radius-button);
+	background: var(--color-bg);
+	color: var(--color-text);
+	cursor: pointer;
+	list-style: none;
+}
+
+.blueworx-menu__button::-webkit-details-marker {
+	display: none;
+}
+
+.blueworx-menu__bars,
+.blueworx-menu__bars::before,
+.blueworx-menu__bars::after {
+	display: block;
+	width: 18px;
+	height: 2px;
+	border-radius: 2px;
+	background: currentColor;
+}
+
+.blueworx-menu__bars {
+	position: relative;
+}
+
+.blueworx-menu__bars::before,
+.blueworx-menu__bars::after {
+	content: "";
+	position: absolute;
+	left: 0;
+}
+
+.blueworx-menu__bars::before { top: -6px; }
+.blueworx-menu__bars::after { top: 6px; }
+
+.blueworx-menu[open] .blueworx-menu__bars {
+	background: transparent;
+}
+
+.blueworx-menu[open] .blueworx-menu__bars::before {
+	top: 0;
+	transform: rotate(45deg);
+}
+
+.blueworx-menu[open] .blueworx-menu__bars::after {
+	top: 0;
+	transform: rotate(-45deg);
+}
+
+.blueworx-menu__drawer {
+	position: absolute;
+	top: calc(100% + var(--space-2));
+	right: 0;
+	z-index: 60;
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-3);
+	box-sizing: border-box;
+	width: min(320px, calc(100vw - 2 * var(--gutter)));
+	padding: var(--space-4);
+	border: 1px solid var(--color-border);
+	border-radius: var(--radius-lg);
+	background: var(--color-bg);
+	box-shadow: var(--shadow-lg);
+}
+
+.blueworx-menu__drawer .blueworx-nav ul {
+	flex-direction: column;
+	gap: 0;
+}
+
+.blueworx-menu__drawer .blueworx-nav a {
+	display: block;
+}
+
+/* In the drawer every level is simply listed, indented. */
+.blueworx-menu__drawer .blueworx-nav .sub-menu {
+	display: flex;
+	position: static;
+	min-width: 0;
+	padding: 0 0 0 var(--space-4);
+	border: 0;
+	border-radius: 0;
+	box-shadow: none;
+}
+
+.blueworx-menu__action {
+	width: 100%;
+	box-sizing: border-box;
+}
+
+@media (max-width: 899px) {
+	.blueworx-header__nav,
+	.blueworx-header__actions > .blueworx-btn {
+		display: none;
+	}
+
+	.blueworx-menu {
+		display: block;
+	}
+}
+
+/* ─── Footer ─── */
+
+.blueworx-footer {
+	margin-top: var(--section-space);
+	border-top: 1px solid var(--color-border);
+	background: var(--color-surface);
+	color: var(--color-text);
+	font-size: var(--text-small);
+}
+
+.blueworx-footer__inner {
+	display: grid;
+	grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+	gap: var(--space-8);
+	box-sizing: border-box;
+	max-width: var(--width-wide);
+	margin: 0 auto;
+	padding: var(--space-12) var(--gutter) var(--space-8);
+}
+
+.blueworx-footer__brand .blueworx-brand {
+	margin-bottom: var(--space-3);
+}
+
+.blueworx-footer__tagline {
+	max-width: 44ch;
+	margin: 0 0 var(--space-4);
+	color: var(--color-text-muted);
+	font-size: var(--text-body);
+}
+
+.blueworx-footer__social {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-2) var(--space-4);
+}
+
+.blueworx-footer__social-link,
+.blueworx-footer__legal-link {
+	color: var(--color-text-muted);
+	font-weight: 500;
+	text-decoration: none;
+}
+
+.blueworx-footer__social-link:hover,
+.blueworx-footer__legal-link:hover,
+.blueworx-footer__social-link:focus-visible,
+.blueworx-footer__legal-link:focus-visible {
+	color: var(--color-link);
+	text-decoration: underline;
+}
+
+.blueworx-footer__menu .blueworx-nav ul {
+	flex-direction: column;
+	gap: var(--space-1);
+}
+
+.blueworx-footer__menu .blueworx-nav a {
+	padding: var(--space-1) 0;
+	border-radius: 0;
+	color: var(--color-text);
+	font-size: var(--text-body);
+}
+
+.blueworx-footer__menu .blueworx-nav a:hover,
+.blueworx-footer__menu .blueworx-nav a:focus-visible {
+	background: transparent;
+	text-decoration: underline;
+}
+
+.blueworx-footer__bottom {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-2) var(--space-6);
+	box-sizing: border-box;
+	max-width: var(--width-wide);
+	margin: 0 auto;
+	padding: var(--space-4) var(--gutter) var(--space-8);
+	border-top: 1px solid var(--color-border);
+	color: var(--color-text-muted);
+}
+
+.blueworx-footer__legal {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--space-2) var(--space-4);
+}
+
+@media (max-width: 639px) {
+	.blueworx-footer__inner {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--space-6);
+	}
+}
+
+/* ─── Page head ─── */
+
+.blueworx-page__head {
+	max-width: var(--width-reading);
+	margin: 0 auto var(--space-8);
+}
+
+.blueworx-page__title {
+	margin: 0;
+}

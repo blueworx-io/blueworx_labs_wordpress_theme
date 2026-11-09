@@ -133,3 +133,27 @@ Sites that had the theme before 2.1.0 start with the switch off, and stay off
 until somebody turns it on: a live site's look must never change because the
 theme updated. The Design screen says so when the switch is off. New sites
 start with it on.
+
+## The page frame
+
+With Site styles on the theme also draws the header and footer around every
+public page: the brand (the custom logo, or the site's name), the **Header
+menu** and **Footer menu** locations (the site's top-level pages stand in
+until a menu is set), the social links from the Design screen, the privacy
+policy page, and the copyright line. Everything in it is styled from the
+named styles in `assets/css/frame.css`; its own classes are `blueworx-*`.
+
+A plugin that renders complete pages of its own turns the frame off for
+those requests:
+
+```php
+add_filter( 'blueworx_site_frame', fn( $on ) => is_singular( 'club_page' ) ? false : $on );
+```
+
+Add a button to the header with `blueworx_header_actions( $actions )`, each
+a `label`, an `href` and a `variant` (`primary` or `secondary`); add a
+legal page to the footer with `blueworx_footer_legal_links( $links )`; and
+print something above or below either part on the `blueworx_header_before`,
+`blueworx_header_after`, `blueworx_footer_before` and `blueworx_footer_after`
+actions. Pages show their title above their content, except the front page;
+`blueworx_page_title_shown` changes that.

@@ -13,7 +13,10 @@ const DIST = 'dist';
 // plugin-update-checker is required, not optional: a copy of the theme without
 // it can never be told about another release, so a zip missing it is a dead end
 // on whatever site installs it.
-const REQUIRED = ['functions.php', 'style.css', 'index.php', 'readme.txt', 'includes', 'assets', 'plugin-update-checker'];
+// The page templates WordPress picks from are root files, so each is listed:
+// a template missing from the zip falls back to index.php without a word.
+const TEMPLATES = ['header.php', 'footer.php', 'page.php', 'parts'];
+const REQUIRED = ['functions.php', 'style.css', 'index.php', 'readme.txt', 'includes', 'assets', 'plugin-update-checker', ...TEMPLATES];
 const OPTIONAL = ['languages'];
 const INCLUDE = [...REQUIRED, ...OPTIONAL];
 
