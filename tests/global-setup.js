@@ -160,6 +160,33 @@ add_action( 'admin_init', static function () {
 	}
 } );
 
+// Reads the signed-in user's role every way another plugin might, for
+// tests/view-as-role.spec.js: off the current user, off a fresh get_userdata(),
+// and by asking current_user_can() for a role by name.
+$bw_test_roles = static function () {
+	if ( ! is_user_logged_in() ) {
+		return;
+	}
+	$user = wp_get_current_user();
+	printf( '<!-- bw_test_roles: %s -->', esc_html( implode( ',', (array) $user->roles ) ) );
+	printf( '<!-- bw_test_userdata_roles: %s -->', esc_html( implode( ',', (array) get_userdata( $user->ID )->roles ) ) );
+	printf( '<!-- bw_test_can: subscriber=%d administrator=%d -->', current_user_can( 'subscriber' ) ? 1 : 0, current_user_can( 'administrator' ) ? 1 : 0 );
+};
+add_action( 'admin_footer', $bw_test_roles );
+add_action( 'wp_footer', $bw_test_roles );
+
+// Writes the signed-in user's roles back the way a careless plugin would, from
+// the user object it was handed, when the request asks it to.
+add_action( 'admin_init', static function () {
+	$how = isset( $_GET['bw_test_role_write'] ) ? sanitize_key( $_GET['bw_test_role_write'] ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+	$user = wp_get_current_user();
+	if ( 'remove' === $how && $user->roles ) {
+		$user->remove_role( $user->roles[0] );
+	} elseif ( 'meta' === $how ) {
+		update_user_meta( $user->ID, $user->cap_key, $user->caps );
+	}
+} );
+
 // A plugin stylesheet that depends on the design system, as docs/design-system.md
 // tells plugins to write one. WordPress drops it wherever that handle is missing.
 add_action( 'admin_enqueue_scripts', static function () {

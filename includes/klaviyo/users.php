@@ -127,6 +127,12 @@ function blueworx_klaviyo_user_changed( $user_id, $reason ) {
 		return false;
 	}
 
+	// Mid-preview the user object names the previewed role, so this would send
+	// an administrator to Klaviyo as a member (includes/view-as-role.php).
+	if ( function_exists( 'blueworx_view_as_is_previewing' ) && blueworx_view_as_is_previewing( (int) $user_id ) ) {
+		return false;
+	}
+
 	$user = get_userdata( (int) $user_id );
 
 	if ( ! $user ) {
