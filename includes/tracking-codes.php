@@ -9,8 +9,11 @@
  * ID that has been checked against its service's format can carry nothing but
  * an ID.
  *
- * Nothing here waits for cookie consent yet — that arrives with the consent
- * work in issue #185.
+ * Cookie consent plugs in through two filters rather than living here:
+ * blueworx_tracking_script_tag rewrites each script's opening tag so the
+ * browser holds it until the visitor agrees (includes/consent.php does that
+ * through SureCookie), and blueworx_tracking_noscript drops the no-script
+ * fallbacks, which no consent could ever hold back.
  *
  * @package BlueWorxLabs
  */
@@ -129,6 +132,41 @@ function blueworx_tracking_save( $posted ) {
 }
 
 /**
+ * A script's opening tag, as consent allows it.
+ *
+ * '<script>' as written here, or whatever the consent module turns it into.
+ *
+ * @param string $category 'analytics' or 'marketing': which consent it waits for.
+ * @param string $name     The service, for the consent tool's own listing.
+ * @param string $attrs    Attributes after the tag name, e.g. ' async src="..."'.
+ * @return string
+ */
+function blueworx_tracking_script_open( $category, $name, $attrs = '' ) {
+	/**
+	 * Filters a tracking script's opening tag.
+	 *
+	 * @param string $tag      The opening tag.
+	 * @param string $category 'analytics' or 'marketing'.
+	 * @param string $name     The service.
+	 */
+	return (string) apply_filters( 'blueworx_tracking_script_tag', '<script' . $attrs . '>', $category, $name );
+}
+
+/**
+ * Whether the no-script fallbacks (a pixel, a frame) are printed.
+ *
+ * @return bool
+ */
+function blueworx_tracking_noscript_allowed() {
+	/**
+	 * Filters whether the tracking codes' no-script fallbacks are printed.
+	 *
+	 * @param bool $allowed True to print them.
+	 */
+	return (bool) apply_filters( 'blueworx_tracking_noscript', true );
+}
+
+/**
  * Whether tracking code belongs on this request.
  *
  * @return bool
@@ -152,7 +190,7 @@ function blueworx_tracking_head_html() {
 
 	if ( '' !== $gtm ) {
 		$html .= "<!-- Google Tag Manager -->\n"
-			. "<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n"
+			. blueworx_tracking_script_open( 'analytics', 'Google Tag Manager' ) . "(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':\n"
 			. "new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],\n"
 			. "j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=\n"
 			. "'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);\n"
@@ -163,8 +201,8 @@ function blueworx_tracking_head_html() {
 	if ( '' !== $ga ) {
 		$html .= "<!-- Google tag (gtag.js) -->\n"
 			// phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript -- Google's published snippet, which must sit beside its config call rather than in the footer queue.
-			. '<script async src="https://www.googletagmanager.com/gtag/js?id=' . esc_attr( $ga ) . "\"></script>\n"
-			. "<script>\n"
+			. blueworx_tracking_script_open( 'analytics', 'Google Analytics', ' async src="https://www.googletagmanager.com/gtag/js?id=' . esc_attr( $ga ) . '"' ) . "</script>\n"
+			. blueworx_tracking_script_open( 'analytics', 'Google Analytics' ) . "\n"
 			. "  window.dataLayer = window.dataLayer || [];\n"
 			. "  function gtag(){dataLayer.push(arguments);}\n"
 			. "  gtag('js', new Date());\n\n"
@@ -174,7 +212,7 @@ function blueworx_tracking_head_html() {
 
 	if ( '' !== $meta ) {
 		$html .= "<!-- Meta Pixel Code -->\n"
-			. "<script>\n"
+			. blueworx_tracking_script_open( 'marketing', 'Meta Pixel' ) . "\n"
 			. "!function(f,b,e,v,n,t,s)\n"
 			. "{if(f.fbq)return;n=f.fbq=function(){n.callMethod?\n"
 			. "n.callMethod.apply(n,arguments):n.queue.push(arguments)};\n"
@@ -186,7 +224,7 @@ function blueworx_tracking_head_html() {
 			. "fbq('init', '" . esc_js( $meta ) . "');\n"
 			. "fbq('track', 'PageView');\n"
 			. "</script>\n"
-			. '<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=' . esc_attr( $meta ) . "&amp;ev=PageView&amp;noscript=1\" /></noscript>\n"
+			. ( blueworx_tracking_noscript_allowed() ? '<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=' . esc_attr( $meta ) . "&amp;ev=PageView&amp;noscript=1\" /></noscript>\n" : '' )
 			. "<!-- End Meta Pixel Code -->\n";
 	}
 
@@ -203,7 +241,7 @@ function blueworx_tracking_head_html() {
 function blueworx_tracking_body_html() {
 	$gtm = blueworx_tracking_id( 'gtm' );
 
-	if ( '' === $gtm ) {
+	if ( '' === $gtm || ! blueworx_tracking_noscript_allowed() ) {
 		return '';
 	}
 
