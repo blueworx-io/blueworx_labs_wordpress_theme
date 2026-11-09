@@ -8,6 +8,15 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.23.2] - 2026-11-08
+
+### Fixed
+- **Every sign-in screen in the site's look.** The "check your email" stop
+  after a password reset or a registration now has its own heading instead
+  of "Welcome Back". Lost password, a bad reset link, registration (open or
+  closed), signed out and check-your-email are all checked by a test, so
+  none can fall back to the plain WordPress screen unnoticed.
+
 ## [2.23.1] - 2026-11-08
 
 ### Changed
