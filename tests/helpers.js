@@ -199,6 +199,7 @@ const FEATURE_SECTIONS = {
   support_access: 'security',
   mcp: 'security',
   user_roles: 'security',
+  user_export: 'security',
   view_as_role: 'security',
   login_session: 'security',
   login_redirect: 'security',
