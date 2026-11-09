@@ -212,6 +212,7 @@ const FEATURE_SECTIONS = {
   page_lock: 'content',
   revisions: 'content',
   robots_txt: 'content',
+  seo: 'content',
   tracking_codes: 'tracking',
   cookie_consent: 'tracking',
   klaviyo: 'tracking',

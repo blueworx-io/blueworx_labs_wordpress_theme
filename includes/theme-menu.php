@@ -23,15 +23,26 @@ const BLUEWORX_THEME_MENU = 'blueworx-theme';
 /**
  * The screens under Theme, in menu order.
  *
- * @return array[] Each with slug, title, capability and callback.
+ * SEO is listed while its switch is on and reachable but unlisted while it is
+ * off, the same as Tracking codes, so the screen can explain itself.
+ *
+ * @return array[] Each with slug, title, capability, callback and listed.
  */
 function blueworx_theme_menu_items() {
 	$items = array(
+		array(
+			'slug'       => 'blueworx-seo',
+			'title'      => __( 'SEO', 'blueworx-labs-wordpress' ),
+			'capability' => 'manage_options',
+			'callback'   => 'blueworx_render_seo_page',
+			'listed'     => blueworx_feature_enabled( 'seo' ),
+		),
 		array(
 			'slug'       => 'blueworx-design',
 			'title'      => __( 'Design System', 'blueworx-labs-wordpress' ),
 			'capability' => blueworx_design_capability(),
 			'callback'   => 'blueworx_render_design_page',
+			'listed'     => true,
 		),
 	);
 
@@ -41,6 +52,7 @@ function blueworx_theme_menu_items() {
 			'title'      => __( 'Cache', 'blueworx-labs-wordpress' ),
 			'capability' => 'manage_options',
 			'callback'   => 'blueworx_render_cache_page',
+			'listed'     => true,
 		);
 	}
 
@@ -48,13 +60,13 @@ function blueworx_theme_menu_items() {
 }
 
 /**
- * The first Theme screen the current user may open.
+ * The first listed Theme screen the current user may open.
  *
  * @return array|null The item, or null when none is open to them.
  */
 function blueworx_theme_menu_first_item() {
 	foreach ( blueworx_theme_menu_items() as $item ) {
-		if ( current_user_can( $item['capability'] ) ) {
+		if ( $item['listed'] && current_user_can( $item['capability'] ) ) {
 			return $item;
 		}
 	}
@@ -108,7 +120,7 @@ function blueworx_register_theme_menu() {
 
 	foreach ( blueworx_theme_menu_items() as $item ) {
 		add_submenu_page(
-			BLUEWORX_THEME_MENU,
+			$item['listed'] ? BLUEWORX_THEME_MENU : null,
 			esc_html( $item['title'] ),
 			esc_html( $item['title'] ),
 			$item['capability'],

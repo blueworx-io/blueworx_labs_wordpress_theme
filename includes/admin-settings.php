@@ -1012,6 +1012,16 @@ function blueworx_get_feature_detail_html( $key ) {
 		);
 	}
 
+	if ( 'seo' === $key ) {
+		return blueworx_ds_button(
+			array(
+				'label' => __( 'Open SEO page', 'blueworx-labs-wordpress' ),
+				'icon'  => 'search',
+				'href'  => admin_url( 'admin.php?page=blueworx-seo' ),
+			)
+		);
+	}
+
 	if ( 'tracking_codes' === $key ) {
 		return blueworx_ds_button(
 			array(

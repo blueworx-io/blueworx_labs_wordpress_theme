@@ -47,6 +47,9 @@ function blueworx_admin_design_screens() {
 		'toplevel_page_blueworx-guides',
 		'blueworx_page_blueworx-edit-menu',
 		'theme_page_blueworx-cache',
+		// Under Theme while SEO is on, under no parent while it is off.
+		'theme_page_blueworx-seo',
+		'admin_page_blueworx-seo',
 		'blueworx_page_blueworx-support',
 		'blueworx_page_blueworx-mcp',
 		'admin_page_blueworx-mcp',

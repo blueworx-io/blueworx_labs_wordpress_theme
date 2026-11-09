@@ -205,6 +205,14 @@ function blueworx_get_feature_definitions() {
 			'default'     => '0',
 			'guide'       => false,
 		),
+		'seo'                   => array(
+			'label'       => __( 'Basic SEO', 'blueworx-labs-wordpress' ),
+			'description' => __( 'Adds the description and share card details to every page, from an SEO page under Theme. Steps back by itself when an SEO plugin such as SureRank is active. Off by default.', 'blueworx-labs-wordpress' ),
+			'section'     => 'content',
+			'detail'      => 'seo',
+			'default'     => '0',
+			'guide'       => false,
+		),
 		'tracking_codes'        => array(
 			'label'       => __( 'Tracking codes', 'blueworx-labs-wordpress' ),
 			'description' => __( 'Adds Google Tag Manager, Google Analytics and the Meta pixel to every page, from IDs entered on a Tracking codes page. Off by default.', 'blueworx-labs-wordpress' ),

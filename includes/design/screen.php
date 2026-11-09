@@ -52,7 +52,8 @@ function blueworx_design_screen_allowed_html() {
  * @return void
  */
 function blueworx_design_screen_assets() {
-	if ( ! isset( $_GET['page'] ) || 'blueworx-design' !== $_GET['page'] ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks which screen's assets to load.
+	// The SEO screen borrows the image picker for its share image.
+	if ( ! isset( $_GET['page'] ) || ! in_array( $_GET['page'], array( 'blueworx-design', 'blueworx-seo' ), true ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Only picks which screen's assets to load.
 		return;
 	}
 
