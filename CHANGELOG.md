@@ -8,6 +8,19 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.27.0] - 2026-11-10
+
+### Added
+- **The sign-in page matches checkout.** A signed-out visitor who opens the
+  customer dashboard now sees SureCart's sign-in form inside the same header
+  and footer as the checkout and thank-you pages: the site's logo, "Sign in",
+  a way back to the site, and the legal links.
+
+### Fixed
+- **The thank-you page uses the checkout's header**, as it already did in the
+  plugin: the site's logo and "Thank you", with "Back to the site" on the
+  right. The checkout title also keeps its size on Elementor sites.
+
 ## [2.26.1] - 2026-11-10
 
 ### Fixed
