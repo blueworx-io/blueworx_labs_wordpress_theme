@@ -8,6 +8,14 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.26.1] - 2026-11-10
+
+### Fixed
+- **The customer dashboard now shows the shop's own sign-in.** With Store pages
+  on, a signed-out visitor who opened the dashboard was sent to the WordPress
+  login instead. They now stay on the page and see SureCart's sign-in form.
+  Sites with Store pages off are unchanged.
+
 ## [2.26.0] - 2026-11-09
 
 ### Added
