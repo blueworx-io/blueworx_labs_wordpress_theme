@@ -41,6 +41,20 @@ test('another plugin names its page through the filter', async ({ page }) => {
   await expect(r.locator('.row-actions .trash')).toHaveCount(0);
 });
 
+test("the site's privacy policy reads Legal page", async ({ page }) => {
+  await login(page);
+  // Whichever page Settings > Privacy points at, whatever it is called —
+  // on a site that chose one before the theme arrived it has no legal meta,
+  // and it must read Legal page all the same.
+  await page.goto('/wp-admin/options-privacy.php');
+  const title = (await page.locator('#page_for_privacy_policy option:checked').textContent()).trim();
+  expect(title).not.toBe('');
+  await page.goto(`${PAGES}&s=${encodeURIComponent(title)}`);
+  const r = row(page, title.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  await expect(r.locator('.column-blueworx_page_source')).toHaveText('Legal page');
+  await expect(r.locator('.row-actions .trash')).toHaveCount(0);
+});
+
 test('an ordinary page is left alone', async ({ page }) => {
   await login(page);
   await page.goto(PAGES);

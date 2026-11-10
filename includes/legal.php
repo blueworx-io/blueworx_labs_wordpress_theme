@@ -174,7 +174,9 @@ function blueworx_legal_page_id( $kind ) {
  * Makes sure every legal page exists, creating the missing ones.
  *
  * Safe to run again: a page that exists is left exactly as it is, published
- * or not, edited or not. Only a page that is missing is created.
+ * or not, edited or not. Only a page that is missing is created. The one
+ * thing an existing page does get is the kind meta, so a privacy policy the
+ * site chose before the theme arrived is recognised as a legal page too.
  *
  * @param bool $publish Whether a created page is published or left a draft.
  * @return array<string,int> The pages' ids, keyed by kind.
@@ -187,6 +189,7 @@ function blueworx_legal_ensure_pages( $publish ) {
 	foreach ( blueworx_legal_kinds() as $kind => $def ) {
 		if ( isset( $ids[ $kind ] ) ) {
 			$stored[ $kind ] = $ids[ $kind ];
+			update_post_meta( $ids[ $kind ], BLUEWORX_LEGAL_META, $kind );
 			continue;
 		}
 
@@ -291,6 +294,25 @@ function blueworx_legal_footer_links( $links ) {
 add_filter( 'blueworx_footer_legal_links', 'blueworx_legal_footer_links' );
 
 /**
+ * Whether a page is one of the legal pages. Pure.
+ *
+ * A page this theme created, or adopted by slug, carries the kind in its
+ * meta. The privacy policy is the exception: it is whatever WordPress has on
+ * Settings, Privacy, and a site that chose that page before the theme
+ * arrived has one with no meta at all. It is a legal page all the same.
+ *
+ * @param int    $post_id    The page.
+ * @param string $meta_kind  The page's legal kind meta, '' when it has none.
+ * @param int    $privacy_id The page WordPress calls the privacy policy, 0 for none.
+ * @return bool
+ */
+function blueworx_legal_is_legal_page( $post_id, $meta_kind, $privacy_id ) {
+	$post_id = (int) $post_id;
+
+	return '' !== (string) $meta_kind || ( $post_id > 0 && $post_id === (int) $privacy_id );
+}
+
+/**
  * Names the legal pages in the Pages list's Source column.
  *
  * @param string $label   The label so far.
@@ -298,7 +320,13 @@ add_filter( 'blueworx_footer_legal_links', 'blueworx_legal_footer_links' );
  * @return string
  */
 function blueworx_legal_page_source( $label, $post_id ) {
-	return '' !== (string) get_post_meta( (int) $post_id, BLUEWORX_LEGAL_META, true ) ? __( 'Legal page', 'blueworx-labs-wordpress' ) : $label;
+	$is_legal = blueworx_legal_is_legal_page(
+		$post_id,
+		(string) get_post_meta( (int) $post_id, BLUEWORX_LEGAL_META, true ),
+		(int) get_option( 'wp_page_for_privacy_policy', 0 )
+	);
+
+	return $is_legal ? __( 'Legal page', 'blueworx-labs-wordpress' ) : $label;
 }
 add_filter( 'blueworx_page_source', 'blueworx_legal_page_source', 10, 2 );
 

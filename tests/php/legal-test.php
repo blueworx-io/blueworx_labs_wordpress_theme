@@ -93,6 +93,12 @@ ok( 'no cookies says so', false !== strpos( blueworx_cookie_list_html( array() )
 // The default declarations, off WordPress: just core's own.
 check( 'with no tracking, only core cookies are listed', array( 'wordpress_test_cookie', 'wordpress_logged_in_*, wordpress_sec_*', 'wp-settings-*' ), array_column( blueworx_cookie_declarations(), 'name' ) );
 
+// The Source column: a page with the kind meta, or the privacy policy WordPress knows about.
+ok( 'a page carrying the kind meta is a legal page', blueworx_legal_is_legal_page( 7, 'cookies', 0 ) );
+ok( "the site's privacy policy is one even with no meta", blueworx_legal_is_legal_page( 12, '', 12 ) );
+ok( 'another page with no meta is not', ! blueworx_legal_is_legal_page( 13, '', 12 ) );
+ok( 'with no privacy page set, nothing matches id 0', ! blueworx_legal_is_legal_page( 0, '', 0 ) );
+
 // Last updated.
 check( 'the updated line', '<p class="blueworx-legal__updated">Last updated 8 November 2026</p>', blueworx_legal_updated_html( '8 November 2026' ) );
 check( 'no date means no line', '', blueworx_legal_updated_html( '' ) );
