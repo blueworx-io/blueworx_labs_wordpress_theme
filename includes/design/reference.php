@@ -199,18 +199,29 @@ function blueworx_design_reference_render() {
 
 	// The site styles always, whatever the switch: this page shows the site
 	// with its design system applied.
-	add_action(
-		'wp_enqueue_scripts',
-		static function () {
-			wp_enqueue_style( 'blueworx-site', BLUEWORX_LABS_URL . 'assets/css/site.css', array( 'blueworx-design' ), BLUEWORX_LABS_VERSION );
-			wp_enqueue_style( 'blueworx-design-reference', BLUEWORX_LABS_URL . 'assets/css/design-reference.css', array( 'blueworx-site' ), BLUEWORX_LABS_VERSION );
-			// The admin screens' copy button script: it only wires buttons to fields.
-			wp_enqueue_script( 'blueworx-labs-wordpress-copy-field', BLUEWORX_LABS_URL . 'assets/js/copy-field.js', array(), BLUEWORX_LABS_VERSION, true );
-		},
-		20
-	);
+	add_action( 'wp_enqueue_scripts', 'blueworx_design_reference_enqueue', 20 );
+
+	// Again just before the stylesheets print. A client plugin that owns the
+	// site's look (Brodfest) drops every stylesheet it does not know late in
+	// wp_enqueue_scripts, and took this page's with them. Nothing runs after
+	// this, so the page always arrives dressed.
+	add_action( 'wp_print_styles', 'blueworx_design_reference_enqueue', PHP_INT_MAX );
 
 	require BLUEWORX_LABS_PATH . 'includes/design/reference-page.php';
 	exit;
 }
 add_action( 'template_redirect', 'blueworx_design_reference_render' );
+
+/**
+ * Queues the reference page's stylesheets and its copy-button script.
+ *
+ * Safe to call more than once: WordPress keeps one copy of each handle.
+ *
+ * @return void
+ */
+function blueworx_design_reference_enqueue() {
+	wp_enqueue_style( 'blueworx-site', BLUEWORX_LABS_URL . 'assets/css/site.css', array( 'blueworx-design' ), BLUEWORX_LABS_VERSION );
+	wp_enqueue_style( 'blueworx-design-reference', BLUEWORX_LABS_URL . 'assets/css/design-reference.css', array( 'blueworx-site' ), BLUEWORX_LABS_VERSION );
+	// The admin screens' copy button script: it only wires buttons to fields.
+	wp_enqueue_script( 'blueworx-labs-wordpress-copy-field', BLUEWORX_LABS_URL . 'assets/js/copy-field.js', array(), BLUEWORX_LABS_VERSION, true );
+}

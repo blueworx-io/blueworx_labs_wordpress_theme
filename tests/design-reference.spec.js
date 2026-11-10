@@ -5,6 +5,10 @@
  * the people who set it — and to nobody else.
  */
 
+import { execFileSync } from 'node:child_process';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import {
   test,
   expect,
@@ -15,8 +19,22 @@ import {
   cacheBust,
   restoreAll,
 } from './helpers.js';
+import { isHarness } from './test-target.js';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const REFERENCE_PATH = '/?blueworx-design-system=1';
+
+/**
+ * Installs or removes a must-use plugin that drops every front-end stylesheet
+ * late in wp_enqueue_scripts, as a client plugin that owns the site's look
+ * does. See tests/fixtures/style-sweep.php.
+ */
+function styleSweep(command) {
+  const fixture = path.join(__dirname, 'fixtures', 'style-sweep.php');
+  const wpLoad = path.join(__dirname, '..', '.wp-test', 'wp', 'wp-load.php');
+  return execFileSync('php', [fixture, wpLoad, command], { encoding: 'utf8' }).trim();
+}
 const DESIGN_PATH = '/wp-admin/admin.php?page=blueworx-design';
 
 const SECTIONS = [
@@ -78,6 +96,25 @@ test.describe('Design system reference page', () => {
     expect(ids).toEqual(SECTIONS);
     await expect(page.locator('#tokens pre')).toContainText('--color-primary: #2f5bea;');
     await expect(page.locator('#tokens pre')).toContainText('@media (max-width: 639px)');
+  });
+
+  test('keeps its styles when a client plugin sweeps every stylesheet', async ({ page }) => {
+    // Brodfest drops every stylesheet it does not own late in
+    // wp_enqueue_scripts, and the reference page arrived undressed.
+    test.skip(!isHarness, 'Needs the local harness to install a must-use plugin.');
+    await login(page);
+    styleSweep('install');
+
+    try {
+      await page.goto(cacheBust(REFERENCE_PATH));
+      await expect(page.locator('link[href*="design-reference.css"]')).toHaveCount(1);
+      await expect(page.locator('link[href*="/site.css"]')).toHaveCount(1);
+      // And they took effect: the reference layout caps the page width.
+      const width = await page.locator('main.bw-ref-main').evaluate((el) => el.ownerDocument.defaultView.getComputedStyle(el).maxWidth);
+      expect(width).not.toBe('none');
+    } finally {
+      styleSweep('remove');
+    }
   });
 
   test('nobody signed out sees it', async ({ browser }) => {

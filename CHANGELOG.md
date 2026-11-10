@@ -8,6 +8,13 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.27.3] - 2026-11-10
+
+### Fixed
+- **The design system page keeps its styles on every site.** On a site whose
+  own plugin owns the look and clears out other stylesheets (Brodfest), the
+  page arrived as bare text and swatches. Its styles now always load.
+
 ## [2.27.2] - 2026-11-10
 
 ### Fixed
