@@ -8,6 +8,14 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.27.1] - 2026-11-10
+
+### Fixed
+- **The privacy policy is always listed as a Legal page.** A site that had
+  chosen its privacy page before the theme arrived saw it with no Source in
+  the Pages list, and it could be deleted. It now reads "Legal page" like the
+  cookies and terms pages, and is protected the same way.
+
 ## [2.27.0] - 2026-11-10
 
 ### Added
