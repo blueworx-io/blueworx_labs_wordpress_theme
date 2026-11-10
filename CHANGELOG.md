@@ -8,6 +8,18 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.28.0] - 2026-11-10
+
+### Added
+- **Email log.** A new function under Notifications & Cleanup keeps a record of
+  every email the site sends: who it went to, the subject, whether the mailer
+  accepted it, and what the mailer said if not. The list lives under Theme as
+  Email logs, filters by text, status and date, and each row opens the full
+  message on a page of its own in a new tab. Thirty days are kept. Off until
+  switched on.
+- **Emails are sent in the site's name.** The sender shows the site title
+  instead of "WordPress". A plugin that sets its own sender name is left alone.
+
 ## [2.27.3] - 2026-11-10
 
 ### Fixed

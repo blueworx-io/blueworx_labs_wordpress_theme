@@ -61,6 +61,12 @@ function blueworx_theme_maybe_setup_site() {
 	// back; a fresh site registers it when somebody switches the function on.
 	blueworx_external_on_activate();
 
+	// The email log's table, created or brought up to date. Guarded: the
+	// lifecycle checks load this file without the log.
+	if ( function_exists( 'blueworx_email_log_install' ) ) {
+		blueworx_email_log_install();
+	}
+
 	update_option( 'blueworx_theme_setup_version', BLUEWORX_LABS_VERSION );
 }
 add_action( 'after_setup_theme', 'blueworx_theme_maybe_setup_site', 6 );

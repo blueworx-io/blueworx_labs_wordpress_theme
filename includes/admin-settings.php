@@ -1022,6 +1022,16 @@ function blueworx_get_feature_detail_html( $key ) {
 		);
 	}
 
+	if ( 'email_log' === $key ) {
+		return blueworx_ds_button(
+			array(
+				'label' => __( 'Open Email logs page', 'blueworx-labs-wordpress' ),
+				'icon'  => 'mail',
+				'href'  => admin_url( 'admin.php?page=blueworx-email-log' ),
+			)
+		);
+	}
+
 	if ( 'tracking_codes' === $key ) {
 		return blueworx_ds_button(
 			array(

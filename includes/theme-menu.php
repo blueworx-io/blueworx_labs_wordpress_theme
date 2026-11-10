@@ -46,6 +46,14 @@ function blueworx_theme_menu_items() {
 		),
 	);
 
+	$items[] = array(
+		'slug'       => 'blueworx-email-log',
+		'title'      => __( 'Email logs', 'blueworx-labs-wordpress' ),
+		'capability' => 'manage_options',
+		'callback'   => 'blueworx_render_email_log_page',
+		'listed'     => blueworx_feature_enabled( 'email_log' ),
+	);
+
 	if ( blueworx_feature_enabled( 'cache_manual' ) ) {
 		$items[] = array(
 			'slug'       => 'blueworx-cache',
