@@ -91,25 +91,23 @@ add_filter( 'blueworx_page_source', static function ( $label, $post_id ) {
 	return $page && 'claimed-fixture' === $page->post_name ? 'Fixture page' : $label;
 }, 10, 2 );
 
-// Stands in for the approved plugins list, which the harness cannot fetch:
-// 'none' approves nothing, 'all' approves everything installed. Driven by
-// tests/fixtures/plugin-check.php; with no mode set the real list is used.
+// Stands in for the approved plugins list: 'none' approves nothing, anything
+// else approves everything installed. Driven by tests/fixtures/plugin-check.php.
+// The real list is never used here: once the harness could fetch it, the
+// plugins it installs were flagged and the notice landed on every admin screen.
 add_filter( 'blueworx_approved_plugins', static function ( $list ) {
 	$mode = get_option( 'bw_test_approved_mode' );
 	if ( 'none' === $mode ) {
 		return array();
 	}
-	if ( 'all' === $mode ) {
-		if ( ! function_exists( 'get_plugins' ) ) {
-			require_once ABSPATH . 'wp-admin/includes/plugin.php';
-		}
-		$all = array();
-		foreach ( array_keys( get_plugins() ) as $file ) {
-			$all[ false !== strpos( $file, '/' ) ? strtok( $file, '/' ) : basename( $file, '.php' ) ] = array();
-		}
-		return $all;
+	if ( ! function_exists( 'get_plugins' ) ) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 	}
-	return $list;
+	$all = array();
+	foreach ( array_keys( get_plugins() ) as $file ) {
+		$all[ false !== strpos( $file, '/' ) ? strtok( $file, '/' ) : basename( $file, '.php' ) ] = array();
+	}
+	return $all;
 } );
 
 // Claims the dashboard address only when the request asks it to, so the same

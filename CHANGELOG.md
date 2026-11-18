@@ -8,6 +8,16 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.29.0] - 2026-11-18
+
+### Added
+- **Claude can reach all of Forge again.** An administrator who has connected
+  Claude can read and change any part of Forge, not just projects, tasks and
+  capacity: the standup, reminders, triage checks and the rest. Forge's own
+  checks apply, installing Forge updates stays out of reach, and changes made
+  this way appear under Recent changes by Claude. This was in the plugin's
+  1.100.0 but was missed when Connect Claude moved into the theme.
+
 ## [2.28.0] - 2026-11-10
 
 ### Added
