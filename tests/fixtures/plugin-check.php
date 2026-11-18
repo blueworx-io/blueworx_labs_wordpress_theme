@@ -10,7 +10,7 @@
  *
  *   none   Nothing is approved, so every installed plugin is flagged.
  *   all    Every installed plugin is approved.
- *   off    Removes the stand-in plugin and the mode, back to the real list.
+ *   off    Removes the stand-in plugin and the mode, back to everything approved.
  *
  * @package BlueWorxLabsTests
  */
