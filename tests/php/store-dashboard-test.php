@@ -66,4 +66,35 @@ check( 'none to itself', false === strpos( $html, '?view=dashboard' ), true );
 $html = blueworx_store_overview( blueworx_store_normalize_views( array() ), 'http://x/', '' );
 check( 'nothing else to offer: empty, so the panel filter can fill it and the empty state comes after', $html, '' );
 
+echo "\nEvery SureCart list on the page gets an id of its own\n";
+$seen = array();
+check( 'the first keeps its id', blueworx_store_next_component_id( 'customer-subscriptions-preview', $seen ), 'customer-subscriptions-preview' );
+check( 'a second copy gets -2', blueworx_store_next_component_id( 'customer-subscriptions-preview', $seen ), 'customer-subscriptions-preview-2' );
+check( 'a different list keeps its own', blueworx_store_next_component_id( 'customer-orders-preview', $seen ), 'customer-orders-preview' );
+check( 'a third copy gets -3', blueworx_store_next_component_id( 'customer-subscriptions-preview', $seen ), 'customer-subscriptions-preview-3' );
+
+// Shaped like SureCart's Component: a protected id, reached through __call.
+// phpcs:disable Squiz.Commenting
+class Bw_Test_Component {
+	protected $id = '';
+	public function __call( $method, $params ) {
+		return call_user_func_array( array( $this, $method ), $params );
+	}
+	protected function id( $id ) {
+		$this->id = $id;
+		return $this;
+	}
+	public function current() {
+		return $this->id;
+	}
+}
+// phpcs:enable Squiz.Commenting
+$one = ( new Bw_Test_Component() )->id( 'bw-test-list' );
+$two = ( new Bw_Test_Component() )->id( 'bw-test-list' );
+check( 'props pass through untouched', blueworx_store_unique_component_id( array( 'a' => 1 ), 'sc-x', $one ), array( 'a' => 1 ) );
+blueworx_store_unique_component_id( array(), 'sc-x', $two );
+check( 'the first component keeps its id', $one->current(), 'bw-test-list' );
+check( 'the second is renamed', $two->current(), 'bw-test-list-2' );
+check( 'no component: props untouched', blueworx_store_unique_component_id( array( 'b' => 2 ), 'sc-x', null ), array( 'b' => 2 ) );
+
 finish();

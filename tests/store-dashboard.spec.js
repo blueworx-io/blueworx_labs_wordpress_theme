@@ -94,3 +94,16 @@ test('with the feature off, the page is left alone', async ({ page }) => {
     await saveEnhancements(page);
   }
 });
+
+test('a SureCart list drawn twice on one page is filled both times', async ({ page }) => {
+  // The dashboard draws the subscriptions list under Plans and again on the
+  // phone's Billing screen. SureCart fills a list by finding its id, so two
+  // copies sharing one id left the second, the one under Plans, empty.
+  await page.goto('/component-ids-fixture/');
+  const lists = page.locator('.bw-test-sc-list');
+  await expect(lists).toHaveCount(2);
+  await expect(lists.nth(0)).toHaveAttribute('id', 'bw-test-sc-list');
+  await expect(lists.nth(1)).toHaveAttribute('id', 'bw-test-sc-list-2');
+  await expect(lists.nth(0)).toHaveText('FILLED');
+  await expect(lists.nth(1)).toHaveText('FILLED');
+});
