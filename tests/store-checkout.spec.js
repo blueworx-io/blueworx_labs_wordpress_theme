@@ -96,3 +96,11 @@ test('an archive is left alone even if its id collided with a store page', async
   await expect(page.locator('.blueworx-checkout')).toHaveCount(0);
   await expect(page.locator('head link[href*="store.css"]')).toHaveCount(0);
 });
+
+test("an empty order confirmation block shows the buyer SureCart's order summary", async ({ page }) => {
+  // The empty block SureCart writes rendered nothing, so a buyer who had just
+  // paid saw no order at all. It is filled with SureCart's own summary.
+  await page.goto('/empty-confirmation-fixture/');
+  await expect(page.locator('sc-order-confirmation sc-order-confirmation-line-items')).toHaveCount(1);
+  await expect(page.locator('sc-order-confirmation sc-order-confirmation-totals')).toHaveCount(1);
+});

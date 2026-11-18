@@ -277,6 +277,7 @@ function bw_fixture_page( $slug, $title, $content ) {
 update_option( 'surecart_checkout_page_id', bw_fixture_page( 'checkout-fixture', 'Checkout fixture', '<p id="shop-content">SHOP CONTENT</p>' ) );
 update_option( 'surecart_order-confirmation_page_id', bw_fixture_page( 'thanks-fixture', 'Thank you fixture', '<p id="shop-content">THANKS CONTENT</p>' ) );
 update_option( 'surecart_dashboard_page_id', bw_fixture_page( 'dashboard-fixture', 'Dashboard fixture', '<p id="foreign-content">FOREIGN</p>' ) );
+bw_fixture_page( 'empty-confirmation-fixture', 'Empty confirmation fixture', '<!-- wp:surecart/order-confirmation --> <!-- /wp:surecart/order-confirmation -->' );
 bw_fixture_page( 'claimed-fixture', 'Claimed dashboard fixture', '<p id="claimed-content">CLAIMED</p>' );
 bw_fixture_page( 'design-colour-fixture', 'Colour fixture', '<p class="has-text-color" id="custom-colour" style="color:#ff0000">Red text</p>' );
 

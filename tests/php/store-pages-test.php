@@ -59,7 +59,34 @@ check( 'present: no', blueworx_store_should_create_confirmation( true, 9, 'publi
 check( 'no shop: no', blueworx_store_should_create_confirmation( false, 0, '' ), false );
 $page = blueworx_store_confirmation_page();
 check( 'it is SureCart\'s own slug', $page['slug'], 'order-confirmation' );
-check( 'and its own block', $page['content'], '<!-- wp:surecart/order-confirmation --> <!-- /wp:surecart/order-confirmation -->' );
+check( 'its block is filled, not empty', false !== strpos( $page['content'], '<!-- wp:surecart/order-confirmation-line-items -->' ), true );
+check( 'and points the buyer at the dashboard', false !== strpos( $page['content'], 'wp:surecart/customer-dashboard-button' ), true );
+check( 'inside SureCart\'s own wrapper, so the editor reads it as valid', false !== strpos( $page['content'], '<sc-order-confirmation><!-- wp:' ), true );
+
+echo "\nAn empty confirmation block is filled as it renders\n";
+$filled = array(
+	'blockName'   => 'surecart/order-confirmation',
+	'innerBlocks' => array( array( 'blockName' => 'surecart/order-confirmation-line-items' ) ),
+	'innerHTML'   => '<sc-order-confirmation></sc-order-confirmation>',
+);
+$empty  = array(
+	'blockName'   => 'surecart/order-confirmation',
+	'innerBlocks' => array(),
+	'innerHTML'   => ' ',
+);
+check( 'the empty one SureCart writes is filled', blueworx_store_fill_confirmation( $empty, $filled ), $filled );
+$own = array(
+	'blockName'   => 'surecart/order-confirmation',
+	'innerBlocks' => array( array( 'blockName' => 'core/paragraph' ) ),
+	'innerHTML'   => '<sc-order-confirmation></sc-order-confirmation>',
+);
+check( 'one the site has filled itself is left alone', blueworx_store_fill_confirmation( $own, $filled ), $own );
+$para = array(
+	'blockName'   => 'core/paragraph',
+	'innerBlocks' => array(),
+	'innerHTML'   => '',
+);
+check( 'any other block is left alone', blueworx_store_fill_confirmation( $para, $filled ), $para );
 
 echo "\nThe four pages\n";
 check( 'are checkout, order-confirmation, dashboard, shop', array_keys( $pages ), array( 'checkout', 'order-confirmation', 'dashboard', 'shop' ) );
