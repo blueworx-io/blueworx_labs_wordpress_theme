@@ -74,14 +74,20 @@ function blueworx_store_pages() {
 }
 
 /**
- * The order confirmation page, exactly as SureCart writes it.
+ * The order confirmation page: SureCart's slug and title, with its block filled in.
  *
  * Its activation seeder makes the checkout, dashboard and shop pages but not
  * this one — only its onboarding does, and a club that never walks through
  * onboarding is left with a permanent warning that anyone who pays will see
- * nothing afterwards. So this plugin makes it, using SureCart's own slug,
- * title and block from Install\InstallService::createPages(). Pure, so what
- * it writes is asserted rather than taken on trust.
+ * nothing afterwards. So this plugin makes it, using SureCart's own slug and
+ * title from Install\InstallService::createPages(). Pure, so what it writes
+ * is asserted rather than taken on trust.
+ *
+ * SureCart's own content for this page is an empty block, and an empty block
+ * shows a buyer nothing: the order loads with nowhere to appear. The editor
+ * only fills it when the block is inserted by hand, so the content here is
+ * what that fills it with — SureCart's own Order Confirmation pattern, less
+ * its thank-you line, which the frame around the page already says.
  *
  * @return array{slug:string,option:string,title:string,content:string}
  */
@@ -90,8 +96,68 @@ function blueworx_store_confirmation_page() {
 		'slug'    => 'order-confirmation',
 		'option'  => 'order-confirmation',
 		'title'   => 'Thank you!',
-		'content' => '<!-- wp:surecart/order-confirmation --> <!-- /wp:surecart/order-confirmation -->',
+		'content' => blueworx_store_confirmation_content(),
 	);
+}
+
+/**
+ * SureCart's Order Confirmation pattern, as block markup: the order summary,
+ * its totals and the way to the dashboard.
+ *
+ * @return string
+ */
+function blueworx_store_confirmation_content() {
+	return '<!-- wp:surecart/order-confirmation -->' . "\n"
+		. '<sc-order-confirmation><!-- wp:surecart/order-confirmation-line-items -->' . "\n"
+		. '<sc-dashboard-module heading="Summary" class="wp-block-surecart-order-confirmation-line-items"><sc-card><sc-order-confirmation-line-items></sc-order-confirmation-line-items><sc-order-confirmation-totals></sc-order-confirmation-totals></sc-card></sc-dashboard-module>' . "\n"
+		. '<!-- /wp:surecart/order-confirmation-line-items -->' . "\n\n"
+		. '<!-- wp:surecart/customer-dashboard-button {"label":"Manage Orders","full":true} /--></sc-order-confirmation>' . "\n"
+		. '<!-- /wp:surecart/order-confirmation -->';
+}
+
+/**
+ * An empty order confirmation block, swapped for a filled one as it renders.
+ *
+ * Every confirmation page SureCart or an older version of this theme made
+ * holds the empty block, so every one of them shows a buyer nothing. Filling
+ * it at render time mends them all on update without rewriting anyone's page.
+ * A block with anything inside it is the site's own and is left alone.
+ *
+ * Pure: the filled block arrives already parsed.
+ *
+ * @param array<string,mixed> $block  The block about to render, as parse_blocks() gives it.
+ * @param array<string,mixed> $filled The filled confirmation block, parsed the same way.
+ * @return array<string,mixed>
+ */
+function blueworx_store_fill_confirmation( $block, $filled ) {
+	if ( ! is_array( $block ) || 'surecart/order-confirmation' !== ( $block['blockName'] ?? '' ) ) {
+		return $block;
+	}
+	if ( ! empty( $block['innerBlocks'] ) || '' !== trim( (string) ( $block['innerHTML'] ?? '' ) ) ) {
+		return $block;
+	}
+	return $filled;
+}
+
+/**
+ * The render_block_data side of blueworx_store_fill_confirmation().
+ *
+ * Bails on the block name before parsing anything, because this runs for
+ * every block on every page, and parses the filled block once per request.
+ *
+ * @param array<string,mixed> $block The block about to render.
+ * @return array<string,mixed>
+ */
+function blueworx_store_fill_confirmation_block( $block ) {
+	if ( ! is_array( $block ) || 'surecart/order-confirmation' !== ( $block['blockName'] ?? '' ) || ! function_exists( 'parse_blocks' ) ) {
+		return $block;
+	}
+	static $filled = null;
+	if ( null === $filled ) {
+		$parsed = parse_blocks( blueworx_store_confirmation_content() );
+		$filled = isset( $parsed[0] ) && is_array( $parsed[0] ) ? $parsed[0] : array();
+	}
+	return array() === $filled ? $block : blueworx_store_fill_confirmation( $block, $filled );
 }
 
 /**

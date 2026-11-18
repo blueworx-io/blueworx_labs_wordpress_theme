@@ -56,6 +56,37 @@ add_shortcode( 'bw_store_test_panel', static function () {
 	return '<p id="test-panel">TEST PANEL</p>';
 } );
 
+// Draws a list the way SureCart's Component does: a fixed id, props through
+// surecart/components/props, then a footer script that finds the list by id
+// and fills it. Two on one page is what the customer dashboard does with
+// the subscriptions list, for tests/store-dashboard.spec.js.
+if ( ! class_exists( 'Bw_Test_Sc_Component' ) ) {
+	class Bw_Test_Sc_Component {
+		protected $id = '';
+		public function __call( $method, $params ) {
+			return call_user_func_array( array( $this, $method ), $params );
+		}
+		protected function id( $id ) {
+			$this->id = $id;
+			return $this;
+		}
+		protected function with( $data ) {
+			apply_filters( 'surecart/components/props', $data, 'bw-test-sc-list', $this );
+			return $this;
+		}
+		protected function render() {
+			$id = $this->id;
+			add_action( 'wp_footer', static function () use ( $id ) {
+				echo '<script>(function(){var c=document.querySelector("#' . esc_js( $id ) . '");if(c){c.textContent="FILLED";}})();</script>';
+			} );
+			return '<div class="bw-test-sc-list" id="' . esc_attr( $id ) . '"></div>';
+		}
+	}
+}
+add_shortcode( 'bw_test_sc_list', static function () {
+	return ( new Bw_Test_Sc_Component() )->id( 'bw-test-sc-list' )->with( array() )->render();
+} );
+
 add_filter( 'blueworx_store_views', static function ( $views ) {
 	$views[] = array(
 		'key'       => 'club',
@@ -277,6 +308,8 @@ function bw_fixture_page( $slug, $title, $content ) {
 update_option( 'surecart_checkout_page_id', bw_fixture_page( 'checkout-fixture', 'Checkout fixture', '<p id="shop-content">SHOP CONTENT</p>' ) );
 update_option( 'surecart_order-confirmation_page_id', bw_fixture_page( 'thanks-fixture', 'Thank you fixture', '<p id="shop-content">THANKS CONTENT</p>' ) );
 update_option( 'surecart_dashboard_page_id', bw_fixture_page( 'dashboard-fixture', 'Dashboard fixture', '<p id="foreign-content">FOREIGN</p>' ) );
+bw_fixture_page( 'empty-confirmation-fixture', 'Empty confirmation fixture', '<!-- wp:surecart/order-confirmation --> <!-- /wp:surecart/order-confirmation -->' );
+bw_fixture_page( 'component-ids-fixture', 'Component ids fixture', '[bw_test_sc_list][bw_test_sc_list]' );
 bw_fixture_page( 'claimed-fixture', 'Claimed dashboard fixture', '<p id="claimed-content">CLAIMED</p>' );
 bw_fixture_page( 'design-colour-fixture', 'Colour fixture', '<p class="has-text-color" id="custom-colour" style="color:#ff0000">Red text</p>' );
 

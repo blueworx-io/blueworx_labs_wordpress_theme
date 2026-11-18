@@ -233,6 +233,7 @@ function blueworx_store_checkout_links() {
 if ( function_exists( 'add_filter' ) && function_exists( 'blueworx_feature_enabled' ) && blueworx_feature_enabled( 'store_pages' ) ) {
 	add_filter( 'the_content', 'blueworx_store_dress_content', BLUEWORX_STORE_CONTENT_PRIORITY );
 	add_filter( 'render_block', 'blueworx_store_strip_post_title', 10, 3 );
+	add_filter( 'render_block_data', 'blueworx_store_fill_confirmation_block' );
 	// These pages serve their own document — see blueworx_store_serve_template().
 	add_filter( 'template_include', 'blueworx_store_serve_template', BLUEWORX_STORE_TEMPLATE_PRIORITY );
 }

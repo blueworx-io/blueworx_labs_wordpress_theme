@@ -8,6 +8,19 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.29.1] - 2026-11-18
+
+### Fixed
+- **The order confirmation page shows the order.** After paying, buyers saw
+  an empty box where their order should be, because the page SureCart makes
+  holds an empty block. The theme now fills that block with SureCart's order
+  summary, totals and dashboard button, on existing pages as well as new ones.
+  A confirmation block a site has filled in itself is left alone.
+- **Plans shows the customer's subscriptions.** The Plans screen in the
+  customer dashboard said "You don't have any subscriptions" to customers who
+  have one, and on a phone the Billing screen's orders and invoices were empty.
+  Each of SureCart's lists now loads wherever it appears.
+
 ## [2.29.0] - 2026-11-18
 
 ### Added

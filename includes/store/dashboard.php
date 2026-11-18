@@ -412,9 +412,73 @@ function blueworx_store_dashboard_content( $content, $context, $signed_in = null
 	return '' === $screen ? $content : $screen;
 }
 
+/**
+ * The id a SureCart component should carry, given the ids already used on this page.
+ *
+ * The first keeps its own id; each later one gets -2, -3 and so on. Pure:
+ * the caller holds the record of what has been used.
+ *
+ * @param string            $id   The id SureCart gave the component.
+ * @param array<string,int> $seen How many times each id has been used so far; updated.
+ * @return string
+ */
+function blueworx_store_next_component_id( $id, &$seen ) {
+	$id          = (string) $id;
+	$seen[ $id ] = isset( $seen[ $id ] ) ? $seen[ $id ] + 1 : 1;
+	return 1 === $seen[ $id ] ? $id : $id . '-' . $seen[ $id ];
+}
+
+/**
+ * Give every SureCart component on the page an id of its own.
+ *
+ * SureCart draws each list with a fixed id, then hands the list its
+ * customer and query from a footer script that finds it by that id. The
+ * dashboard draws some lists twice — under Plans, and again on the phone's
+ * Billing screen — so two elements shared one id, the script only ever
+ * found the first, and the second sat on "You don't have any
+ * subscriptions" for a customer who has one. SureCart reads the id back
+ * when it writes that script, so renaming the component here renames both
+ * the element and the script that fills it.
+ *
+ * Runs on SureCart's own surecart/components/props filter, which hands over
+ * the component; the id is set before it is asked for props on every
+ * dashboard list. Anything unexpected — no component, no id, a SureCart
+ * that has changed shape — leaves the component exactly as it was.
+ *
+ * @param array<string,mixed> $data      The component's props.
+ * @param string              $tag       The component's tag.
+ * @param object|null         $component The component being built.
+ * @return array<string,mixed>
+ */
+function blueworx_store_unique_component_id( $data, $tag = '', $component = null ) {
+	static $seen = array();
+	if ( ! is_object( $component ) ) {
+		return $data;
+	}
+	try {
+		if ( ! property_exists( $component, 'id' ) ) {
+			return $data;
+		}
+		$prop = new ReflectionProperty( $component, 'id' );
+		$prop->setAccessible( true );
+		$id = (string) $prop->getValue( $component );
+		if ( '' === $id ) {
+			return $data;
+		}
+		$next = blueworx_store_next_component_id( $id, $seen );
+		if ( $next !== $id ) {
+			$component->id( $next );
+		}
+	} catch ( Throwable $e ) {
+		return $data;
+	}
+	return $data;
+}
+
 if ( function_exists( 'add_action' ) && function_exists( 'blueworx_feature_enabled' ) && blueworx_feature_enabled( 'store_pages' ) ) {
 	// The real block and shortcode renderers, installed once WordPress has
 	// registered them.
 	add_action( 'init', 'blueworx_store_slot_install' );
 	add_action( 'template_redirect', 'blueworx_store_route', 5 );
+	add_filter( 'surecart/components/props', 'blueworx_store_unique_component_id', 10, 3 );
 }
