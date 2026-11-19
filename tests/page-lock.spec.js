@@ -99,7 +99,8 @@ test.describe('Locked pages', () => {
       pageId = post.id;
       expect(post.meta._blueworx_page_lock).toBe(true);
 
-      await page.goto('/wp-admin/edit.php?post_type=page');
+      // Searched by its own title: on a busy site the list runs to several screens.
+      await page.goto(`/wp-admin/edit.php?post_type=page&s=${encodeURIComponent(`Locked page ${stamp}`)}`);
       await expect(page.locator(`#post-${pageId} .post-state`)).toContainText('Locked');
 
       // The admin's own panel carries the switch, and it is on. Done before
@@ -181,7 +182,7 @@ test.describe('Locked pages', () => {
       if ((await panel.locator('.components-panel__body-toggle').getAttribute('aria-expanded')) === 'false') {
         await panel.locator('.components-panel__body-toggle').click();
       }
-      await expect(panel).toContainText('locked by an administrator');
+      await expect(panel).toContainText('This page is locked');
       await expect(panel.locator('input[type="checkbox"]')).toHaveCount(0);
       await client.frameLocator('iframe[name="editor-canvas"]').locator('.wp-block-paragraph').first().click();
       await expect(client.getByRole('button', { name: 'Move up' })).toHaveCount(0);

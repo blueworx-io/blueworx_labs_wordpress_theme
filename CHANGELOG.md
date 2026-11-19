@@ -8,6 +8,19 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.30.0] - 2026-11-19
+
+### Changed
+- **Every new page is locked.** A page is locked as soon as it's made, so
+  clients and Claude can change its words, images and links but not add, move
+  or remove sections. Pages that already exist are left as they are, and an
+  administrator can still lock or unlock any page.
+- **A simpler editor for clients on locked pages.** They see only the site's
+  own sections, with no code view and no add-block button, and the list of
+  sections opens on the left so they can jump straight to one.
+- The page lock now comes from the shared BlueWorx foundation, so it works the
+  same on every site.
+
 ## [2.29.1] - 2026-11-18
 
 ### Fixed

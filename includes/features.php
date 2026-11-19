@@ -192,7 +192,7 @@ function blueworx_get_feature_definitions() {
 		),
 		'page_lock'             => array(
 			'label'       => __( 'Locked pages', 'blueworx-labs-wordpress' ),
-			'description' => __( 'Lets an administrator lock a page so clients can change its words and images but not add, move or remove blocks. Only administrators can lock or unlock, and the lock holds for connected tools too.', 'blueworx-labs-wordpress' ),
+			'description' => __( 'Locks every new page so clients and connected tools can change its words, images and links but not add, move or remove sections. Only administrators can lock or unlock a page.', 'blueworx-labs-wordpress' ),
 			'section'     => 'content',
 			'detail'      => null,
 			'guide'       => false,

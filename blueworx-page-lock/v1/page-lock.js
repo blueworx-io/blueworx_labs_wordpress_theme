@@ -1,11 +1,12 @@
 /**
- * The Page lock panel in the block editor's sidebar.
+ * The page lock in the block editor.
  *
- * Administrators get a switch bound to the lock. Everyone else sees, when the
- * page is locked, a plain line saying what they can still change. Plain
+ * Administrators get a Locked switch in the page tab. Everyone else, on a
+ * locked page, sees a plain line saying what they can still change, and the
+ * page structure panel opens so they can jump to any section. Plain
  * JavaScript on the React WordPress already loads: no build step.
  */
-(function () {
+( function () {
 	'use strict';
 
 	if ( ! window.wp || ! window.blueworxPageLock ) {
@@ -20,21 +21,38 @@
 		return;
 	}
 
+	var panelName = 'blueworx-page-lock/blueworx-page-lock';
+
+	function openListView() {
+		var stores = [ 'core/editor', 'core/edit-post' ];
+		for ( var i = 0; i < stores.length; i++ ) {
+			var actions = wp.data.dispatch( stores[ i ] );
+			if ( actions && typeof actions.setIsListViewOpened === 'function' ) {
+				actions.setIsListViewOpened( true );
+				return;
+			}
+		}
+	}
+
 	function PageLockPanel() {
 		var meta = wp.data.useSelect( function ( select ) {
 			return select( 'core/editor' ).getEditedPostAttribute( 'meta' ) || {};
 		}, [] );
-		var editor = wp.data.useDispatch( 'core/editor' );
-		var editPost = editor.editPost;
-		var locked = !! meta[ config.metaKey ];
-
-		// A locked page's notice has to be readable without a click, so the
-		// panel opens itself the first time it draws a locked page. The
-		// editor remembers a panel the person then closes.
-		var panelName = 'blueworx-page-lock/blueworx-page-lock';
 		var isOpen = wp.data.useSelect( function ( select ) {
 			return select( 'core/editor' ).isEditorPanelOpened( panelName );
 		}, [] );
+		var editor = wp.data.useDispatch( 'core/editor' );
+		var locked = !! meta[ config.metaKey ];
+
+		// The structure panel opens once, when the editor first draws. Closing
+		// it afterwards is the person's choice and is left alone.
+		wp.element.useEffect( function () {
+			if ( config.openListView ) {
+				openListView();
+			}
+		}, [] );
+
+		// A locked page's notice has to be readable without a click.
 		wp.element.useEffect( function () {
 			if ( locked && ! isOpen ) {
 				editor.toggleEditorPanelOpened( panelName );
@@ -51,7 +69,7 @@
 				onChange: function ( value ) {
 					var next = {};
 					next[ config.metaKey ] = !! value;
-					editPost( { meta: next } );
+					editor.editPost( { meta: next } );
 				},
 			} );
 		} else if ( locked ) {
