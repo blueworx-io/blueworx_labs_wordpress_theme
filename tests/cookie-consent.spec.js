@@ -130,7 +130,8 @@ test.describe('Cookie consent', () => {
       await page.getByRole('button', { name: 'Accept All' }).click();
       await expect(page.locator(`script[src*="gtag/js?id=${GA_ID}"]:not([type="text/plain"])`)).toHaveCount(1);
       const cookies = await context.cookies();
-      expect(cookies.some((c) => c.name === 'surecookie_user_consent')).toBe(true);
+      // SureCookie 1.9.0 adds a per-site ending to the cookie's name.
+      expect(cookies.some((c) => c.name.startsWith('surecookie_user_consent'))).toBe(true);
 
       // Off again: no banner, and the script runs for everyone as before.
       await login(page);
