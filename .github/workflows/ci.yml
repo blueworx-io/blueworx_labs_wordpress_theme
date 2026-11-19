@@ -3,7 +3,7 @@ on: pull_request
 jobs:
   guardrails:
     # v1.19.0 is the first foundation release that supports themes.
-    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/ci-wordpress.yml@v1.23.0
+    uses: blueworx-io/bluegroup_core_foundation/.github/workflows/ci-wordpress.yml@v1.25.0
     with:
       # A theme, not a plugin: the version comes from style.css and the test
       # site switches the theme on rather than activating a plugin.
@@ -11,6 +11,9 @@ jobs:
       # Provision a disposable WordPress on the runner rather than pointing at a
       # staging host. See docs/wordpress-test-harness.md in the foundation.
       use_local_wordpress: true
+      # Test run against the WordPress 7.2 release candidate. Not for merging.
+      wordpress_version: 7.2-RC1
+      gutenberg: true
       # No `shards`: the foundation sizes the split from the suite (one runner
       # per 150 tests), so it grows as tests are added. Each shard is its own
       # runner with its own WordPress, which is what makes this safe — the specs
@@ -31,7 +34,7 @@ jobs:
       # Bump this whenever the design system changes upstream: the sync check
       # compares our copy against the foundation AT THIS REF, so a component
       # added upstream and copied here fails until the ref moves with it.
-      foundation_ref: v1.23.0
+      foundation_ref: v1.25.0
       # Our design system copy matches the foundation, so the sync check stays
       # strict (its default). Adherence is the one we cannot pass yet: the admin
       # re-skin is still hand-styled, and the components we invented for it are
