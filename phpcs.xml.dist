@@ -12,6 +12,8 @@
 	<!-- Not ours: the bundled update library, the design system's synced skill,
 	     and the local test site and its output. -->
 	<exclude-pattern>*/plugin-update-checker/*</exclude-pattern>
+	<!-- The shared page lock, copied whole from the foundation and checked against it in CI. -->
+	<exclude-pattern>*/blueworx-page-lock/*</exclude-pattern>
 	<exclude-pattern>*/.claude/*</exclude-pattern>
 	<exclude-pattern>*/.wp-test/*</exclude-pattern>
 	<exclude-pattern>*/test-results/*</exclude-pattern>

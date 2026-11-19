@@ -70,7 +70,7 @@ $blueworx_update_checker->getVcsApi()->enableReleaseAssets();
 // Kept under the plugin's name: client plugins such as Clubhouse check it to
 // know the BlueWorx base is present and new enough.
 if ( ! defined( 'BLUEWORX_LABS_VERSION' ) ) {
-	define( 'BLUEWORX_LABS_VERSION', '2.29.1' );
+	define( 'BLUEWORX_LABS_VERSION', '2.30.0' );
 }
 
 // The template directory, never the stylesheet one, so a child theme still
@@ -141,7 +141,10 @@ require_once BLUEWORX_LABS_PATH . 'includes/email-notifications.php';
 require_once BLUEWORX_LABS_PATH . 'includes/email-log.php';
 require_once BLUEWORX_LABS_PATH . 'includes/email-log-screen.php';
 require_once BLUEWORX_LABS_PATH . 'includes/page-excerpts.php';
-require_once BLUEWORX_LABS_PATH . 'includes/page-lock.php';
+// The shared page lock, copied whole from the foundation. Never edit it here.
+if ( blueworx_feature_enabled( 'page_lock' ) ) {
+	require_once BLUEWORX_LABS_PATH . 'blueworx-page-lock/blueworx-page-lock.php';
+}
 require_once BLUEWORX_LABS_PATH . 'includes/translate.php';
 require_once BLUEWORX_LABS_PATH . 'includes/profile-cleanup.php';
 require_once BLUEWORX_LABS_PATH . 'includes/user-roles.php';
