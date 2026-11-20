@@ -8,6 +8,12 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.30.1] - 2026-11-19
+
+### Fixed
+- On WordPress 7.2, the role tick boxes on the Add User screen stretched into
+  wide bars. They stay normal tick boxes now.
+
 ## [2.30.0] - 2026-11-19
 
 ### Changed

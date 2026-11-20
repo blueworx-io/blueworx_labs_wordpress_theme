@@ -117,7 +117,8 @@ test.describe('Standard blocks', () => {
 
       // Wide and full alignment are offered on a group block.
       await canvas.locator('.wp-block-group').first().click();
-      await page.getByRole('button', { name: /^Align$/ }).click();
+      // "Align" up to WordPress 7.1, "Align block" from 7.2.
+      await page.getByRole('button', { name: /^Align( block)?$/ }).click();
       await expect(page.getByRole('menuitemradio', { name: /Wide width/ })).toBeVisible();
       await expect(page.getByRole('menuitemradio', { name: /Full width/ })).toBeVisible();
     } finally {
