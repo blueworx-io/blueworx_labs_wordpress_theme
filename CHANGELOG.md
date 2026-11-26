@@ -13,6 +13,8 @@ history is in the plugin's own repository,
 ### Changed
 - Updated the page lock to the foundation's version 1.0.1. Pages lock the same
   way for client logins.
+- The automatic checks on each change now use Foundation 1.26.0, which also
+  checks that the page lock copy is up to date. Nothing changes on the site.
 
 ## [2.30.1] - 2026-11-19
 
