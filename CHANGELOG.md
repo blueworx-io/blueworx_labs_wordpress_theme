@@ -8,6 +8,12 @@ Versions 1.x were the BlueWorx Labs | WordPress Enhancements plugin. Their
 history is in the plugin's own repository,
 [blueworx-io/blueworx_labs_wordpress](https://github.com/blueworx-io/blueworx_labs_wordpress/blob/main/CHANGELOG.md).
 
+## [2.30.2] - 2026-11-26
+
+### Changed
+- Updated the page lock to the foundation's version 1.0.1. Pages lock the same
+  way for client logins.
+
 ## [2.30.1] - 2026-11-19
 
 ### Fixed
